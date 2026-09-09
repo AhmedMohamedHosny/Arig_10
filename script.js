@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
@@ -14,6 +14,165 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const perfumesCol = collection(db, "perfumes");
+
+// العطور المبدئية لحفظها في Firebase تلقائياً لو كانت السحابة فارغة
+const initialProducts = [
+  { name: "سراقة نوار", price: 1290, category: "men", desc: "تركيبة عميقة وأنيقة من العود والعنبر والأخشاب الدافئة.", notes: "عود، عنبر، خشب الأرز", image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85" },
+  { name: "سراقة إيلان", price: 1450, category: "unisex", desc: "حمضيات منعشة تلتقي بالمسك الأنيق لعطر عصري مميز.", notes: "برغموت، مسك، فيتيفر", image: "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=85" },
+  { name: "سراقة عود", price: 1690, category: "men", desc: "عود شرقي غني متوازن مع الزعفران والجلد وخشب الصندل الناعم.", notes: "عود، زعفران، جلد", image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85" },
+  { name: "سراقة فيلفيت", price: 1390, category: "women", desc: "لمسة زهرية ناعمة ملفوفة بالفانيليا والورد وخشب الصندل الكريمي.", notes: "ورد، فانيليا، خشب الصندل", image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=85" }
+];
+
+let products = [];
+let cart = JSON.parse(localStorage.getItem("arig-cart")) || [];
+let wishlist = JSON.parse(localStorage.getItem("arig-wishlist")) || [];
+let currentCategory = "all";
+let selectedProduct = null;
+
+// التحقق ونقل العطور المبدئية لـ Firebase عند أول تشغيل
+async function syncInitialData() {
+  const snapshot = await getDocs(perfumesCol);
+  if (snapshot.empty) {
+    for (const p of initialProducts) {
+      await addDoc(perfumesCol, { ...p, createdAt: new Date() });
+    }
+  }
+}
+syncInitialData();
+
+// جلب البيانات لحظياً من Firebase
+onSnapshot(perfumesCol, (snapshot) => {
+  products = [];
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    products.push({
+      id: docSnap.id,
+      name: data.name,
+      price: Number(data.price),
+      category: data.category || "unisex",
+      description: data.desc || "عطر فاخر صُمم لترك انطباع مميز.",
+      notes: data.notes ? data.notes.split("،") : ["عنبر", "مسك"],
+      image: data.image || "image/S1.jpg",
+      rating: 4.9,
+      reviews: 12
+    });
+  });
+  renderProducts();
+});
+
+// بناء كروت العطور (الاسم والسعر بالخارج فقط)
+function renderProducts() {
+  const grid = document.getElementById("productsGrid");
+  if (!grid) return;
+
+  let filtered = products;
+  if (currentCategory !== "all") {
+    filtered = products.filter(p => p.category === currentCategory);
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--gold); padding: 40px;">لا توجد عطور معروضة في هذا القسم.</p>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const isFav = wishlist.includes(p.id);
+    return `
+      <article class="product-card">
+        <div class="product-image-wrap">
+          <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleWishlist('${p.id}')">${isFav ? '♥' : '♡'}</button>
+          <img class="product-image" src="${p.image}" alt="${p.name}">
+          <div class="product-actions">
+            <button class="quick-btn" onclick="openQuickView('${p.id}')">عرض سريع</button>
+            <button class="add-btn" onclick="addToCart('${p.id}')">أضف إلى السلة</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-category">${p.category === 'men' ? 'رجالي' : p.category === 'women' ? 'نسائي' : 'للجنسين'}</span>
+          </div>
+          <h3 class="product-name">${p.name}</h3>
+          <div class="product-bottom">
+            <span class="product-price">${p.price} EGP</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// النافذة المنبثقة التفصيلية (Quick View)
+window.openQuickView = function(id) {
+  const p = products.find(prod => prod.id === id);
+  if (!p) return;
+
+  selectedProduct = p;
+  document.getElementById("modalImage").src = p.image;
+  document.getElementById("modalName").textContent = p.name;
+  document.getElementById("modalCategory").textContent = p.category === 'men' ? 'رجالي' : p.category === 'women' ? 'نسائي' : 'للجنسين';
+  document.getElementById("modalDescription").textContent = p.description;
+  document.getElementById("modalPrice").textContent = `${p.price} EGP`;
+
+  const notesWrap = document.getElementById("modalNotes");
+  if (notesWrap) {
+    notesWrap.innerHTML = p.notes.map(n => `<span class="note">${n}</span>`).join('');
+  }
+
+  document.getElementById("modalBackdrop").classList.add("active");
+  document.body.classList.add("no-scroll");
+};
+
+// السلة والمفضلة
+window.addToCart = function(id) {
+  const p = products.find(prod => prod.id === id);
+  if (!p) return;
+
+  const exist = cart.find(item => item.id === id);
+  if (exist) {
+    exist.qty++;
+  } else {
+    cart.push({ id: p.id, name: p.name, price: p.price, image: p.image, qty: 1 });
+  }
+  localStorage.setItem("arig-cart", JSON.stringify(cart));
+  updateCartUI();
+  alert(`تمت إضافة ${p.name} إلى السلة!`);
+};
+
+window.toggleWishlist = function(id) {
+  if (wishlist.includes(id)) {
+    wishlist = wishlist.filter(itemId => itemId !== id);
+  } else {
+    wishlist.push(id);
+  }
+  localStorage.setItem("arig-wishlist", JSON.stringify(wishlist));
+  renderProducts();
+};
+
+function updateCartUI() {
+  const countEl = document.getElementById("cartCount");
+  if (countEl) {
+    countEl.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  }
+}
+
+// فتح لوحة التحكم
+const ADMIN_PASS = "1234";
+let logoClicks = 0, clickTimer;
+
+document.querySelector(".logo")?.addEventListener("click", (e) => {
+  logoClicks++;
+  clearTimeout(clickTimer);
+  if (logoClicks === 5) {
+    e.preventDefault();
+    logoClicks = 0;
+    const pass = prompt("أدخل كلمة سر لوحة التحكم:");
+    if (pass === ADMIN_PASS) window.location.href = "admin.html";
+  } else {
+    clickTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+  }
+});
+
+updateCartUI();
 
 /* =========================================================
    SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
