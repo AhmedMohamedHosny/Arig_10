@@ -1,21 +1,24 @@
-
-
 /* =========================================================
-   ARIG — Vanilla JavaScript E-Commerce
+   ARIG — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
 
 const products = [
   {
     id: 1,
     name: "ARIG Noir",
+    nameAr: "اريج نوار",
     category: "men",
     categoryLabel: "For Him",
+    categoryLabelAr: "رجالي",
     price: 1290,
     rating: 4.9,
     reviews: 128,
     description: "A deep and sophisticated composition of amber, oud and warm woods.",
+    descriptionAr: "تركيبة عميقة وأنيقة من العود والعنبر والأخشاب الدافئة.",
     notes: ["Oud", "Amber", "Cedarwood"],
+    notesAr: ["عود", "عنبر", "خشب الأرز"],
     badge: "Bestseller",
+    badgeAr: "الأكثر مبيعًا",
     image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85",
     featured: true,
     bestseller: true
@@ -23,14 +26,19 @@ const products = [
   {
     id: 2,
     name: "ARIG Élan",
+    nameAr: "اريج إيلان",
     category: "unisex",
     categoryLabel: "Unisex",
+    categoryLabelAr: "للجنسين",
     price: 1450,
     rating: 4.8,
     reviews: 96,
     description: "Fresh citrus meets elegant musk for a modern signature scent.",
+    descriptionAr: "حمضيات منعشة تلتقي بالمسك الأنيق لعطر عصري مميز.",
     notes: ["Bergamot", "Musk", "Vetiver"],
+    notesAr: ["برغموت", "مسك", "فيتيفر"],
     badge: "New",
+    badgeAr: "جديد",
     image: "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=85",
     featured: true,
     bestseller: true
@@ -38,14 +46,19 @@ const products = [
   {
     id: 3,
     name: "ARIG Oud",
+    nameAr: "اريج عود",
     category: "men",
     categoryLabel: "For Him",
+    categoryLabelAr: "رجالي",
     price: 1690,
     rating: 4.9,
     reviews: 174,
     description: "Rich oriental oud balanced with saffron, leather and smooth sandalwood.",
+    descriptionAr: "عود شرقي غني متوازن مع الزعفران والجلد وخشب الصندل الناعم.",
     notes: ["Oud", "Saffron", "Leather"],
+    notesAr: ["عود", "زعفران", "جلد"],
     badge: "Signature",
+    badgeAr: "توقيعي",
     image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85",
     featured: true,
     bestseller: true
@@ -53,14 +66,19 @@ const products = [
   {
     id: 4,
     name: "ARIG Velvet",
+    nameAr: "اريج فيلفيت",
     category: "women",
     categoryLabel: "For Her",
+    categoryLabelAr: "نسائي",
     price: 1390,
     rating: 4.8,
     reviews: 113,
     description: "A soft floral veil wrapped in vanilla, rose and creamy sandalwood.",
+    descriptionAr: "لمسة زهرية ناعمة ملفوفة بالفانيليا والورد وخشب الصندل الكريمي.",
     notes: ["Rose", "Vanilla", "Sandalwood"],
+    notesAr: ["ورد", "فانيليا", "خشب الصندل"],
     badge: "Bestseller",
+    badgeAr: "الأكثر مبيعًا",
     image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=85",
     featured: true,
     bestseller: true
@@ -68,14 +86,19 @@ const products = [
   {
     id: 5,
     name: "ARIG Aura",
+    nameAr: "اريج أورا",
     category: "unisex",
     categoryLabel: "Unisex",
+    categoryLabelAr: "للجنسين",
     price: 1190,
     rating: 4.7,
     reviews: 81,
     description: "Clean white florals and musk create an effortlessly elegant aura.",
+    descriptionAr: "زهور بيضاء نقية ومسك يخلقان هالة أنيقة بلا عناء.",
     notes: ["White Musk", "Iris", "Jasmine"],
+    notesAr: ["مسك أبيض", "إيريس", "ياسمين"],
     badge: "",
+    badgeAr: "",
     image: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=85",
     featured: true,
     bestseller: false
@@ -83,14 +106,19 @@ const products = [
   {
     id: 6,
     name: "ARIG Royal",
+    nameAr: "اريج رويال",
     category: "men",
     categoryLabel: "For Him",
+    categoryLabelAr: "رجالي",
     price: 1850,
     rating: 4.9,
     reviews: 142,
     description: "An intense royal blend of spices, leather, amber and precious woods.",
+    descriptionAr: "مزيج ملكي قوي من التوابل والجلد والعنبر والأخشاب النفيسة.",
     notes: ["Spices", "Leather", "Amber"],
+    notesAr: ["توابل", "جلد", "عنبر"],
     badge: "Luxury",
+    badgeAr: "فاخر",
     image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=85",
     featured: false,
     bestseller: true
@@ -98,14 +126,19 @@ const products = [
   {
     id: 7,
     name: "ARIG Bloom",
+    nameAr: "اريج بلوم",
     category: "women",
     categoryLabel: "For Her",
+    categoryLabelAr: "نسائي",
     price: 1250,
     rating: 4.8,
     reviews: 104,
     description: "A radiant bouquet of blooming flowers with a delicate fruity finish.",
+    descriptionAr: "باقة زاهية من الأزهار المتفتحة بلمسة فاكهية رقيقة.",
     notes: ["Peony", "Peach", "Musk"],
+    notesAr: ["فاوانيا", "خوخ", "مسك"],
     badge: "New",
+    badgeAr: "جديد",
     image: "https://images.unsplash.com/photo-1563170351-be82bc888aa4?auto=format&fit=crop&w=900&q=85",
     featured: false,
     bestseller: false
@@ -113,19 +146,89 @@ const products = [
   {
     id: 8,
     name: "ARIG Intense",
+    nameAr: "اريج إنتنس",
     category: "unisex",
     categoryLabel: "Unisex",
+    categoryLabelAr: "للجنسين",
     price: 1590,
     rating: 4.9,
     reviews: 137,
     description: "A magnetic evening fragrance built around incense, vanilla and dark woods.",
+    descriptionAr: "عطر مسائي جذاب يقوم على البخور والفانيليا والأخشاب الداكنة.",
     notes: ["Incense", "Vanilla", "Dark Woods"],
+    notesAr: ["بخور", "فانيليا", "أخشاب داكنة"],
     badge: "Bestseller",
+    badgeAr: "الأكثر مبيعًا",
     image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=900&q=85",
     featured: false,
     bestseller: true
   }
 ];
+
+/* =========================================================
+   TRANSLATIONS (dynamic strings)
+   ========================================================= */
+
+const i18n = {
+  ar: {
+    reviews: "تقييم",
+    quickView: "عرض سريع",
+    addToCart: "أضف إلى السلة",
+    unavailable: "غير متاح",
+    unavailableText: "هذا المنتج غير متاح حاليًا.",
+    addedTitle: "تمت الإضافة إلى السلة",
+    addedText: (name) => `تمت إضافة ${name} إلى مختاراتك.`,
+    removedTitle: "تم الحذف",
+    removedText: "تمت إزالة المنتج من سلتك.",
+    wishlistAddedTitle: "أُضيف إلى المفضلة",
+    wishlistAddedText: "يمكنك العثور على هذا العطر هنا في أي وقت.",
+    wishlistRemovedTitle: "تحديث المفضلة",
+    wishlistRemovedText: "تمت الإزالة من المفضلة.",
+    emptyCartTitle: "سلتك فارغة",
+    emptyCartText: "اكتشف عطرًا يصنع لحظتك القادمة التي لا تُنسى.",
+    exploreFragrances: "تسوّق العطور",
+    emptyCartToastTitle: "سلتك فارغة",
+    emptyCartToastText: "أضف عطرًا قبل إتمام الشراء.",
+    checkoutReadyTitle: "الدفع جاهز",
+    checkoutReadyText: "هذا العرض التجريبي جاهز للربط بنظام الدفع الخاص بك.",
+    subscribedTitle: "تم التسجيل",
+    subscribedText: "شكرًا لانضمامك إلى عالم اريج.",
+    enterEmail: "من فضلك أدخل بريدك الإلكتروني.",
+    invalidEmail: "من فضلك أدخل بريدًا إلكترونيًا صحيحًا.",
+    welcomeMessage: "مرحبًا بك في عالم اريج.",
+    addToWishlist: "أضف إلى المفضلة",
+    removeFromWishlist: "أزل من المفضلة"
+  },
+  en: {
+    reviews: "reviews",
+    quickView: "Quick View",
+    addToCart: "Add to Cart",
+    unavailable: "Unavailable",
+    unavailableText: "This product is currently unavailable.",
+    addedTitle: "Added to cart",
+    addedText: (name) => `${name} is now in your selection.`,
+    removedTitle: "Removed",
+    removedText: "The item was removed from your cart.",
+    wishlistAddedTitle: "Saved to favorites",
+    wishlistAddedText: "You can find this fragrance here anytime.",
+    wishlistRemovedTitle: "Wishlist updated",
+    wishlistRemovedText: "Removed from your favorites.",
+    emptyCartTitle: "Your cart is empty",
+    emptyCartText: "Discover a fragrance made for your next unforgettable moment.",
+    exploreFragrances: "Explore Fragrances",
+    emptyCartToastTitle: "Your cart is empty",
+    emptyCartToastText: "Add a fragrance before checkout.",
+    checkoutReadyTitle: "Checkout ready",
+    checkoutReadyText: "This demo is ready to connect to your payment system.",
+    subscribedTitle: "You're on the list",
+    subscribedText: "Thank you for joining the ARIG world.",
+    enterEmail: "Please enter your email address.",
+    invalidEmail: "Please enter a valid email address.",
+    welcomeMessage: "Welcome to the ARIG world.",
+    addToWishlist: "Add to wishlist",
+    removeFromWishlist: "Remove from wishlist"
+  }
+};
 
 /* =========================================================
    STATE
@@ -137,8 +240,9 @@ let currentCategory = "all";
 let currentSearch = "";
 let currentSort = "featured";
 let selectedProduct = null;
-let modalQuantity = 1;
+let modalQty = 1;
 let toastTimeout;
+let currentLang = loadLang();
 
 /* =========================================================
    DOM
@@ -163,14 +267,19 @@ const modalRating = document.getElementById("modalRating");
 const modalDescription = document.getElementById("modalDescription");
 const modalNotes = document.getElementById("modalNotes");
 const modalPrice = document.getElementById("modalPrice");
-const modalQuantity = document.getElementById("modalQuantity");
+const modalQuantityEl = document.getElementById("modalQuantity");
 
 /* =========================================================
    HELPERS
    ========================================================= */
 
+function t(key) {
+  return i18n[currentLang][key];
+}
+
 function formatPrice(price) {
-  return `${price.toLocaleString("en-EG")} EGP`;
+  const num = price.toLocaleString(currentLang === "ar" ? "ar-EG" : "en-EG");
+  return currentLang === "ar" ? `${num} جنيه` : `${num} EGP`;
 }
 
 function escapeHtml(text) {
@@ -205,6 +314,15 @@ function saveWishlist() {
   localStorage.setItem("arig-wishlist", JSON.stringify(wishlist));
 }
 
+function loadLang() {
+  const saved = localStorage.getItem("arig-lang");
+  return saved === "en" ? "en" : "ar";
+}
+
+function saveLang() {
+  localStorage.setItem("arig-lang", currentLang);
+}
+
 function getProduct(id) {
   return products.find(product => product.id === Number(id));
 }
@@ -229,63 +347,129 @@ function stars(rating) {
   return `★ ${rating.toFixed(1)}`;
 }
 
+function productName(product) {
+  return currentLang === "ar" ? product.nameAr : product.name;
+}
+
+function productCategoryLabel(product) {
+  return currentLang === "ar" ? product.categoryLabelAr : product.categoryLabel;
+}
+
+function productDescription(product) {
+  return currentLang === "ar" ? product.descriptionAr : product.description;
+}
+
+function productNotes(product) {
+  return currentLang === "ar" ? product.notesAr : product.notes;
+}
+
+function productBadge(product) {
+  return currentLang === "ar" ? product.badgeAr : product.badge;
+}
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+
+function applyLanguage() {
+  document.documentElement.setAttribute("lang", currentLang);
+  document.documentElement.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
+
+  document.querySelectorAll("[data-ar-html], [data-en-html]").forEach(el => {
+    const html = currentLang === "ar" ? el.dataset.arHtml : el.dataset.enHtml;
+    if (html !== undefined) el.innerHTML = html;
+  });
+
+  document.querySelectorAll("[data-ar], [data-en]").forEach(el => {
+    const text = currentLang === "ar" ? el.dataset.ar : el.dataset.en;
+    if (text !== undefined) el.textContent = text;
+  });
+
+  document.querySelectorAll("[data-ar-ph], [data-en-ph]").forEach(el => {
+    const ph = currentLang === "ar" ? el.dataset.arPh : el.dataset.enPh;
+    if (ph !== undefined) el.setAttribute("placeholder", ph);
+  });
+
+  document.querySelectorAll("[data-ar-aria], [data-en-aria]").forEach(el => {
+    const aria = currentLang === "ar" ? el.dataset.arAria : el.dataset.enAria;
+    if (aria !== undefined) el.setAttribute("aria-label", aria);
+  });
+
+  const langBtnText = document.getElementById("langBtnText");
+  if (langBtnText) langBtnText.textContent = currentLang === "ar" ? "EN" : "AR";
+
+  renderProducts();
+  renderBestSellers();
+  updateCartUI();
+
+  if (selectedProduct) {
+    openQuickView(selectedProduct.id);
+  }
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === "ar" ? "en" : "ar";
+  saveLang();
+  applyLanguage();
+}
+
 /* =========================================================
    PRODUCT RENDERING
    ========================================================= */
 
 function productCard(product) {
   const isFavorite = wishlist.includes(product.id);
+  const badge = productBadge(product);
 
   return `
     <article class="product-card" data-product-id="${product.id}">
       <div class="product-image-wrap">
-        ${product.badge ? `<span class="product-badge">${escapeHtml(product.badge)}</span>` : ""}
-        
+        ${badge ? `<span class="product-badge">${escapeHtml(badge)}</span>` : ""}
+
         <button
           class="wishlist-btn ${isFavorite ? "active" : ""}"
           data-action="wishlist"
           data-id="${product.id}"
-          aria-label="${isFavorite ? "Remove from wishlist" : "Add to wishlist"}"
+          aria-label="${isFavorite ? escapeHtml(t("removeFromWishlist")) : escapeHtml(t("addToWishlist"))}"
           aria-pressed="${isFavorite}"
         >${isFavorite ? "♥" : "♡"}</button>
 
         <img
           class="product-image"
           src="${product.image}"
-          alt="${escapeHtml(product.name)} perfume bottle"
+          alt="${escapeHtml(productName(product))}"
           loading="lazy"
-          onerror="this.src='https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=80'"
         >
 
         <div class="product-actions">
           <button class="quick-btn" data-action="quick" data-id="${product.id}">
-            Quick View
+            ${escapeHtml(t("quickView"))}
           </button>
           <button class="add-btn" data-action="add" data-id="${product.id}">
-            Add to Cart
+            ${escapeHtml(t("addToCart"))}
           </button>
         </div>
       </div>
 
       <div class="product-info">
         <div class="product-meta">
-          <span class="product-category">${escapeHtml(product.categoryLabel)}</span>
+          <span class="product-category">${escapeHtml(productCategoryLabel(product))}</span>
           <span class="rating">${stars(product.rating)}</span>
         </div>
 
-        <h3 class="product-name">${escapeHtml(product.name)}</h3>
+        <h3 class="product-name">${escapeHtml(productName(product))}</h3>
 
         <p class="product-description">
-          ${escapeHtml(product.description)}
+          ${escapeHtml(productDescription(product))}
         </p>
 
         <div class="product-bottom">
           <span class="product-price">${formatPrice(product.price)}</span>
-          <span class="product-category">${product.reviews} reviews</span>
+          <span class="product-category">${product.reviews} ${escapeHtml(t("reviews"))}</span>
         </div>
 
         <button class="mobile-add" data-action="add" data-id="${product.id}">
-          Add to Cart
+          ${escapeHtml(t("addToCart"))}
         </button>
       </div>
     </article>
@@ -307,10 +491,10 @@ function getFilteredProducts() {
     const query = currentSearch.toLowerCase().trim();
 
     filtered = filtered.filter(product =>
-      product.name.toLowerCase().includes(query) ||
-      product.categoryLabel.toLowerCase().includes(query) ||
-      product.description.toLowerCase().includes(query) ||
-      product.notes.some(note => note.toLowerCase().includes(query))
+      productName(product).toLowerCase().includes(query) ||
+      productCategoryLabel(product).toLowerCase().includes(query) ||
+      productDescription(product).toLowerCase().includes(query) ||
+      productNotes(product).some(note => note.toLowerCase().includes(query))
     );
   }
 
@@ -328,7 +512,7 @@ function getFilteredProducts() {
       break;
 
     case "name":
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
+      filtered.sort((a, b) => productName(a).localeCompare(productName(b)));
       break;
 
     default:
@@ -366,7 +550,7 @@ function addToCart(id, quantity = 1) {
   const product = getProduct(id);
 
   if (!product) {
-    showToast("Unavailable", "This product is currently unavailable.");
+    showToast(t("unavailable"), t("unavailableText"));
     return;
   }
 
@@ -383,7 +567,7 @@ function addToCart(id, quantity = 1) {
 
   saveCart();
   updateCartUI();
-  showToast("Added to cart", `${product.name} is now in your selection.`);
+  showToast(t("addedTitle"), t("addedText")(productName(product)));
 }
 
 function removeFromCart(id) {
@@ -415,9 +599,9 @@ function updateCartUI() {
     cartItems.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty-icon">⌁</div>
-        <h3>Your cart is empty</h3>
-        <p>Discover a fragrance made for your next unforgettable moment.</p>
-        <button class="btn btn-dark" id="continueShopping">Explore Fragrances</button>
+        <h3>${escapeHtml(t("emptyCartTitle"))}</h3>
+        <p>${escapeHtml(t("emptyCartText"))}</p>
+        <button class="btn btn-dark" id="continueShopping">${escapeHtml(t("exploreFragrances"))}</button>
       </div>
     `;
 
@@ -437,19 +621,19 @@ function updateCartUI() {
         <img
           class="cart-item-image"
           src="${product.image}"
-          alt="${escapeHtml(product.name)}"
+          alt="${escapeHtml(productName(product))}"
           loading="lazy"
         >
 
         <div class="cart-item-info">
-          <span class="cart-item-category">${escapeHtml(product.categoryLabel)}</span>
-          <h3 class="cart-item-name">${escapeHtml(product.name)}</h3>
+          <span class="cart-item-category">${escapeHtml(productCategoryLabel(product))}</span>
+          <h3 class="cart-item-name">${escapeHtml(productName(product))}</h3>
           <span class="cart-item-price">${formatPrice(product.price)}</span>
 
           <div class="cart-item-controls">
-            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${product.id}" aria-label="Decrease quantity">−</button>
+            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${product.id}">−</button>
             <span class="cart-qty">${item.quantity}</span>
-            <button class="cart-qty-btn" data-cart-action="increase" data-id="${product.id}" aria-label="Increase quantity">+</button>
+            <button class="cart-qty-btn" data-cart-action="increase" data-id="${product.id}">+</button>
           </div>
         </div>
 
@@ -457,7 +641,6 @@ function updateCartUI() {
           class="remove-item"
           data-cart-action="remove"
           data-id="${product.id}"
-          aria-label="Remove ${escapeHtml(product.name)}"
         >&times;</button>
       </div>
     `;
@@ -489,18 +672,18 @@ function openQuickView(id) {
   if (!product) return;
 
   selectedProduct = product;
-  modalQuantity = 1;
+  modalQty = 1;
 
   modalImage.src = product.image;
-  modalImage.alt = `${product.name} perfume bottle`;
-  modalCategory.textContent = product.categoryLabel;
-  modalName.textContent = product.name;
-  modalRating.textContent = `${stars(product.rating)} · ${product.reviews} reviews`;
-  modalDescription.textContent = product.description;
+  modalImage.alt = productName(product);
+  modalCategory.textContent = productCategoryLabel(product);
+  modalName.textContent = productName(product);
+  modalRating.textContent = `${stars(product.rating)} · ${product.reviews} ${t("reviews")}`;
+  modalDescription.textContent = productDescription(product);
   modalPrice.textContent = formatPrice(product.price);
-  modalQuantity.textContent = modalQuantity;
+  modalQuantityEl.textContent = modalQty;
 
-  modalNotes.innerHTML = product.notes
+  modalNotes.innerHTML = productNotes(product)
     .map(note => `<span class="note">${escapeHtml(note)}</span>`)
     .join("");
 
@@ -523,10 +706,10 @@ function toggleWishlist(id) {
 
   if (wishlist.includes(id)) {
     wishlist = wishlist.filter(item => item !== id);
-    showToast("Wishlist updated", "Removed from your favorites.");
+    showToast(t("wishlistRemovedTitle"), t("wishlistRemovedText"));
   } else {
     wishlist.push(id);
-    showToast("Saved to favorites", "You can find this fragrance here anytime.");
+    showToast(t("wishlistAddedTitle"), t("wishlistAddedText"));
   }
 
   saveWishlist();
@@ -595,7 +778,7 @@ document.addEventListener("click", event => {
 
     if (action === "remove") {
       removeFromCart(id);
-      showToast("Removed", "The item was removed from your cart.");
+      showToast(t("removedTitle"), t("removedText"));
     }
   }
 
@@ -683,23 +866,23 @@ modalBackdrop.addEventListener("click", event => {
 });
 
 document.getElementById("modalMinus").addEventListener("click", () => {
-  if (modalQuantity > 1) {
-    modalQuantity--;
-    modalQuantity.textContent = modalQuantity;
+  if (modalQty > 1) {
+    modalQty--;
+    modalQuantityEl.textContent = modalQty;
   }
 });
 
 document.getElementById("modalPlus").addEventListener("click", () => {
-  if (modalQuantity < 20) {
-    modalQuantity++;
-    modalQuantity.textContent = modalQuantity;
+  if (modalQty < 20) {
+    modalQty++;
+    modalQuantityEl.textContent = modalQty;
   }
 });
 
 document.getElementById("modalAdd").addEventListener("click", () => {
   if (!selectedProduct) return;
 
-  addToCart(selectedProduct.id, modalQuantity);
+  addToCart(selectedProduct.id, modalQty);
   closeQuickView();
   openCart();
 });
@@ -737,7 +920,7 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 /* =========================================================
-   THEME
+   THEME (light / dark)
    ========================================================= */
 
 const themeBtn = document.getElementById("themeBtn");
@@ -747,6 +930,8 @@ function applySavedTheme() {
 
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
   }
 }
 
@@ -758,6 +943,12 @@ themeBtn.addEventListener("click", () => {
     document.body.classList.contains("dark-mode") ? "dark" : "light"
   );
 });
+
+/* =========================================================
+   LANGUAGE TOGGLE
+   ========================================================= */
+
+document.getElementById("langBtn").addEventListener("click", toggleLanguage);
 
 /* =========================================================
    COLLECTION CARDS
@@ -821,7 +1012,7 @@ newsletterForm.addEventListener("submit", event => {
   newsletterMessage.className = "";
 
   if (!email) {
-    newsletterMessage.textContent = "Please enter your email address.";
+    newsletterMessage.textContent = t("enterEmail");
     newsletterMessage.classList.add("error");
     return;
   }
@@ -829,20 +1020,17 @@ newsletterForm.addEventListener("submit", event => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(email)) {
-    newsletterMessage.textContent = "Please enter a valid email address.";
+    newsletterMessage.textContent = t("invalidEmail");
     newsletterMessage.classList.add("error");
     return;
   }
 
-  newsletterMessage.textContent = "Welcome to the ARIG world.";
+  newsletterMessage.textContent = t("welcomeMessage");
   newsletterMessage.classList.add("success");
 
   newsletterEmail.value = "";
 
-  showToast(
-    "You're on the list",
-    "Thank you for joining the ARIG world."
-  );
+  showToast(t("subscribedTitle"), t("subscribedText"));
 });
 
 /* =========================================================
@@ -851,14 +1039,11 @@ newsletterForm.addEventListener("submit", event => {
 
 document.getElementById("checkoutBtn").addEventListener("click", () => {
   if (cart.length === 0) {
-    showToast("Your cart is empty", "Add a fragrance before checkout.");
+    showToast(t("emptyCartToastTitle"), t("emptyCartToastText"));
     return;
   }
 
-  showToast(
-    "Checkout ready",
-    "This demo is ready to connect to your payment system."
-  );
+  showToast(t("checkoutReadyTitle"), t("checkoutReadyText"));
 });
 
 /* =========================================================
@@ -904,6 +1089,4 @@ document.addEventListener("error", event => {
    ========================================================= */
 
 applySavedTheme();
-renderProducts();
-renderBestSellers();
-updateCartUI();
+applyLanguage();
