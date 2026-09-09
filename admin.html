@@ -3,124 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة الكاشير والإدارة | عطور سراقة</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>لوحة التحكم | عطور سراقة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-color: #f4f6f8;
-      --header-bg: #4a0e17; /* نبيذي فاخر مثل عجيبة أو أخضر حسب رغبتك */
-      --card-bg: #ffffff;
-      --accent-green: #00875a;
-      --text-dark: #2d3748;
-      --text-muted: #718096;
-      --border: #e2e8f0;
+      --emerald-dark: #0a221c;
+      --emerald-main: #0d2c24;
+      --emerald-card: #12382e;
+      --gold: #d4af37;
+      --gold-hover: #b59a6a;
+      --text-light: #f3efe7;
+      --text-muted: #a3b8b0;
+      --danger: #e74c3c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 40px; }
+    body { background-color: var(--emerald-dark); color: var(--text-light); padding-bottom: 50px; }
 
-    /* NAVBAR HEADER */
     .admin-header {
-      background-color: var(--header-bg);
-      color: #fff;
-      padding: 12px 30px;
+      background: var(--emerald-main);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 15px 4%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
-    .header-title { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
-    .badge-pos { background: #d4af37; color: #000; padding: 2px 10px; border-radius: 4px; font-size: 12px; }
-    .header-actions { display: flex; align-items: center; gap: 15px; }
-    .btn-exit { background: #e53e3e; color: #fff; border: 0; padding: 6px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px; font-weight: 600; }
+    .brand-title {
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 26px;
+      color: var(--gold);
+    }
+    .btn-store {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 8px 18px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
 
-    /* DASHBOARD STATS (مثل عجيبة) */
-    .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-    .stat-card { background: var(--card-bg); padding: 18px; border-radius: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-    .stat-card .title { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
-    .stat-card .value { font-size: 22px; font-weight: 700; color: var(--accent-green); }
+    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
 
-    /* NAVIGATION TABS */
-    .tabs-bar { display: flex; gap: 10px; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
-    .tab-btn { background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
-    .tab-btn.active { color: var(--header-bg); border-bottom-color: var(--header-bg); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--emerald-main);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-card .title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+    .stat-card .value { font-size: 26px; font-weight: 700; color: var(--gold); }
 
-    /* FORM & TABLES */
-    .panel-card { background: var(--card-bg); border-radius: 10px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 25px; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 13px; font-weight: 600; }
-    .form-group input, .form-group select, .form-group textarea { padding: 9px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-size: 13px; }
-    
-    /* UPLOAD FILE BUTTON */
-    .file-uploader { border: 2px dashed var(--border); padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; background: #fafafa; }
-    .file-uploader input { display: none; }
-    
-    .btn-submit { background: var(--accent-green); color: #fff; border: 0; padding: 10px 25px; border-radius: 6px; cursor: pointer; font-weight: 700; margin-top: 15px; }
+    .panel {
+      background: var(--emerald-main);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    .panel-title {
+      font-size: 18px;
+      color: var(--gold);
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      padding-bottom: 10px;
+    }
 
-    /* PRODUCTS GRID */
-    .products-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
-    .product-card-admin { background: #fff; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; text-align: center; padding-bottom: 10px; }
-    .product-card-admin img { width: 100%; height: 140px; object-fit: cover; background: #eee; }
-    .product-card-admin h4 { font-size: 15px; margin: 8px 0 4px; }
-    .product-card-admin p { font-size: 13px; color: var(--accent-green); font-weight: 700; }
-    .btn-delete { background: #e53e3e; color: #fff; border: 0; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-top: 8px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 13px; color: var(--text-muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--emerald-card);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 4px;
+      padding: 10px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .upload-box {
+      border: 2px dashed var(--gold);
+      background: var(--emerald-card);
+      padding: 15px;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--gold);
+      font-size: 13px;
+    }
+    .upload-box input { display: none; }
+
+    .btn-save {
+      background: var(--gold);
+      color: var(--emerald-dark);
+      border: 0;
+      padding: 12px 30px;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .perfumes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .perfume-card {
+      background: var(--emerald-card);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .perfume-card img { width: 100%; height: 180px; object-fit: cover; }
+    .perfume-info { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+    .perfume-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+    .perfume-cat { font-size: 11px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+    .perfume-price { font-size: 15px; font-weight: 700; color: var(--gold); margin-top: auto; }
+    .btn-delete {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
   <header class="admin-header">
-    <div class="header-title">
-      <span>👑 لوحة الكاشير والإدارة - عطور سراقة</span>
-      <span class="badge-pos">الرئيسية</span>
-    </div>
-    <div class="header-actions">
-      <a href="index.html" class="btn-exit">الخروج للمتجر ➔</a>
-    </div>
+    <div class="brand-title">✨ سراقة — إدارة العطور</div>
+    <a href="index.html" class="btn-store">العودة للمتجر ➔</a>
   </header>
 
   <div class="container">
-
-    <!-- STATS (نفس تقسيمات عجيبة) -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="title">إجمالي العطور</div>
-        <div class="value" id="totalPerfumesCount">0</div>
+        <div class="title">إجمالي العطور المتاحة</div>
+        <div class="value" id="countTotal">0</div>
       </div>
       <div class="stat-card">
-        <div class="title">طلبات اليوم</div>
-        <div class="value">0</div>
+        <div class="title">عطور التشكيلة الرجالية</div>
+        <div class="value" id="countMen">0</div>
       </div>
       <div class="stat-card">
-        <div class="title">جاهز للتحضير</div>
-        <div class="value">0</div>
+        <div class="title">عطور التشكيلة النسائية</div>
+        <div class="value" id="countWomen">0</div>
       </div>
       <div class="stat-card">
-        <div class="title">المبيعات الإجمالية</div>
-        <div class="value">0 ج.م</div>
+        <div class="title">عطور للجنسين (Unisex)</div>
+        <div class="value" id="countUnisex">0</div>
       </div>
     </div>
 
-    <!-- TABS -->
-    <div class="tabs-bar">
-      <button class="tab-btn active">📦 إدارة المنيو والعطور</button>
-      <button class="tab-btn">📋 المبيعات والطلبات المباشرة</button>
-    </div>
-
-    <!-- ADD PRODUCT PANEL -->
-    <div class="panel-card">
-      <h3>✨ إضافة عطر جديد للمتجر</h3>
-      <form id="addPerfumeForm">
+    <div class="panel">
+      <h2 class="panel-title">✨ إضافة عطر جديد لمجموعات سراقة</h2>
+      <form id="perfumeForm">
         <div class="form-grid">
           <div class="form-group">
             <label>اسم العطر:</label>
-            <input type="text" id="pName" placeholder="مثال: سراقة أودو بارفان" required>
+            <input type="text" id="pName" placeholder="مثال: سراقة العود الملكي" required>
           </div>
           <div class="form-group">
             <label>السعر (EGP):</label>
-            <input type="number" id="pPrice" placeholder="1200" required>
+            <input type="number" id="pPrice" placeholder="1500" required>
           </div>
           <div class="form-group">
             <label>التصنيف:</label>
@@ -131,113 +198,141 @@
             </select>
           </div>
           <div class="form-group">
-            <label>صورة العطر (رفع مباشر من الفون/الكمبيوتر):</label>
-            <div class="file-uploader" onclick="document.getElementById('pFileInput').click()">
-              <span id="fileLabel">📁 اضغط هنا لاختيار صورة من جهازك</span>
-              <input type="file" id="pFileInput" accept="image/*" onchange="handleFileSelect(event)">
+            <label>صورة العطر (رفع مباشر):</label>
+            <div class="upload-box" onclick="document.getElementById('pFileInput').click()">
+              <span id="uploadLabel">📷 اختر صورة من الجهاز</span>
+              <input type="file" id="pFileInput" accept="image/*">
             </div>
           </div>
         </div>
+
         <div class="form-group" style="margin-top: 15px;">
           <label>الوصف والنوتات العطرية:</label>
-          <textarea id="pDesc" rows="2" placeholder="مكونات العطر: العود، الصندل، العنبر..."></textarea>
+          <textarea id="pDesc" rows="3" placeholder="مقدمة العطر: الهيل والصندل..."></textarea>
         </div>
-        <button type="submit" class="btn-submit">حفظ وإضافة للمتجر</button>
+
+        <button type="submit" class="btn-save" id="saveBtn">حفظ العطر ونشره سحابياً</button>
       </form>
     </div>
 
-    <!-- DISPLAY PRODUCTS -->
-    <div class="panel-card">
-      <h3>🛍️ العطور المعروضة حالياً في المتجر</h3>
-      <div class="products-list" id="productsGridAdmin">
-        <!-- يتم عرض العطور هنا عبر JavaScript -->
-      </div>
+    <div class="panel">
+      <h2 class="panel-title">🛍️ تشكيلة العطور المعروضة حالياً</h2>
+      <div class="perfumes-grid" id="perfumesList"></div>
     </div>
-
   </div>
 
-  <script>
-    // 1. افتراضيات العطور المبدئية
-    const defaultPerfumes = [
-      { id: 1, name: "سراقة الملكي", price: 1500, category: "unisex", image: "image/S1.jpg", desc: "مزيج فاخر من العود والعنبر" },
-      { id: 2, name: "سراقة نايت", price: 1200, category: "men", image: "image/S1.jpg", desc: "عطر رجالي ثقيل وجذاب" }
-    ];
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let base64Image = "image/S1.jpg"; // افتراضي
+    // Firebase Config الخاص بمشروعك
+    const firebaseConfig = {
+      apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
+      authDomain: "suraka-cfb2d.firebaseapp.com",
+      projectId: "suraka-cfb2d",
+      storageBucket: "suraka-cfb2d.firebasestorage.app",
+      messagingSenderId: "1082260408358",
+      appId: "1:1082260408358:web:41aa9f7cb0bd778408bee7",
+      measurementId: "G-PTVR815MCF"
+    };
 
-    // 2. قراءة وتحميل البيانات
-    function getPerfumes() {
-      const stored = localStorage.getItem("suraka_perfumes");
-      return stored ? JSON.parse(stored) : defaultPerfumes;
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const perfumesCol = collection(db, "perfumes");
 
-    function savePerfumes(data) {
-      localStorage.setItem("suraka_perfumes", JSON.stringify(data));
-      renderAdminProducts();
-    }
+    let currentImageData = "image/S1.jpg";
 
-    // 3. معالجة رفع الملفات المباشر
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
+    document.getElementById("pFileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
       if (file) {
-        document.getElementById("fileLabel").innerText = "✅ تم اختيار: " + file.name;
+        document.getElementById("uploadLabel").innerText = "✅ تم اختيار: " + file.name;
         const reader = new FileReader();
-        reader.onload = function(e) {
-          base64Image = e.target.result; // تحويل الصورة لكود جاهز للتخزين للعرض المباشر
-        };
+        reader.onload = function(evt) { currentImageData = evt.target.result; };
         reader.readAsDataURL(file);
       }
-    }
-
-    // 4. عرض العطور وإحصائياتها
-    function renderAdminProducts() {
-      const perfumes = getPerfumes();
-      const grid = document.getElementById("productsGridAdmin");
-      document.getElementById("totalPerfumesCount").innerText = perfumes.length;
-
-      grid.innerHTML = "";
-      perfumes.forEach((p, index) => {
-        grid.innerHTML += `
-          <div class="product-card-admin">
-            <img src="${p.image}" alt="${p.name}">
-            <h4>${p.name}</h4>
-            <p>${p.price} EGP</p>
-            <button class="btn-delete" onclick="deletePerfume(${index})">حذف العطر</button>
-          </div>
-        `;
-      });
-    }
-
-    // 5. إضافة عطر جديد
-    document.getElementById("addPerfumeForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const perfumes = getPerfumes();
-      const newP = {
-        id: Date.now(),
-        name: document.getElementById("pName").value,
-        price: document.getElementById("pPrice").value,
-        category: document.getElementById("pCategory").value,
-        image: base64Image,
-        desc: document.getElementById("pDesc").value
-      };
-      perfumes.push(newP);
-      savePerfumes(perfumes);
-      alert("تمت إضافة العطر بنجاح!");
-      e.target.reset();
-      document.getElementById("fileLabel").innerText = "📁 اضغط هنا لاختيار صورة من جهازك";
     });
 
-    // 6. حذف عطر
-    function deletePerfume(index) {
-      if (confirm("هل أنت تأكد من حذف هذا العطر؟")) {
-        const perfumes = getPerfumes();
-        perfumes.splice(index, 1);
-        savePerfumes(perfumes);
+    async function loadPerfumes() {
+      const grid = document.getElementById("perfumesList");
+      grid.innerHTML = "<p style='color: var(--gold);'>جاري تحميل العطور من السحابة...</p>";
+      
+      try {
+        const snapshot = await getDocs(perfumesCol);
+        grid.innerHTML = "";
+        let men = 0, women = 0, unisex = 0, total = 0;
+
+        snapshot.forEach((docSnap) => {
+          total++;
+          const p = docSnap.data();
+          const pId = docSnap.id;
+
+          if (p.category === "men") men++;
+          if (p.category === "women") women++;
+          if (p.category === "unisex") unisex++;
+
+          grid.innerHTML += `
+            <div class="perfume-card">
+              <img src="${p.image || 'image/S1.jpg'}" alt="${p.name}">
+              <div class="perfume-info">
+                <span class="perfume-cat">${p.category === 'men' ? 'رجالي' : p.category === 'women' ? 'نسائي' : 'للجنسين'}</span>
+                <div class="perfume-name">${p.name}</div>
+                <div class="perfume-price">${p.price} EGP</div>
+                <button class="btn-delete" data-id="${pId}">حذف</button>
+              </div>
+            </div>
+          `;
+        });
+
+        document.getElementById("countTotal").innerText = total;
+        document.getElementById("countMen").innerText = men;
+        document.getElementById("countWomen").innerText = women;
+        document.getElementById("countUnisex").innerText = unisex;
+
+        document.querySelectorAll(".btn-delete").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            if (confirm("هل تريد حذف هذا العطر نهائياً؟")) {
+              await deleteDoc(doc(db, "perfumes", e.target.dataset.id));
+              loadPerfumes();
+            }
+          });
+        });
+
+      } catch (err) {
+        grid.innerHTML = "<p style='color: var(--danger);'>حدث خطأ أثناء تحميل البيانات.</p>";
       }
     }
 
-    // تشغيل العرض التلقائي عند الفتح
-    renderAdminProducts();
+    document.getElementById("perfumeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("saveBtn");
+      btn.innerText = "جاري الحفظ...";
+      btn.disabled = true;
+
+      try {
+        await addDoc(perfumesCol, {
+          name: document.getElementById("pName").value,
+          price: Number(document.getElementById("pPrice").value),
+          category: document.getElementById("pCategory").value,
+          image: currentImageData,
+          desc: document.getElementById("pDesc").value,
+          createdAt: new Date()
+        });
+
+        alert("تم رفع العطر بنجاح!");
+        e.target.reset();
+        document.getElementById("uploadLabel").innerText = "📷 اختر صورة من الجهاز";
+        currentImageData = "image/S1.jpg";
+        loadPerfumes();
+      } catch (err) {
+        alert("حدث خطأ أثناء الحفظ!");
+      } finally {
+        btn.innerText = "حفظ العطر ونشره سحابياً";
+        btn.disabled = false;
+      }
+    });
+
+    loadPerfumes();
   </script>
 </body>
 </html>
