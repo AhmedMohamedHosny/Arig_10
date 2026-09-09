@@ -1090,3 +1090,37 @@ document.addEventListener("error", event => {
 
 applySavedTheme();
 applyLanguage();
+// --- ADMIN ACCESS (5 CLICKS & SHORTCUT) ---
+const ADMIN_PASS = "1234"; // كلمة السر المبدئية
+let logoClicks = 0;
+let clickTimer;
+
+function checkAdminAuth() {
+  const pass = prompt("أدخل كلمة سر لوحة التحكم:");
+  if (pass === ADMIN_PASS) {
+    window.location.href = "admin.html";
+  } else if (pass !== null) {
+    alert("كلمة السر غير صحيحة!");
+  }
+}
+
+// 1. الدخول بـ 5 كليكات على اللوجو
+document.querySelector(".logo")?.addEventListener("click", (e) => {
+  logoClicks++;
+  clearTimeout(clickTimer);
+  if (logoClicks === 5) {
+    e.preventDefault();
+    logoClicks = 0;
+    checkAdminAuth();
+  } else {
+    clickTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+  }
+});
+
+// 2. الدخول باختصار Shift + Ctrl + A
+document.addEventListener("keydown", (e) => {
+  if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === "a") {
+    e.preventDefault();
+    checkAdminAuth();
+  }
+});
