@@ -1,11 +1,11 @@
 /* =========================================================
-   SARAQA — Vanilla JavaScript E-Commerce (AR/EN)
+   SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
 
 const products = [
   {
     id: 1,
-    name: "SARAQA Noir",
+    name: "SURAKA Noir",
     nameAr: "سراقة نوار",
     category: "men",
     categoryLabel: "For Him",
@@ -25,7 +25,7 @@ const products = [
   },
   {
     id: 2,
-    name: "SARAQA Élan",
+    name: "SURAKA Élan",
     nameAr: "سراقة إيلان",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -45,7 +45,7 @@ const products = [
   },
   {
     id: 3,
-    name: "SARAQA Oud",
+    name: "SURAKA Oud",
     nameAr: "سراقة عود",
     category: "men",
     categoryLabel: "For Him",
@@ -65,7 +65,7 @@ const products = [
   },
   {
     id: 4,
-    name: "SARAQA Velvet",
+    name: "SURAKA Velvet",
     nameAr: "سراقة فيلفيت",
     category: "women",
     categoryLabel: "For Her",
@@ -85,7 +85,7 @@ const products = [
   },
   {
     id: 5,
-    name: "SARAQA Aura",
+    name: "SURAKA Aura",
     nameAr: "سراقة أورا",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -105,7 +105,7 @@ const products = [
   },
   {
     id: 6,
-    name: "SARAQA Royal",
+    name: "SURAKA Royal",
     nameAr: "سراقة رويال",
     category: "men",
     categoryLabel: "For Him",
@@ -125,7 +125,7 @@ const products = [
   },
   {
     id: 7,
-    name: "SARAQA Bloom",
+    name: "SURAKA Bloom",
     nameAr: "سراقة بلوم",
     category: "women",
     categoryLabel: "For Her",
@@ -145,7 +145,7 @@ const products = [
   },
   {
     id: 8,
-    name: "SARAQA Intense",
+    name: "SURAKA Intense",
     nameAr: "سراقة إنتنس",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -221,10 +221,10 @@ const i18n = {
     checkoutReadyTitle: "Checkout ready",
     checkoutReadyText: "This demo is ready to connect to your payment system.",
     subscribedTitle: "You're on the list",
-    subscribedText: "Thank you for joining the SARAQA world.",
+    subscribedText: "Thank you for joining the SURAKA world.",
     enterEmail: "Please enter your email address.",
     invalidEmail: "Please enter a valid email address.",
-    welcomeMessage: "Welcome to the SARAQA world.",
+    welcomeMessage: "Welcome to the SURAKA world.",
     addToWishlist: "Add to wishlist",
     removeFromWishlist: "Remove from wishlist"
   }
