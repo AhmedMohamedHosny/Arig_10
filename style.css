@@ -1290,7 +1290,8 @@ html[dir="rtl"] .footer-tagline::before {
 }
 
 html[dir="rtl"] .footer-column .socials {
-  align-items: flex-end;
+  align-items: flex-start;
+  flex-direction: row;
 }
 
 .socials a {
