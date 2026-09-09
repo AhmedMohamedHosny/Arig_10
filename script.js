@@ -1,12 +1,12 @@
 /* =========================================================
-   ARIG — Vanilla JavaScript E-Commerce (AR/EN)
+   SARAQA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
 
 const products = [
   {
     id: 1,
-    name: "ARIG Noir",
-    nameAr: "اريج نوار",
+    name: "SARAQA Noir",
+    nameAr: "سراقة نوار",
     category: "men",
     categoryLabel: "For Him",
     categoryLabelAr: "رجالي",
@@ -25,8 +25,8 @@ const products = [
   },
   {
     id: 2,
-    name: "ARIG Élan",
-    nameAr: "اريج إيلان",
+    name: "SARAQA Élan",
+    nameAr: "سراقة إيلان",
     category: "unisex",
     categoryLabel: "Unisex",
     categoryLabelAr: "للجنسين",
@@ -45,8 +45,8 @@ const products = [
   },
   {
     id: 3,
-    name: "ARIG Oud",
-    nameAr: "اريج عود",
+    name: "SARAQA Oud",
+    nameAr: "سراقة عود",
     category: "men",
     categoryLabel: "For Him",
     categoryLabelAr: "رجالي",
@@ -65,8 +65,8 @@ const products = [
   },
   {
     id: 4,
-    name: "ARIG Velvet",
-    nameAr: "اريج فيلفيت",
+    name: "SARAQA Velvet",
+    nameAr: "سراقة فيلفيت",
     category: "women",
     categoryLabel: "For Her",
     categoryLabelAr: "نسائي",
@@ -85,8 +85,8 @@ const products = [
   },
   {
     id: 5,
-    name: "ARIG Aura",
-    nameAr: "اريج أورا",
+    name: "SARAQA Aura",
+    nameAr: "سراقة أورا",
     category: "unisex",
     categoryLabel: "Unisex",
     categoryLabelAr: "للجنسين",
@@ -105,8 +105,8 @@ const products = [
   },
   {
     id: 6,
-    name: "ARIG Royal",
-    nameAr: "اريج رويال",
+    name: "SARAQA Royal",
+    nameAr: "سراقة رويال",
     category: "men",
     categoryLabel: "For Him",
     categoryLabelAr: "رجالي",
@@ -125,8 +125,8 @@ const products = [
   },
   {
     id: 7,
-    name: "ARIG Bloom",
-    nameAr: "اريج بلوم",
+    name: "SARAQA Bloom",
+    nameAr: "سراقة بلوم",
     category: "women",
     categoryLabel: "For Her",
     categoryLabelAr: "نسائي",
@@ -145,8 +145,8 @@ const products = [
   },
   {
     id: 8,
-    name: "ARIG Intense",
-    nameAr: "اريج إنتنس",
+    name: "SARAQA Intense",
+    nameAr: "سراقة إنتنس",
     category: "unisex",
     categoryLabel: "Unisex",
     categoryLabelAr: "للجنسين",
@@ -192,10 +192,10 @@ const i18n = {
     checkoutReadyTitle: "الدفع جاهز",
     checkoutReadyText: "هذا العرض التجريبي جاهز للربط بنظام الدفع الخاص بك.",
     subscribedTitle: "تم التسجيل",
-    subscribedText: "شكرًا لانضمامك إلى عالم اريج.",
+    subscribedText: "شكرًا لانضمامك إلى عالم سراقة.",
     enterEmail: "من فضلك أدخل بريدك الإلكتروني.",
     invalidEmail: "من فضلك أدخل بريدًا إلكترونيًا صحيحًا.",
-    welcomeMessage: "مرحبًا بك في عالم اريج.",
+    welcomeMessage: "مرحبًا بك في عالم سراقة.",
     addToWishlist: "أضف إلى المفضلة",
     removeFromWishlist: "أزل من المفضلة"
   },
@@ -221,10 +221,10 @@ const i18n = {
     checkoutReadyTitle: "Checkout ready",
     checkoutReadyText: "This demo is ready to connect to your payment system.",
     subscribedTitle: "You're on the list",
-    subscribedText: "Thank you for joining the ARIG world.",
+    subscribedText: "Thank you for joining the SARAQA world.",
     enterEmail: "Please enter your email address.",
     invalidEmail: "Please enter a valid email address.",
-    welcomeMessage: "Welcome to the ARIG world.",
+    welcomeMessage: "Welcome to the SARAQA world.",
     addToWishlist: "Add to wishlist",
     removeFromWishlist: "Remove from wishlist"
   }
