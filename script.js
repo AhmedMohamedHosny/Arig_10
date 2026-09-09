@@ -1,3 +1,20 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
+  authDomain: "suraka-cfb2d.firebaseapp.com",
+  projectId: "suraka-cfb2d",
+  storageBucket: "suraka-cfb2d.firebasestorage.app",
+  messagingSenderId: "1082260408358",
+  appId: "1:1082260408358:web:41aa9f7cb0bd778408bee7",
+  measurementId: "G-PTVR815MCF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const perfumesCol = collection(db, "perfumes");
+
 /* =========================================================
    SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
@@ -1089,7 +1106,43 @@ document.addEventListener("error", event => {
    ========================================================= */
 
 applySavedTheme();
-applyLanguage();
+
+// الاستماع للـ Firebase وجلب العطور المضافة لحظياً
+onSnapshot(perfumesCol, (snapshot) => {
+  const firebaseProducts = [];
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    firebaseProducts.push({
+      id: doc.id,
+      name: data.name,
+      nameAr: data.name,
+      category: data.category || "unisex",
+      categoryLabel: data.category === 'men' ? 'For Him' : data.category === 'women' ? 'For Her' : 'Unisex',
+      categoryLabelAr: data.category === 'men' ? 'رجالي' : data.category === 'women' ? 'نسائي' : 'للجنسين',
+      price: Number(data.price),
+      rating: 5.0,
+      reviews: 1,
+      description: data.desc || "",
+      descriptionAr: data.desc || "",
+      notes: ["سراقة"],
+      notesAr: ["سراقة"],
+      badge: "جديد",
+      badgeAr: "جديد",
+      image: data.image || "image/S1.jpg",
+      featured: true,
+      bestseller: false
+    });
+  });
+
+  if (firebaseProducts.length > 0) {
+    products.length = 0;
+    products.push(...firebaseProducts);
+  }
+
+  applyLanguage();
+});
+
+
 // --- ADMIN ACCESS (5 CLICKS & SHORTCUT) ---
 const ADMIN_PASS = "1234"; // كلمة السر المبدئية
 let logoClicks = 0;
