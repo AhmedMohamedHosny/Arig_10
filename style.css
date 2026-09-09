@@ -1285,6 +1285,12 @@ html[dir="rtl"] .footer-tagline::before {
 
 .footer-column .socials {
   margin-top: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+html[dir="rtl"] .footer-column .socials {
+  align-items: flex-end;
 }
 
 .socials a {
