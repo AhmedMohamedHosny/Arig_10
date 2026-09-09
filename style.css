@@ -11,6 +11,8 @@
   --white: #fff;
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "DM Sans", Arial, sans-serif;
+  --serif-ar: "Aref Ruqaa", "Cormorant Garamond", Georgia, serif;
+  --sans-ar: "Cairo", "DM Sans", Arial, sans-serif;
   --transition: .35s cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -30,6 +32,27 @@ body {
   font-family: var(--sans);
   font-weight: 400;
   overflow-x: hidden;
+}
+
+html[lang="ar"] body {
+  font-family: var(--sans-ar);
+}
+
+html[lang="ar"] .hero h1,
+html[lang="ar"] .section-heading h2,
+html[lang="ar"] .why-intro h2,
+html[lang="ar"] .story-content h2,
+html[lang="ar"] .newsletter-inner h2,
+html[lang="ar"] .logo,
+html[lang="ar"] .footer-logo,
+html[lang="ar"] .product-name,
+html[lang="ar"] .cart-item-name,
+html[lang="ar"] .modal-info h2,
+html[lang="ar"] .collection-content h3,
+html[lang="ar"] .benefit h3,
+html[lang="ar"] .cart-empty h3,
+html[lang="ar"] .no-products h3 {
+  font-family: var(--serif-ar);
 }
 
 body.no-scroll {
@@ -74,6 +97,11 @@ img {
   letter-spacing: 2px;
 }
 
+html[lang="ar"] .announcement {
+  font-size: 11px;
+  letter-spacing: .5px;
+}
+
 .announcement-close {
   position: absolute;
   right: 20px;
@@ -81,6 +109,11 @@ img {
   background: transparent;
   font-size: 17px;
   opacity: .7;
+}
+
+html[dir="rtl"] .announcement-close {
+  right: auto;
+  left: 20px;
 }
 
 .navbar {
@@ -125,12 +158,24 @@ img {
   margin-left: 60px;
 }
 
+html[dir="rtl"] .desktop-nav {
+  margin-left: 0;
+  margin-right: 60px;
+}
+
 .desktop-nav a,
 .mobile-nav a {
   font-size: 11px;
   letter-spacing: 1.7px;
   text-transform: uppercase;
   position: relative;
+}
+
+html[lang="ar"] .desktop-nav a,
+html[lang="ar"] .mobile-nav a {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
 }
 
 .desktop-nav a::after,
@@ -178,6 +223,27 @@ img {
   stroke-linejoin: round;
 }
 
+.lang-btn {
+  width: auto;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 9px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 10px;
+  letter-spacing: 1px;
+  display: grid;
+  place-items: center;
+  transition: var(--transition);
+}
+
+.lang-btn:hover {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+}
+
 .cart-count {
   position: absolute;
   top: 0;
@@ -190,6 +256,11 @@ img {
   display: grid;
   place-items: center;
   font-size: 8px;
+}
+
+html[dir="rtl"] .cart-count {
+  right: auto;
+  left: -3px;
 }
 
 .mobile-menu-btn {
@@ -226,6 +297,13 @@ img {
   overflow: hidden;
 }
 
+html[dir="rtl"] .hero {
+  background:
+    linear-gradient(270deg, rgba(0,0,0,.68) 0%, rgba(0,0,0,.28) 52%, rgba(0,0,0,.05) 100%),
+    url("https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=2000&q=90")
+    center 45% / cover no-repeat;
+}
+
 .hero::after {
   content: "";
   position: absolute;
@@ -242,6 +320,11 @@ img {
   animation: heroIn 1s .2s both;
 }
 
+html[dir="rtl"] .hero-content {
+  margin-left: 0;
+  margin-right: 9%;
+}
+
 @keyframes heroIn {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
@@ -253,6 +336,12 @@ img {
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 17px;
+}
+
+html[lang="ar"] .eyebrow {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11px;
 }
 
 .hero .eyebrow {
@@ -267,6 +356,12 @@ img {
   letter-spacing: -2px;
 }
 
+html[lang="ar"] .hero h1 {
+  letter-spacing: 0;
+  line-height: 1.05;
+  font-size: clamp(50px, 7vw, 96px);
+}
+
 .hero h1 em,
 h2 em {
   font-weight: 400;
@@ -274,6 +369,12 @@ h2 em {
 
 .hero h1 em {
   font-style: italic;
+}
+
+html[lang="ar"] .hero h1 em,
+html[lang="ar"] h2 em {
+  font-style: normal;
+  color: var(--gold);
 }
 
 .hero-text {
@@ -300,6 +401,12 @@ h2 em {
   letter-spacing: 1.8px;
   font-size: 9px;
   transition: var(--transition);
+}
+
+html[lang="ar"] .btn {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
 }
 
 .btn-light {
@@ -346,6 +453,11 @@ h2 em {
   writing-mode: vertical-rl;
 }
 
+html[dir="rtl"] .hero-scroll {
+  right: auto;
+  left: 6%;
+}
+
 .hero-scroll i {
   height: 48px;
   width: 1px;
@@ -377,6 +489,15 @@ h2 em {
   font-size: clamp(44px, 5vw, 66px);
   line-height: .9;
   letter-spacing: -1px;
+}
+
+html[lang="ar"] .section-heading h2,
+html[lang="ar"] .why-intro h2,
+html[lang="ar"] .story-content h2,
+html[lang="ar"] .newsletter-inner h2 {
+  letter-spacing: 0;
+  line-height: 1.15;
+  font-size: clamp(36px, 4.2vw, 54px);
 }
 
 .section-heading h2 em,
@@ -437,6 +558,12 @@ h2 em {
   text-transform: uppercase;
 }
 
+html[lang="ar"] .filter-btn {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 12px;
+}
+
 .filter-btn::after {
   content: "";
   height: 1px;
@@ -446,6 +573,11 @@ h2 em {
   left: 0;
   bottom: 18px;
   transition: var(--transition);
+}
+
+html[dir="rtl"] .filter-btn::after {
+  left: auto;
+  right: 0;
 }
 
 .filter-btn.active {
@@ -468,6 +600,12 @@ h2 em {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+html[lang="ar"] .sort-wrapper label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
 }
 
 .sort-wrapper select {
@@ -567,6 +705,17 @@ h2 em {
   text-transform: uppercase;
 }
 
+html[dir="rtl"] .product-badge {
+  left: auto;
+  right: 13px;
+}
+
+html[lang="ar"] .product-badge {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 10px;
+}
+
 .wishlist-btn {
   position: absolute;
   top: 12px;
@@ -580,6 +729,11 @@ h2 em {
   z-index: 2;
   font-size: 17px;
   transition: var(--transition);
+}
+
+html[dir="rtl"] .wishlist-btn {
+  right: auto;
+  left: 12px;
 }
 
 .wishlist-btn:hover {
@@ -613,6 +767,12 @@ h2 em {
   text-transform: uppercase;
 }
 
+html[lang="ar"] .product-actions button {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11px;
+}
+
 .quick-btn {
   background: rgba(255,255,255,.92);
   color: var(--text);
@@ -641,6 +801,12 @@ h2 em {
   text-transform: uppercase;
 }
 
+html[lang="ar"] .product-category {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 10px;
+}
+
 .rating {
   font-size: 9px;
   letter-spacing: 1px;
@@ -659,6 +825,10 @@ h2 em {
   font-size: 10px;
   line-height: 1.6;
   min-height: 32px;
+}
+
+html[lang="ar"] .product-description {
+  font-size: 11px;
 }
 
 .product-bottom {
@@ -724,6 +894,10 @@ h2 em {
   overflow: hidden;
   text-align: left;
   background: #222;
+}
+
+html[dir="rtl"] .collection-card {
+  text-align: right;
 }
 
 .collection-image {
@@ -793,6 +967,12 @@ h2 em {
   letter-spacing: 1.7px;
   text-transform: uppercase;
   font-weight: 400;
+}
+
+html[lang="ar"] .collection-content strong {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11px;
 }
 
 /* WHY */
@@ -919,6 +1099,12 @@ h2 em {
   position: relative;
 }
 
+html[lang="ar"] .text-link {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 12px;
+}
+
 .text-link span {
   font-size: 16px;
   transition: transform var(--transition);
@@ -926,6 +1112,10 @@ h2 em {
 
 .text-link:hover span {
   transform: translateX(5px);
+}
+
+html[dir="rtl"] .text-link:hover span {
+  transform: translateX(-5px);
 }
 
 /* BEST */
@@ -992,11 +1182,24 @@ h2 em {
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
 }
 
-.newsletter-input button span {
+html[lang="ar"] .newsletter-input button {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 12px;
+}
+
+.newsletter-input button span:last-child {
   margin-left: 9px;
   font-size: 15px;
+}
+
+html[dir="rtl"] .newsletter-input button span:last-child {
+  margin-left: 0;
+  margin-right: 9px;
 }
 
 #newsletterMessage {
@@ -1004,6 +1207,10 @@ h2 em {
   margin-top: 10px;
   min-height: 16px;
   font-size: 9px;
+}
+
+html[lang="ar"] #newsletterMessage {
+  font-size: 11px;
 }
 
 #newsletterMessage.success {
@@ -1077,10 +1284,21 @@ h2 em {
   margin-bottom: 10px;
 }
 
+html[lang="ar"] .footer-column h4 {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 12px;
+}
+
 .footer-column a,
 .footer-column p {
   color: rgba(255,255,255,.5);
   font-size: 10px;
+}
+
+html[lang="ar"] .footer-column a,
+html[lang="ar"] .footer-column p {
+  font-size: 12px;
 }
 
 .footer-column a:hover {
@@ -1098,6 +1316,12 @@ h2 em {
   font-size: 8px;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+html[lang="ar"] .footer-bottom {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 10px;
 }
 
 /* CART */
@@ -1129,6 +1353,12 @@ h2 em {
   transition: transform .5s cubic-bezier(.22,1,.36,1);
   display: flex;
   flex-direction: column;
+}
+
+html[dir="rtl"] .cart-drawer {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
 }
 
 .cart-drawer.active {
@@ -1192,6 +1422,12 @@ h2 em {
   text-transform: uppercase;
   letter-spacing: 1.2px;
   font-size: 7px;
+}
+
+html[lang="ar"] .cart-item-category {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 10px;
 }
 
 .cart-item-name {
@@ -1261,6 +1497,10 @@ h2 em {
   margin: 8px 0 22px;
 }
 
+html[lang="ar"] .cart-empty p {
+  font-size: 12px;
+}
+
 .cart-footer {
   border-top: 1px solid var(--line);
   padding: 22px 30px 28px;
@@ -1279,6 +1519,12 @@ h2 em {
   letter-spacing: 1px;
 }
 
+html[lang="ar"] .cart-summary span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
 .cart-summary strong {
   font-family: var(--serif);
   font-size: 25px;
@@ -1288,6 +1534,10 @@ h2 em {
   color: var(--muted);
   font-size: 8px;
   margin: 6px 0 16px;
+}
+
+html[lang="ar"] .shipping-note {
+  font-size: 10px;
 }
 
 .checkout-btn {
@@ -1339,6 +1589,11 @@ h2 em {
   border-radius: 50%;
 }
 
+html[dir="rtl"] .modal-close {
+  right: auto;
+  left: 12px;
+}
+
 .modal-image-wrap {
   min-height: 560px;
   background: #e4ded2;
@@ -1363,6 +1618,12 @@ h2 em {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
+}
+
+html[lang="ar"] .modal-category {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 11px;
 }
 
 .modal-info h2 {
@@ -1398,6 +1659,12 @@ h2 em {
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+html[lang="ar"] .note {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 10px;
 }
 
 .modal-purchase {
@@ -1455,6 +1722,11 @@ h2 em {
   transition: .5s cubic-bezier(.22,1,.36,1);
 }
 
+html[dir="rtl"] .toast {
+  right: auto;
+  left: 25px;
+}
+
 .toast.show {
   transform: translateY(0);
   opacity: 1;
@@ -1477,10 +1749,18 @@ h2 em {
   font-weight: 500;
 }
 
+html[lang="ar"] .toast strong {
+  font-family: var(--serif-ar);
+}
+
 .toast p {
   color: rgba(255,255,255,.5);
   font-size: 8px;
   margin-top: 2px;
+}
+
+html[lang="ar"] .toast p {
+  font-size: 10px;
 }
 
 /* DARK MODE */
@@ -1528,12 +1808,22 @@ body.dark-mode .add-btn {
   color: #111;
 }
 
+body.dark-mode .lang-btn {
+  border-color: var(--line);
+  color: var(--text);
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 1100px) {
   .desktop-nav {
     gap: 25px;
     margin-left: 20px;
+  }
+
+  html[dir="rtl"] .desktop-nav {
+    margin-left: 0;
+    margin-right: 20px;
   }
 
   .products-grid {
@@ -1562,6 +1852,10 @@ body.dark-mode .add-btn {
     font-size: 8px;
   }
 
+  html[lang="ar"] .announcement {
+    font-size: 10px;
+  }
+
   .navbar {
     height: 68px;
   }
@@ -1588,6 +1882,11 @@ body.dark-mode .add-btn {
   .nav-actions {
     gap: 4px;
     margin-left: auto;
+  }
+
+  html[dir="rtl"] .nav-actions {
+    margin-left: 0;
+    margin-right: auto;
   }
 
   #themeBtn {
@@ -1637,6 +1936,11 @@ body.dark-mode .add-btn {
 
   .hero-content {
     margin-left: 7%;
+  }
+
+  html[dir="rtl"] .hero-content {
+    margin-left: 0;
+    margin-right: 7%;
   }
 
   .hero h1 {
@@ -1703,6 +2007,12 @@ body.dark-mode .add-btn {
     text-transform: uppercase;
   }
 
+  html[lang="ar"] .mobile-add {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 11px;
+  }
+
   .collections-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1767,6 +2077,11 @@ body.dark-mode .add-btn {
     right: 8px;
   }
 
+  html[dir="rtl"] .announcement-close {
+    right: auto;
+    left: 8px;
+  }
+
   .hero {
     min-height: 620px;
     align-items: flex-end;
@@ -1809,6 +2124,10 @@ body.dark-mode .add-btn {
   .product-description {
     font-size: 9px;
     min-height: 0;
+  }
+
+  html[lang="ar"] .product-description {
+    font-size: 11px;
   }
 
   .product-meta {
