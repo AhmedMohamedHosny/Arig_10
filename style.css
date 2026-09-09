@@ -1249,10 +1249,42 @@ html[lang="ar"] #newsletterMessage {
   margin-top: 5px;
 }
 
+.footer-tagline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,.55) !important;
+  font-style: italic;
+  letter-spacing: .5px;
+  margin-top: 10px !important;
+}
+
+html[lang="ar"] .footer-tagline {
+  font-style: normal;
+  font-family: var(--serif-ar);
+}
+
+.footer-tagline::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
+}
+
+html[dir="rtl"] .footer-tagline::before {
+  order: 2;
+}
+
 .socials {
   display: flex;
   gap: 10px;
   margin-top: 27px;
+}
+
+.footer-column .socials {
+  margin-top: 0;
 }
 
 .socials a {
