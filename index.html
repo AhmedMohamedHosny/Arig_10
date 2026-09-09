@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ARIG — The Essence of Elegance. Discover premium fragrances crafted to leave an unforgettable impression.">
+  <meta name="theme-color" content="#11100e">
+  <title>ARIG — The Essence of Elegance</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="announcement">
+    <span>FREE DELIVERY ON ORDERS OVER 1,500 EGP</span>
+    <button class="announcement-close" aria-label="Close announcement">&times;</button>
+  </div>
+
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a href="#home" class="logo">ARIG</a>
+
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#shop">Shop</a>
+        <a href="#collections">Collections</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 5 5"></path>
+          </svg>
+        </button>
+
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"></path>
+          </svg>
+        </button>
+
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h2l1.7 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L21 8H7"></path>
+            <circle cx="10" cy="20" r="1"></circle>
+            <circle cx="18" cy="20" r="1"></circle>
+          </svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#home">Home</a>
+      <a href="#shop">Shop</a>
+      <a href="#collections">Collections</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="eyebrow">ARIG PARFUMS · EST. 2026</p>
+        <h1>The Essence<br><em>of Elegance</em></h1>
+        <p class="hero-text">
+          Discover fragrances crafted to leave an unforgettable impression.
+        </p>
+        <div class="hero-buttons">
+          <a href="#shop" class="btn btn-light">Shop Collection</a>
+          <a href="#about" class="btn btn-outline-light">Explore ARIG</a>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <span>SCROLL TO DISCOVER</span>
+        <i></i>
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="section shop-section" id="shop">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">THE COLLECTION</p>
+          <h2>Signature <em>Fragrances</em></h2>
+        </div>
+        <p class="section-description">
+          Distinctive compositions designed for moments that deserve to be remembered.
+        </p>
+      </div>
+
+      <div class="shop-toolbar">
+        <div class="category-tabs" id="categoryTabs">
+          <button class="filter-btn active" data-category="all">All</button>
+          <button class="filter-btn" data-category="men">Men</button>
+          <button class="filter-btn" data-category="women">Women</button>
+          <button class="filter-btn" data-category="unisex">Unisex</button>
+          <button class="filter-btn" data-category="bestseller">Best Sellers</button>
+        </div>
+
+        <div class="sort-wrapper">
+          <label for="sortSelect">Sort by</label>
+          <select id="sortSelect">
+            <option value="featured">Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="search-panel" id="searchPanel">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 5 5"></path>
+          </svg>
+          <input type="search" id="searchInput" placeholder="Search fragrances..." autocomplete="off">
+          <button id="clearSearch" aria-label="Clear search">&times;</button>
+        </div>
+      </div>
+
+      <div class="products-grid" id="productsGrid"></div>
+
+      <div class="no-products" id="noProducts">
+        <div>⌁</div>
+        <h3>No fragrance found</h3>
+        <p>Try another search or category.</p>
+      </div>
+    </section>
+
+    <!-- COLLECTIONS -->
+    <section class="section collections-section" id="collections">
+      <div class="section-heading centered">
+        <p class="eyebrow">DISCOVER YOUR SCENT</p>
+        <h2>Explore Our <em>Collections</em></h2>
+      </div>
+
+      <div class="collections-grid">
+        <button class="collection-card collection-men" data-collection="men">
+          <div class="collection-image"></div>
+          <div class="collection-content">
+            <span>01</span>
+            <h3>For Him</h3>
+            <p>Bold. Refined. Unforgettable.</p>
+            <strong>Explore →</strong>
+          </div>
+        </button>
+
+        <button class="collection-card collection-women" data-collection="women">
+          <div class="collection-image"></div>
+          <div class="collection-content">
+            <span>02</span>
+            <h3>For Her</h3>
+            <p>Elegant. Sensual. Timeless.</p>
+            <strong>Explore →</strong>
+          </div>
+        </button>
+
+        <button class="collection-card collection-unisex" data-collection="unisex">
+          <div class="collection-image"></div>
+          <div class="collection-content">
+            <span>03</span>
+            <h3>Unisex</h3>
+            <p>For every expression of you.</p>
+            <strong>Explore →</strong>
+          </div>
+        </button>
+
+        <button class="collection-card collection-best" data-collection="bestseller">
+          <div class="collection-image"></div>
+          <div class="collection-content">
+            <span>04</span>
+            <h3>Best Sellers</h3>
+            <p>Our most loved signatures.</p>
+            <strong>Explore →</strong>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- WHY ARIG -->
+    <section class="why-section">
+      <div class="why-inner">
+        <div class="why-intro">
+          <p class="eyebrow">THE ARIG STANDARD</p>
+          <h2>Made with <em>intention.</em></h2>
+          <p>
+            Every ARIG fragrance is created around one simple idea:
+            luxury should be felt, not announced.
+          </p>
+        </div>
+
+        <div class="benefits-grid">
+          <div class="benefit">
+            <span class="benefit-number">01</span>
+            <div class="benefit-icon">✦</div>
+            <h3>Premium Ingredients</h3>
+            <p>Carefully selected notes and exceptional raw materials.</p>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-number">02</span>
+            <div class="benefit-icon">◌</div>
+            <h3>Long Lasting</h3>
+            <p>Concentrated compositions created to stay with you.</p>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-number">03</span>
+            <div class="benefit-icon">◇</div>
+            <h3>Elegant Packaging</h3>
+            <p>A refined bottle designed to belong in your space.</p>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-number">04</span>
+            <div class="benefit-icon">↗</div>
+            <h3>Fast Delivery</h3>
+            <p>Your signature scent delivered safely to your door.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAND STORY -->
+    <section class="story-section" id="about">
+      <div class="story-image"></div>
+      <div class="story-content">
+        <p class="eyebrow">THE STORY OF ARIG</p>
+        <h2>A fragrance is<br><em>more than a scent.</em></h2>
+        <p>
+          ARIG was born from a fascination with the invisible details
+          that make us unforgettable — a first impression, a memory,
+          a moment shared.
+        </p>
+        <p>
+          Our fragrances combine modern elegance with timeless perfumery,
+          creating compositions that feel personal rather than ordinary.
+        </p>
+        <a href="#shop" class="text-link">Discover the collection <span>→</span></a>
+      </div>
+    </section>
+
+    <!-- BEST SELLERS -->
+    <section class="section best-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">MOST LOVED</p>
+          <h2>Best <em>Sellers</em></h2>
+        </div>
+        <button class="text-link" id="viewBestSellers">View all <span>→</span></button>
+      </div>
+
+      <div class="products-grid best-grid" id="bestProductsGrid"></div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter-section" id="contact">
+      <div class="newsletter-inner">
+        <p class="eyebrow">STAY IN THE WORLD OF ARIG</p>
+        <h2>Join the ARIG <em>world.</em></h2>
+        <p>Be the first to discover new fragrances, exclusive launches and private offers.</p>
+
+        <form class="newsletter-form" id="newsletterForm" novalidate>
+          <div class="newsletter-input">
+            <input type="email" id="newsletterEmail" placeholder="Your email address" aria-label="Email address">
+            <button type="submit">Subscribe <span>→</span></button>
+          </div>
+          <small id="newsletterMessage"></small>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a href="#home" class="footer-logo">ARIG</a>
+        <p>The Essence of Elegance.</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="TikTok">tk</a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h4>Explore</h4>
+        <a href="#home">Home</a>
+        <a href="#shop">Shop</a>
+        <a href="#collections">Collections</a>
+        <a href="#about">Our Story</a>
+      </div>
+
+      <div class="footer-column">
+        <h4>Customer Care</h4>
+        <a href="#">Shipping & Delivery</a>
+        <a href="#">Returns</a>
+        <a href="#">FAQ</a>
+        <a href="#">Contact Us</a>
+      </div>
+
+      <div class="footer-column">
+        <h4>Contact</h4>
+        <a href="mailto:hello@arigparfums.com">hello@arigparfums.com</a>
+        <a href="tel:+201000000000">+20 100 000 0000</a>
+        <p>Cairo, Egypt</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 ARIG. All rights reserved.</span>
+      <span>Crafted with intention.</span>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">YOUR SELECTION</p>
+        <h2>Your Cart</h2>
+      </div>
+      <button class="close-btn" id="closeCart" aria-label="Close cart">&times;</button>
+    </div>
+
+    <div class="cart-items" id="cartItems"></div>
+
+    <div class="cart-footer" id="cartFooter">
+      <div class="cart-summary">
+        <span>Subtotal</span>
+        <strong id="cartTotal">0 EGP</strong>
+      </div>
+      <p class="shipping-note">Shipping calculated at checkout.</p>
+      <button class="btn btn-dark checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="product-modal" role="dialog" aria-modal="true" aria-label="Product details">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="modal-image-wrap">
+        <img id="modalImage" src="" alt="">
+      </div>
+
+      <div class="modal-info">
+        <span class="modal-category" id="modalCategory"></span>
+        <h2 id="modalName"></h2>
+        <div class="modal-rating" id="modalRating"></div>
+        <p class="modal-description" id="modalDescription"></p>
+
+        <div class="notes" id="modalNotes"></div>
+
+        <div class="modal-purchase">
+          <strong id="modalPrice"></strong>
+          <div class="quantity-control">
+            <button id="modalMinus">−</button>
+            <span id="modalQuantity">1</span>
+            <button id="modalPlus">+</button>
+          </div>
+        </div>
+
+        <button class="btn btn-dark modal-add" id="modalAdd">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <span class="toast-icon">✓</span>
+    <div>
+      <strong id="toastTitle">Added to cart</strong>
+      <p id="toastText">Your fragrance has been added.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+      </html>
