@@ -496,11 +496,28 @@ function productCard(product) {
   const badge = productBadge(product);
 
   return `
-    <article class="product-card" data-product-id="${product.id}" data-selected-size="50" data-selected-qty="1">
+    <article class="product-card" data-product-id="${product.id}">
       <div class="product-image-wrap">
         ${badge ? `<span class="product-badge">${escapeHtml(badge)}</span>` : ""}
 
+        <!-- زر أيقونة العين لفتح الصفحة الكاملة -->
         <button
+          type="button"
+          class="card-eye-btn"
+          data-action="open-full-page"
+          data-id="${product.id}"
+          title="عرض كامل التفاصيل"
+          aria-label="عرض كامل التفاصيل"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+
+        <!-- زر المفضلة -->
+        <button
+          type="button"
           class="wishlist-btn ${isFavorite ? "active" : ""}"
           data-action="wishlist"
           data-id="${product.id}"
@@ -513,10 +530,12 @@ function productCard(product) {
           src="${product.image}"
           alt="${escapeHtml(productName(product))}"
           loading="lazy"
+          data-action="open-full-page"
+          data-id="${product.id}"
         >
       </div>
 
-      <div class="product-info">
+      <div class="product-info" data-action="open-full-page" data-id="${product.id}">
         <div class="product-meta">
           <span class="product-category">${escapeHtml(productCategoryLabel(product))}</span>
           <span class="rating">${stars(product.rating)}</span>
@@ -528,33 +547,9 @@ function productCard(product) {
           ${escapeHtml(productDescription(product))}
         </p>
 
-        <!-- اختيار الحجم مباشرة من الكارت -->
-        <div class="card-sizes">
-          <button type="button" class="card-size-btn" data-card-size="10">10 مل</button>
-          <button type="button" class="card-size-btn" data-card-size="30">30 مل</button>
-          <button type="button" class="card-size-btn active" data-card-size="50">50 مل</button>
-          <button type="button" class="card-size-btn" data-card-size="100">100 مل</button>
-        </div>
-
-        <!-- السعر والمراجعات -->
         <div class="product-bottom">
-          <span class="product-price card-price-display">${formatPrice(product.price)}</span>
+          <span class="product-price">${formatPrice(product.price)}</span>
           <span class="product-category">${product.reviews} ${escapeHtml(t("reviews"))}</span>
-        </div>
-
-        <!-- أزرار الكمية + إضافة للسلة + تفاصيل -->
-        <div class="card-actions-row">
-          <div class="card-qty-picker">
-            <button type="button" class="card-qty-btn" data-qty-action="minus">−</button>
-            <span class="card-qty-num">1</span>
-            <button type="button" class="card-qty-btn" data-qty-action="plus">+</button>
-          </div>
-          <button class="card-add-submit" data-action="card-direct-add" data-id="${product.id}">
-            أضف إلى السلة
-          </button>
-          <button class="card-details-btn" data-action="quick" data-id="${product.id}" title="تفاصيل العطر">
-            عرض سريع
-          </button>
         </div>
       </div>
     </article>
@@ -564,7 +559,7 @@ function productCard(product) {
 function getFilteredProducts() {
   let filtered = [...products];
 
-if (currentCategory !== "all") {
+  if (currentCategory !== "all") {
     if (currentCategory === "bestseller") {
       filtered = filtered.filter(product => product.bestseller);
     } else if (currentCategory === "wishlist") {
@@ -589,19 +584,15 @@ if (currentCategory !== "all") {
     case "price-low":
       filtered.sort((a, b) => a.price - b.price);
       break;
-
     case "price-high":
       filtered.sort((a, b) => b.price - a.price);
       break;
-
     case "rating":
       filtered.sort((a, b) => b.rating - a.rating);
       break;
-
     case "name":
       filtered.sort((a, b) => productName(a).localeCompare(productName(b)));
       break;
-
     default:
       filtered.sort((a, b) => Number(b.featured) - Number(a.featured));
   }
@@ -617,25 +608,24 @@ function renderProducts() {
     currentPage = 1;
   }
 
-  // تقسيم المنتجات بحد أقصى 8 لكل صفحة
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const paginated = filtered.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
 
-  productsGrid.innerHTML = paginated.map(productCard).join("");
+  if (productsGrid) {
+    productsGrid.innerHTML = paginated.map(productCard).join("");
+  }
 
   if (filtered.length === 0) {
-    noProducts.classList.add("visible");
+    noProducts?.classList.add("visible");
     if (paginationEl) paginationEl.innerHTML = "";
   } else {
-    noProducts.classList.remove("visible");
+    noProducts?.classList.remove("visible");
     renderPagination(totalPages);
   }
 }
 
 function renderPagination(totalPages) {
   if (!paginationEl) return;
-  
-  // إخفاء الترقيم إذا كانت الصفحات 1 فقط
   if (totalPages <= 1) {
     paginationEl.innerHTML = "";
     return;
@@ -662,10 +652,8 @@ function renderPagination(totalPages) {
 }
 
 function renderBestSellers() {
-  const best = products
-    .filter(product => product.bestseller)
-    .slice(0, 4);
-
+  if (!bestProductsGrid) return;
+  const best = products.filter(product => product.bestseller).slice(0, 4);
   bestProductsGrid.innerHTML = best.map(productCard).join("");
 }
 
@@ -692,7 +680,6 @@ function addToCart(id, quantity = 1, size = 50) {
   saveCart();
   updateCartUI();
   showToast("تمت الإضافة للسلة 🛍️", `${productName(product)} (${size} مل)`);
-  // لا يوجد openCart() هنا إطلاقاً، فقط يتحدث عداد السلة بالأعلى
 }
 
 function removeFromCart(id, size = 50) {
@@ -715,10 +702,10 @@ function changeQuantity(id, change, size = 50) {
   updateCartUI();
 }
 
-
-
 function updateCartUI() {
-  cartCount.textContent = getCartCount();
+  if (cartCount) cartCount.textContent = getCartCount();
+
+  if (!cartItems) return;
 
   if (cart.length === 0) {
     cartItems.innerHTML = `
@@ -729,19 +716,17 @@ function updateCartUI() {
         <button class="btn btn-dark" id="continueShopping">${escapeHtml(t("exploreFragrances"))}</button>
       </div>
     `;
-
-    cartFooter.style.display = "none";
+    if (cartFooter) cartFooter.style.display = "none";
     return;
   }
 
-  cartFooter.style.display = "block";
+  if (cartFooter) cartFooter.style.display = "block";
 
   cartItems.innerHTML = cart.map(item => {
     const product = getProduct(item.id);
-
     if (!product) return "";
 
-const itemSize = item.size || 50;
+    const itemSize = item.size || 50;
     const itemPrice = getPriceForSize(product.price, itemSize);
 
     return `
@@ -775,19 +760,19 @@ const itemSize = item.size || 50;
     `;
   }).join("");
 
-  cartTotal.textContent = formatPrice(getCartTotal());
+  if (cartTotal) cartTotal.textContent = formatPrice(getCartTotal());
 }
 
 function openCart() {
-  cartDrawer.classList.add("active", "open");
-  overlay.classList.add("active", "open");
+  cartDrawer?.classList.add("active", "open");
+  overlay?.classList.add("active", "open");
   document.body.classList.add("no-scroll");
   updateCartUI();
 }
 
 function closeCart() {
-  cartDrawer.classList.remove("active", "open");
-  overlay.classList.remove("active", "open");
+  cartDrawer?.classList.remove("active", "open");
+  overlay?.classList.remove("active", "open");
   document.body.classList.remove("no-scroll");
 }
 
@@ -813,41 +798,38 @@ let currentPfpSize = 50;
 let currentPfpQty = 1;
 
 function updatePfpPriceDisplay() {
-  if (!currentPfpProduct) return;
+  if (!currentPfpProduct || !pfpPrice) return;
   const unitPrice = getPriceForSize(currentPfpProduct.price, currentPfpSize);
   pfpPrice.textContent = formatPrice(unitPrice * currentPfpQty);
 }
 
 function openProductFullPage(id) {
   const prod = getProduct(id);
-  if (!prod) return;
+  if (!prod || !productFullPage) return;
 
   currentPfpProduct = prod;
   currentPfpSize = 50;
   currentPfpQty = 1;
 
-  pfpImage.src = prod.image;
-  pfpImage.alt = productName(prod);
-  pfpCategory.textContent = productCategoryLabel(prod);
-  pfpName.textContent = productName(prod);
-  pfpRating.textContent = stars(prod.rating);
-  pfpReviews.textContent = `(${prod.reviews} ${t("reviews")})`;
-  pfpDesc.textContent = productDescription(prod);
-  pfpQtyVal.textContent = currentPfpQty;
+  if (pfpImage) { pfpImage.src = prod.image; pfpImage.alt = productName(prod); }
+  if (pfpCategory) pfpCategory.textContent = productCategoryLabel(prod);
+  if (pfpName) pfpName.textContent = productName(prod);
+  if (pfpRating) pfpRating.textContent = stars(prod.rating);
+  if (pfpReviews) pfpReviews.textContent = `(${prod.reviews} ${t("reviews")})`;
+  if (pfpDesc) pfpDesc.textContent = productDescription(prod);
+  if (pfpQtyVal) pfpQtyVal.textContent = currentPfpQty;
 
-  // إعادة ضبط أزرار الأحجام
   document.querySelectorAll("#pfpSizes .pfp-size-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.size === "50");
   });
 
-  // النوتات العطرية
-  pfpNotes.innerHTML = productNotes(prod)
-    .map(n => `<span>${escapeHtml(n)}</span>`)
-    .join("");
+  if (pfpNotes) {
+    pfpNotes.innerHTML = productNotes(prod)
+      .map(n => `<span>${escapeHtml(n)}</span>`)
+      .join("");
+  }
 
   updatePfpPriceDisplay();
-
-  // جلب عطور أخرى من نفس الصنف
   renderRelatedPerfumes(prod);
 
   productFullPage.style.display = "block";
@@ -856,6 +838,7 @@ function openProductFullPage(id) {
 }
 
 function closeProductFullPage() {
+  if (!productFullPage) return;
   productFullPage.style.display = "none";
   document.body.classList.remove("no-scroll");
   currentPfpProduct = null;
@@ -863,7 +846,6 @@ function closeProductFullPage() {
 
 closeProductPageBtn?.addEventListener("click", closeProductFullPage);
 
-// تغيير الحجم داخل الصفحة الكاملة
 document.getElementById("pfpSizes")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".pfp-size-btn");
   if (!btn || !currentPfpProduct) return;
@@ -875,11 +857,10 @@ document.getElementById("pfpSizes")?.addEventListener("click", (e) => {
   updatePfpPriceDisplay();
 });
 
-// تغيير الكمية داخل الصفحة الكاملة
 document.getElementById("pfpQtyMinus")?.addEventListener("click", () => {
   if (currentPfpQty > 1) {
     currentPfpQty--;
-    pfpQtyVal.textContent = currentPfpQty;
+    if (pfpQtyVal) pfpQtyVal.textContent = currentPfpQty;
     updatePfpPriceDisplay();
   }
 });
@@ -887,29 +868,26 @@ document.getElementById("pfpQtyMinus")?.addEventListener("click", () => {
 document.getElementById("pfpQtyPlus")?.addEventListener("click", () => {
   if (currentPfpQty < 20) {
     currentPfpQty++;
-    pfpQtyVal.textContent = currentPfpQty;
+    if (pfpQtyVal) pfpQtyVal.textContent = currentPfpQty;
     updatePfpPriceDisplay();
   }
 });
 
-// إضافة للسلة (تحديث العداد بالأعلى فقط دون فتح السلة تلقائياً)
 pfpAddBtn?.addEventListener("click", () => {
   if (!currentPfpProduct) return;
 
-  // إضافة للمنتج
   addToCart(currentPfpProduct.id, currentPfpQty, currentPfpSize);
 
-  // تأثير حركي سريع على الزر للتأكيد
   pfpAddBtn.style.background = "#2ecc71";
-  pfpAddBtn.querySelector("span:last-child").textContent = "✓ تمت الإضافة بنجاح!";
-  
+  const label = pfpAddBtn.querySelector("span:last-child");
+  if (label) label.textContent = "✓ تمت الإضافة بنجاح!";
+
   setTimeout(() => {
     pfpAddBtn.style.background = "var(--gold)";
-    pfpAddBtn.querySelector("span:last-child").textContent = "أضف إلى السلة";
+    if (label) label.textContent = "أضف إلى السلة";
   }, 1800);
 });
 
-// عرض عطور أخرى من نفس الصنف (رجالي مع رجالي، نسائي مع نسائي)
 function renderRelatedPerfumes(mainProduct) {
   if (!pfpRelatedGrid) return;
 
@@ -917,7 +895,6 @@ function renderRelatedPerfumes(mainProduct) {
     .filter(p => p.category === mainProduct.category && String(p.id) !== String(mainProduct.id))
     .slice(0, 4);
 
-  // إذا لم نجد عطور كافية من نفس الصنف، نأتي بعطور مميزة
   const fallback = related.length > 0 
     ? related 
     : products.filter(p => String(p.id) !== String(mainProduct.id)).slice(0, 4);
@@ -952,7 +929,6 @@ function toggleWishlist(id) {
   renderBestSellers();
 }
 
-// زر فتح المفضلة من الهيدر
 document.getElementById("wishlistNavBtn")?.addEventListener("click", () => {
   currentCategory = "wishlist";
   currentPage = 1;
@@ -973,14 +949,13 @@ function showToast(title, text) {
   const toast = document.getElementById("toast");
   const toastTitle = document.getElementById("toastTitle");
   const toastText = document.getElementById("toastText");
+  if (!toast) return;
 
-  toastTitle.textContent = title;
-  toastText.textContent = text;
+  if (toastTitle) toastTitle.textContent = title;
+  if (toastText) toastText.textContent = text;
 
   toast.classList.add("show");
-
   clearTimeout(toastTimeout);
-
   toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
   }, 3000);
@@ -991,7 +966,6 @@ function showToast(title, text) {
    ========================================================= */
 
 document.addEventListener("click", event => {
-// فتح صفحة العطر الكاملة عند الضغط على العين أو الكارت
   const openPageTrigger = event.target.closest('[data-action="open-full-page"]');
   if (openPageTrigger && !event.target.closest('.wishlist-btn')) {
     const id = openPageTrigger.dataset.id;
@@ -999,79 +973,35 @@ document.addEventListener("click", event => {
     return;
   }
 
-  // 2. تغيير الكمية (+ أو -) من الكارت وتحديث السعر
-  const qtyActionBtn = event.target.closest("[data-qty-action]");
-  if (qtyActionBtn) {
-    const card = qtyActionBtn.closest(".product-card");
-    const prodId = card.dataset.productId;
-    const prod = getProduct(prodId);
-    if (card && prod) {
-      let qty = Number(card.dataset.selectedQty || 1);
-      if (qtyActionBtn.dataset.qtyAction === "plus" && qty < 20) {
-        qty++;
-      } else if (qtyActionBtn.dataset.qtyAction === "minus" && qty > 1) {
-        qty--;
-      }
-      card.dataset.selectedQty = qty;
-      card.querySelector(".card-qty-num").textContent = qty;
-
-      const currentSize = Number(card.dataset.selectedSize || 50);
-      const unitPrice = getPriceForSize(prod.price, currentSize);
-      card.querySelector(".card-price-display").textContent = formatPrice(unitPrice * qty);
-    }
-    return;
-  }
-
-  // 3. الضغط على زر "أضف إلى السلة" المباشر بالكارت
   const actionElement = event.target.closest("[data-action]");
   if (actionElement) {
     const action = actionElement.dataset.action;
     const id = actionElement.dataset.id;
 
-    if (action === "card-direct-add") {
-      const card = actionElement.closest(".product-card");
-      const size = Number(card.dataset.selectedSize || 50);
-      const qty = Number(card.dataset.selectedQty || 1);
-      addToCart(id, qty, size);
-      openCart();
-      return;
-    }
-
-    if (action === "quick") {
-      openQuickView(id);
-    }
-
     if (action === "wishlist") {
       toggleWishlist(id);
+      return;
     }
   }
 
-const cartAction = event.target.closest("[data-cart-action]");
-
+  const cartAction = event.target.closest("[data-cart-action]");
   if (cartAction) {
     const action = cartAction.dataset.cartAction;
     const id = cartAction.dataset.id;
     const size = Number(cartAction.dataset.size || 50);
 
-    if (action === "increase") {
-      changeQuantity(id, 1, size);
-    }
-
-    if (action === "decrease") {
-      changeQuantity(id, -1, size);
-    }
-
+    if (action === "increase") changeQuantity(id, 1, size);
+    if (action === "decrease") changeQuantity(id, -1, size);
     if (action === "remove") {
       removeFromCart(id, size);
       showToast(t("removedTitle"), t("removedText"));
     }
+    return;
   }
 
   if (event.target.id === "continueShopping") {
     closeCart();
-    document.getElementById("shop").scrollIntoView({
-      behavior: "smooth"
-    });
+    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
   }
 });
 
@@ -1079,9 +1009,8 @@ const cartAction = event.target.closest("[data-cart-action]");
    CATEGORY FILTERING
    ========================================================= */
 
-document.getElementById("categoryTabs").addEventListener("click", event => {
+document.getElementById("categoryTabs")?.addEventListener("click", event => {
   const button = event.target.closest(".filter-btn");
-
   if (!button) return;
 
   document.querySelectorAll(".filter-btn").forEach(btn => {
@@ -1089,152 +1018,87 @@ document.getElementById("categoryTabs").addEventListener("click", event => {
   });
 
   button.classList.add("active");
-currentCategory = button.dataset.category;
+  currentCategory = button.dataset.category;
   currentPage = 1;
   renderProducts();
 });
 
 /* =========================================================
-   SORT
+   SORT & SEARCH
    ========================================================= */
 
-document.getElementById("sortSelect").addEventListener("change", event => {
-currentSort = event.target.value;
+document.getElementById("sortSelect")?.addEventListener("change", event => {
+  currentSort = event.target.value;
   currentPage = 1;
   renderProducts();
 });
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
 
 const searchPanel = document.getElementById("searchPanel");
 const searchInput = document.getElementById("searchInput");
 
-document.getElementById("searchBtn").addEventListener("click", () => {
-  searchPanel.classList.toggle("open");
-
-  if (searchPanel.classList.contains("open")) {
-    setTimeout(() => searchInput.focus(), 250);
+document.getElementById("searchBtn")?.addEventListener("click", () => {
+  searchPanel?.classList.toggle("open");
+  if (searchPanel?.classList.contains("open")) {
+    setTimeout(() => searchInput?.focus(), 250);
   }
 });
 
-searchInput.addEventListener("input", event => {
-currentSearch = event.target.value;
+searchInput?.addEventListener("input", event => {
+  currentSearch = event.target.value;
   currentPage = 1;
   renderProducts();
 });
 
-document.getElementById("clearSearch").addEventListener("click", () => {
-  searchInput.value = "";
-currentSearch = "";
+document.getElementById("clearSearch")?.addEventListener("click", () => {
+  if (searchInput) searchInput.value = "";
+  currentSearch = "";
   currentPage = 1;
   renderProducts();
-  searchInput.focus();
+  searchInput?.focus();
 });
 
 /* =========================================================
    CART CONTROLS
    ========================================================= */
 
-document.getElementById("cartBtn").addEventListener("click", openCart);
-document.getElementById("closeCart").addEventListener("click", closeCart);
-overlay.addEventListener("click", closeCart);
+document.getElementById("cartBtn")?.addEventListener("click", openCart);
+document.getElementById("closeCart")?.addEventListener("click", closeCart);
+overlay?.addEventListener("click", closeCart);
 
 /* =========================================================
-   MODAL CONTROLS
-   ========================================================= */
-
-document.getElementById("modalClose").addEventListener("click", closeQuickView);
-
-modalBackdrop.addEventListener("click", event => {
-  if (event.target === modalBackdrop) {
-    closeQuickView();
-  }
-});
-
-function updateModalPrice() {
-  if (!selectedProduct) return;
-  const unitPrice = getPriceForSize(selectedProduct.price, selectedSize);
-  modalPrice.textContent = formatPrice(unitPrice * modalQty);
-}
-
-document.getElementById("modalMinus").addEventListener("click", () => {
-  if (modalQty > 1) {
-    modalQty--;
-    modalQuantityEl.textContent = modalQty;
-    updateModalPrice();
-  }
-});
-
-document.getElementById("modalPlus").addEventListener("click", () => {
-  if (modalQty < 20) {
-    modalQty++;
-    modalQuantityEl.textContent = modalQty;
-    updateModalPrice();
-  }
-});
-
-document.getElementById("modalSizes")?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".size-btn");
-  if (!btn || !selectedProduct) return;
-
-  document.querySelectorAll("#modalSizes .size-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-
-  selectedSize = Number(btn.dataset.size);
-  updateModalPrice();
-});
-
-document.getElementById("modalAdd").addEventListener("click", () => {
-  if (!selectedProduct) return;
-
-  addToCart(selectedProduct.id, modalQty, selectedSize);
-  closeQuickView();
-  openCart();
-});
-
-/* =========================================================
-   MOBILE NAV
+   MOBILE NAV & NAVBAR
    ========================================================= */
 
 const mobileMenuBtn = document.getElementById("mobileMenuBtn");
 const mobileNav = document.getElementById("mobileNav");
 
-mobileMenuBtn.addEventListener("click", () => {
-  const isOpen = mobileNav.classList.toggle("open");
-
+mobileMenuBtn?.addEventListener("click", () => {
+  const isOpen = mobileNav?.classList.toggle("open");
   mobileMenuBtn.classList.toggle("active", isOpen);
   mobileMenuBtn.setAttribute("aria-expanded", String(isOpen));
 });
 
-mobileNav.querySelectorAll("a").forEach(link => {
+mobileNav?.querySelectorAll("a").forEach(link => {
   link.addEventListener("click", () => {
     mobileNav.classList.remove("open");
-    mobileMenuBtn.classList.remove("active");
-    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    mobileMenuBtn?.classList.remove("active");
+    mobileMenuBtn?.setAttribute("aria-expanded", "false");
   });
 });
 
-/* =========================================================
-   NAVBAR SCROLL
-   ========================================================= */
-
 const navbar = document.getElementById("navbar");
-
 window.addEventListener("scroll", () => {
-  navbar.classList.toggle("scrolled", window.scrollY > 20);
+  navbar?.classList.toggle("scrolled", window.scrollY > 20);
 }, { passive: true });
 
 /* =========================================================
-   THEME (light / dark)
+   THEME (Light / Dark) & LANGUAGE
    ========================================================= */
 
 const themeBtn = document.getElementById("themeBtn");
 
 function applySavedTheme() {
   const savedTheme = localStorage.getItem("arig-theme");
-
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
   } else {
@@ -1242,103 +1106,52 @@ function applySavedTheme() {
   }
 }
 
-themeBtn.addEventListener("click", () => {
+themeBtn?.addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
-
   localStorage.setItem(
     "arig-theme",
     document.body.classList.contains("dark-mode") ? "dark" : "light"
   );
 });
 
-/* =========================================================
-   LANGUAGE TOGGLE
-   ========================================================= */
-
-document.getElementById("langBtn").addEventListener("click", toggleLanguage);
-
-/* =========================================================
-   COLLECTION CARDS
-   ========================================================= */
+document.getElementById("langBtn")?.addEventListener("click", toggleLanguage);
 
 document.querySelectorAll(".collection-card").forEach(card => {
   card.addEventListener("click", () => {
     const collection = card.dataset.collection;
-
-currentCategory = collection;
+    currentCategory = collection;
     currentPage = 1;
     document.querySelectorAll(".filter-btn").forEach(btn => {
-      btn.classList.toggle(
-        "active",
-        btn.dataset.category === collection
-      );
+      btn.classList.toggle("active", btn.dataset.category === collection);
     });
-
     renderProducts();
-
-    document.getElementById("shop").scrollIntoView({
-      behavior: "smooth"
-    });
+    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
   });
 });
-
-
-/* =========================================================
-   BEST SELLERS BUTTON
-   ========================================================= */
 
 document.getElementById("viewBestSellers")?.addEventListener("click", () => {
   currentCategory = "bestseller";
-
   document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.classList.toggle(
-      "active",
-      btn.dataset.category === "bestseller"
-    );
+    btn.classList.toggle("active", btn.dataset.category === "bestseller");
   });
-
   renderProducts();
-
-  document.getElementById("shop")?.scrollIntoView({
-    behavior: "smooth"
-  });
+  document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
 });
-
-
 
 /* =========================================================
    CHECKOUT & SHIPPING SYSTEM
    ========================================================= */
 
-// قائمة المحافظات المصرية وأسعار الشحن
 const GOVERNORATES = [
-  { name: "القاهرة", fee: 45 },
-  { name: "الجيزة", fee: 45 },
-  { name: "الإسكندرية", fee: 55 },
-  { name: "القليوبية", fee: 50 },
-  { name: "الغربية", fee: 55 },
-  { name: "المنوفية", fee: 55 },
-  { name: "الشرقية", fee: 55 },
-  { name: "الدقهلية", fee: 55 },
-  { name: "البحيرة", fee: 60 },
-  { name: "كفر الشيخ", fee: 60 },
-  { name: "دمياط", fee: 60 },
-  { name: "بورسعيد", fee: 60 },
-  { name: "الإسماعيلية", fee: 60 },
-  { name: "السويس", fee: 60 },
-  { name: "الفيوم", fee: 65 },
-  { name: "بني سويف", fee: 70 },
-  { name: "المنيا", fee: 75 },
-  { name: "أسيوط", fee: 80 },
-  { name: "سوهاج", fee: 85 },
-  { name: "قنا", fee: 90 },
-  { name: "الأقصر", fee: 95 },
-  { name: "أسوان", fee: 95 },
-  { name: "البحر الأحمر", fee: 100 },
-  { name: "مطروح", fee: 90 },
-  { name: "الوادي الجديد", fee: 100 },
-  { name: "شمال سيناء", fee: 110 },
-  { name: "جنوب سيناء", fee: 110 }
+  { name: "القاهرة", fee: 45 }, { name: "الجيزة", fee: 45 }, { name: "الإسكندرية", fee: 55 },
+  { name: "القليوبية", fee: 50 }, { name: "الغربية", fee: 55 }, { name: "المنوفية", fee: 55 },
+  { name: "الشرقية", fee: 55 }, { name: "الدقهلية", fee: 55 }, { name: "البحيرة", fee: 60 },
+  { name: "كفر الشيخ", fee: 60 }, { name: "دمياط", fee: 60 }, { name: "بورسعيد", fee: 60 },
+  { name: "الإسماعيلية", fee: 60 }, { name: "السويس", fee: 60 }, { name: "الفيوم", fee: 65 },
+  { name: "بني سويف", fee: 70 }, { name: "المنيا", fee: 75 }, { name: "أسيوط", fee: 80 },
+  { name: "سوهاج", fee: 85 }, { name: "قنا", fee: 90 }, { name: "الأقصر", fee: 95 },
+  { name: "أسوان", fee: 95 }, { name: "البحر الأحمر", fee: 100 }, { name: "مطروح", fee: 90 },
+  { name: "الوادي الجديد", fee: 100 }, { name: "شمال سيناء", fee: 110 }, { name: "جنوب سيناء", fee: 110 }
 ];
 
 const checkoutModal = document.getElementById("checkoutModalBackdrop");
@@ -1351,10 +1164,8 @@ const btnLocation = document.getElementById("btnLocation");
 const locationStatus = document.getElementById("locationStatus");
 const custLocationMap = document.getElementById("custLocationMap");
 const transferDetails = document.getElementById("transferDetails");
-const transferText = document.getElementById("transferText");
 const checkoutForm = document.getElementById("checkoutForm");
 
-// ملء قائمة المحافظات بأمان
 if (custGovSelect) {
   GOVERNORATES.forEach(gov => {
     const opt = document.createElement("option");
@@ -1364,7 +1175,6 @@ if (custGovSelect) {
   });
 }
 
-// فتح وإغلاق نافذة الشراء
 function openCheckout() {
   if (cart.length === 0) {
     showToast("سلتك فارغة", "أضف عطوراً أولاً لإتمام الشراء.");
@@ -1387,12 +1197,10 @@ checkoutModal?.addEventListener("click", (e) => {
   if (e.target === checkoutModal) closeCheckout();
 });
 
-// حساب تكلفة الشحن والإجمالي (شحن مجاني فوق 1500 ج)
 function getShippingFee() {
   const subtotal = getCartTotal();
   if (subtotal >= 1500) return 0;
-
-  const selectedGov = GOVERNORATES.find(g => g.name === custGovSelect.value);
+  const selectedGov = GOVERNORATES.find(g => g.name === custGovSelect?.value);
   return selectedGov ? selectedGov.fee : 0;
 }
 
@@ -1401,87 +1209,64 @@ function updateCheckoutSummary() {
   const shipping = getShippingFee();
   const total = subtotal + shipping;
 
-  summarySubtotal.textContent = `${subtotal.toLocaleString("ar-EG")} جنيه`;
-  
-  if (subtotal >= 1500 && custGovSelect.value) {
-    summaryShipping.textContent = "مجاني (عرض الطلبات فوق 1,500)";
-  } else {
-    summaryShipping.textContent = custGovSelect.value ? `${shipping.toLocaleString("ar-EG")} جنيه` : "اختر المحافظة";
+  if (summarySubtotal) summarySubtotal.textContent = `${subtotal.toLocaleString("ar-EG")} جنيه`;
+  if (summaryShipping) {
+    if (subtotal >= 1500 && custGovSelect?.value) {
+      summaryShipping.textContent = "مجاني (عرض الطلبات فوق 1,500)";
+    } else {
+      summaryShipping.textContent = custGovSelect?.value ? `${shipping.toLocaleString("ar-EG")} جنيه` : "اختر المحافظة";
+    }
   }
-
-  summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
- syncTransferAmount();
+  if (summaryTotal) summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
 }
 
 custGovSelect?.addEventListener("change", updateCheckoutSummary);
-// تفاصيل الدفع الإلكتروني ونسخ الرقم
-const copyNumberBtn = document.getElementById("copyNumberBtn");
-const transferHeading = document.getElementById("transferHeading");
-const transferAmountVal = document.getElementById("transferAmountVal");
 
 let selectedPaymentMethod = "cod";
-
-function syncTransferAmount() {
-  if (transferAmountVal) {
-    const total = getCartTotal() + getShippingFee();
-    transferAmountVal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
-  }
-}
-
 document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
   radio.addEventListener("change", (e) => {
     selectedPaymentMethod = e.target.value;
-    syncTransferAmount();
-    if (selectedPaymentMethod === "instapay") {
-      transferDetails.style.display = "flex";
-      transferHeading.textContent = "تحويل الإجمالي عبر InstaPay";
-    } else if (selectedPaymentMethod === "vodafone_cash") {
-      transferDetails.style.display = "flex";
-      transferHeading.textContent = "تحويل الإجمالي عبر Vodafone Cash";
-    } else {
-      transferDetails.style.display = "none";
+    if (transferDetails) {
+      transferDetails.style.display = (selectedPaymentMethod === "instapay" || selectedPaymentMethod === "vodafone_cash") ? "flex" : "none";
     }
   });
 });
 
-// نسخ رقم التحويل
-copyNumberBtn?.addEventListener("click", () => {
+document.getElementById("copyNumberBtn")?.addEventListener("click", () => {
   navigator.clipboard.writeText("01016118242").then(() => {
-    copyNumberBtn.textContent = "تم النسخ ✓";
     showToast("تم النسخ", "تم نسخ الرقم إلى الحافظة.");
-    setTimeout(() => { copyNumberBtn.textContent = "نسخ"; }, 2000);
   });
 });
 
-// تحديد الموقع الجغرافي بالـ GPS
 btnLocation?.addEventListener("click", () => {
   if (!navigator.geolocation) {
-    locationStatus.textContent = "المتصفح لا يدعم تحديد الموقع.";
+    if (locationStatus) locationStatus.textContent = "المتصفح لا يدعم تحديد الموقع.";
     return;
   }
-  locationStatus.textContent = "جاري تحديد موقعك بدقة...";
+  if (locationStatus) locationStatus.textContent = "جاري تحديد موقعك بدقة...";
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const mapLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-      custLocationMap.value = mapLink;
-      locationStatus.textContent = "✓ تم التقاط موقعك بنجاح وسيرفق مع الطلب.";
-      locationStatus.style.color = "#557c5c";
+      if (custLocationMap) custLocationMap.value = mapLink;
+      if (locationStatus) {
+        locationStatus.textContent = "✓ تم التقاط موقعك بنجاح وسيرفق مع الطلب.";
+        locationStatus.style.color = "#557c5c";
+      }
     },
-    (err) => {
-      locationStatus.textContent = "تعذر تحديد الموقع. يرجى كتابة العنوان يدوياً.";
-      locationStatus.style.color = "#a34e4e";
+    () => {
+      if (locationStatus) {
+        locationStatus.textContent = "تعذر تحديد الموقع. يرجى كتابة العنوان يدوياً.";
+        locationStatus.style.color = "#a34e4e";
+      }
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 });
 
-// التحقق من صحة رقم الهاتف المصري
 function isValidEgyptianPhone(phone) {
-  const regex = /^01[0125][0-9]{8}$/;
-  return regex.test(phone.trim());
+  return /^01[0125][0-9]{8}$/.test(phone.trim());
 }
 
-// تأكيد وإرسال الطلب
 checkoutForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -1509,8 +1294,10 @@ checkoutForm?.addEventListener("submit", async (e) => {
   }
 
   const submitBtn = document.getElementById("submitOrderBtn");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "جاري تأكيد الطلب...";
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "جاري تأكيد الطلب...";
+  }
 
   const orderItems = cart.map(item => {
     const prod = getProduct(item.id);
@@ -1539,11 +1326,7 @@ checkoutForm?.addEventListener("submit", async (e) => {
       googleMapsUrl: locationMap || "لم يحدد موقع GPS"
     },
     items: orderItems,
-    pricing: {
-      subtotal,
-      shippingFee,
-      total
-    },
+    pricing: { subtotal, shippingFee, total },
     paymentMethod,
     paymentProof: paymentMethod === "cod" ? "دفع عند الاستلام" : "سيرسل في شات الواتساب",
     status: "new",
@@ -1552,7 +1335,7 @@ checkoutForm?.addEventListener("submit", async (e) => {
 
   try {
     await addDoc(ordersCol, orderData);
-// خصم الزجاجات المطلوبة تلقائياً من مخزون فايربيز
+
     for (const item of cart) {
       try {
         const perfumeDocRef = doc(db, "perfumes", String(item.id));
@@ -1563,6 +1346,7 @@ checkoutForm?.addEventListener("submit", async (e) => {
         console.warn("Stock update skipped for item:", item.id);
       }
     }
+
     const paymentMethodsNames = {
       cod: "الدفع عند الاستلام (COD)",
       instapay: "انستا باي (InstaPay)",
@@ -1578,7 +1362,7 @@ checkoutForm?.addEventListener("submit", async (e) => {
       .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
       .join("\n");
 
-    const waMessage = `*طلب جديد من متجر سراقة — SURAQA* 💎
+    const waMessage = `*طلب جديد من متجر سراقة — SURAKA* 💎
 --------------------------------
 👤 *اسم العميل:* ${name}
 📱 *الهاتف الأساسي:* ${phone}
@@ -1604,9 +1388,9 @@ ${receiptMessageText}
     updateCartUI();
     closeCheckout();
     checkoutForm.reset();
-    locationStatus.textContent = "";
+    if (locationStatus) locationStatus.textContent = "";
 
-    showToast("تم تأكيد الطلب بنجاح! 🎉", "جاري توجيهك إلى واتساب لإرسال الإيصال...");
+    showToast("تم تأكيد الطلب بنجاح! 🎉", "جاري توجيهك إلى واتساب...");
 
     const waUrl = `https://wa.me/201016118242?text=${encodeURIComponent(waMessage)}`;
     setTimeout(() => {
@@ -1617,8 +1401,10 @@ ${receiptMessageText}
     console.error("Firebase Error: ", err);
     alert("حدث خطأ أثناء إرسال الطلب، تأكد من اتصال الإنترنت وحاول مجدداً.");
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "تأكيد الطلب الآن";
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "تأكيد الطلب الآن";
+    }
   }
 });
 
@@ -1629,44 +1415,25 @@ ${receiptMessageText}
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     closeCart();
-    closeQuickView();
-
-    mobileNav.classList.remove("open");
-    mobileMenuBtn.classList.remove("active");
-    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    closeProductFullPage();
+    mobileNav?.classList.remove("open");
+    mobileMenuBtn?.classList.remove("active");
+    mobileMenuBtn?.setAttribute("aria-expanded", "false");
   }
 });
 
-
-
 /* =========================================================
-   IMAGE ERROR FALLBACK
-   ========================================================= */
-
-document.addEventListener("error", event => {
-  if (
-    event.target.tagName === "IMG" &&
-    event.target.dataset.fallbackApplied !== "true"
-  ) {
-    event.target.dataset.fallbackApplied = "true";
-    event.target.src =
-      "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=80";
-  }
-}, true);
-
-/* =========================================================
-   INITIALIZE
+   INITIALIZE & FIRESTORE REALTIME LISTENER
    ========================================================= */
 
 applySavedTheme();
 
-// الاستماع للـ Firebase وجلب العطور المضافة لحظياً
 onSnapshot(perfumesCol, (snapshot) => {
   const firebaseProducts = [];
-  snapshot.forEach((doc) => {
-    const data = doc.data();
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
     firebaseProducts.push({
-      id: doc.id,
+      id: docSnap.id,
       name: data.name,
       nameAr: data.name,
       category: data.category || "unisex",
@@ -1681,7 +1448,7 @@ onSnapshot(perfumesCol, (snapshot) => {
       notesAr: ["سراقة"],
       badge: "جديد",
       badgeAr: "جديد",
-      image: data.image || "image/S1.jpg",
+      image: data.image || "image/S1.png",
       featured: true,
       bestseller: false
     });
@@ -1695,9 +1462,8 @@ onSnapshot(perfumesCol, (snapshot) => {
   applyLanguage();
 });
 
-
-// --- ADMIN ACCESS (5 CLICKS & SHORTCUT) ---
-const ADMIN_PASS = "1234"; // كلمة السر المبدئية
+// الدخول للوحة التحكم
+const ADMIN_PASS = "1234";
 let logoClicks = 0;
 let clickTimer;
 
@@ -1710,7 +1476,6 @@ function checkAdminAuth() {
   }
 }
 
-// 1. الدخول بـ 5 كليكات على اللوجو
 document.querySelector(".logo")?.addEventListener("click", (e) => {
   logoClicks++;
   clearTimeout(clickTimer);
@@ -1723,7 +1488,6 @@ document.querySelector(".logo")?.addEventListener("click", (e) => {
   }
 });
 
-// 2. الدخول باختصار Shift + Ctrl + A
 document.addEventListener("keydown", (e) => {
   if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === "a") {
     e.preventDefault();
@@ -1731,54 +1495,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* =========================================================
-   SCENT FINDER (Floating Guide Button)
-   ========================================================= */
-
-(function () {
-  const sfBtn = document.getElementById('scentFinderBtn');
-  const sfOverlay = document.getElementById('scentFinderOverlay');
-  const sfPanel = document.getElementById('scentFinderPanel');
-  const sfClose = document.getElementById('sfClose');
-  const sfStep1 = document.getElementById('sfStep1');
-  const sfStep2 = document.getElementById('sfStep2');
-  const sfGoShop = document.getElementById('sfGoShop');
-
-  let selectedCategory = 'all';
-
-  function openPanel() {
-    sfOverlay.classList.add('active');
-    sfPanel.classList.add('active');
-    document.body.classList.add('no-scroll');
-  }
-
-  function closePanel() {
-    sfOverlay.classList.remove('active');
-    sfPanel.classList.remove('active');
-    document.body.classList.remove('no-scroll');
-    sfStep1.classList.add('active');
-    sfStep2.classList.remove('active');
-  }
-
-  sfBtn?.addEventListener('click', openPanel);
-  sfClose?.addEventListener('click', closePanel);
-  sfOverlay?.addEventListener('click', closePanel);
-
-  document.querySelectorAll('.sf-option').forEach(btn => {
-    btn.addEventListener('click', () => {
-      selectedCategory = btn.dataset.category;
-      sfStep1.classList.remove('active');
-      sfStep2.classList.add('active');
-    });
-  });
-
-  sfGoShop?.addEventListener('click', () => {
-    closePanel();
-    const targetBtn = document.querySelector(`.filter-btn[data-category="${selectedCategory}"]`);
-    if (targetBtn) targetBtn.click();
-    document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
-  });
-})();
 /* =========================================================
    إخفاء أزرار التواصل والشريط خارج الرئيسية
    ========================================================= */
@@ -1801,26 +1517,67 @@ if (homeSec) {
 
   homeObserver.observe(homeSec);
 }
-/* =========================================================
-   مراقبة إغلاق المتجر وعروض الأدمن الترويجية
-   ========================================================= */
-const closedScreen = document.getElementById("storeClosedScreen");
-onSnapshot(doc(db, "settings", "storeConfig"), (docSnap) => {
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    
-    // شاشة قفل المتجر والصلاة على النبي
-    if (closedScreen) {
-      closedScreen.style.display = data.isClosed ? "flex" : "none";
-      document.body.classList.toggle("no-scroll", !!data.isClosed);
-    }
 
-    // شريط العروض الترويجية بالأعلى
-    if (data.offerActive && data.activeOffer) {
-      const ticker = document.querySelector(".ticker-inner");
-      if (ticker) {
-        ticker.innerHTML = `<span>🔥 ${data.activeOffer}</span><span>💎 سراقة — فخامة العطور</span>`;
-      }
+/* =========================================================
+   مراقبة إغلاق المتجر وتغيير الألوان الـ 22 تلقائياً للعملاء
+   ========================================================= */
+const THEME_PRESETS = {
+  "emerald": { dark: "#071914", main: "#0a221c", card: "#0f3027", gold: "#d4af37", bg: "radial-gradient(circle at 85% 0%, rgba(212,175,55,0.06), transparent 26%), #071914" },
+  "obsidian": { dark: "#0a0a0a", main: "#121212", card: "#1a1a1a", gold: "#dfb743", bg: "radial-gradient(circle at 50% 0%, #1f1a10, #0a0a0a)" },
+  "royal-navy": { dark: "#060d1a", main: "#0b172e", card: "#102244", gold: "#e5c158", bg: "radial-gradient(circle at 80% 10%, #10254c, #060d1a)" },
+  "velvet-burgundy": { dark: "#18060b", main: "#270c14", card: "#3a131e", gold: "#e6be65", bg: "radial-gradient(circle at 75% 15%, #42101f, #18060b)" },
+  "imperial-purple": { dark: "#12081c", main: "#1c0f2b", card: "#29173e", gold: "#f3cc68", bg: "radial-gradient(circle at 85% 10%, #3a1c59, #12081c)" },
+  "sapphire-mist": { dark: "#07121b", main: "#0c1d2a", card: "#132b3d", gold: "#64b5f6", bg: "linear-gradient(145deg, #07121b, #0e2435)" },
+  "forest-bronze": { dark: "#11160d", main: "#1c2417", card: "#283321", gold: "#cd7f32", bg: "radial-gradient(circle at 70% 0%, #293621, #11160d)" },
+  "charcoal-copper": { dark: "#131315", main: "#1c1c20", card: "#27272c", gold: "#d97443", bg: "radial-gradient(circle at 50% 10%, #2f2723, #131315)" },
+  "deep-maroon": { dark: "#1f0a0d", main: "#2c0e13", card: "#3f151c", gold: "#ffd700", bg: "radial-gradient(circle at 80% 0%, #4a151e, #1f0a0d)" },
+  "ocean-teal": { dark: "#051617", main: "#092426", card: "#0e3437", gold: "#38ef7d", bg: "radial-gradient(circle at 75% 20%, #104144, #051617)" },
+  "royal-twilight": { dark: "#0d091a", main: "#16102b", card: "#221940", gold: "#ffb347", bg: "linear-gradient(135deg, #180e30 0%, #081224 100%)" },
+  "black-marble": { dark: "#050505", main: "#0d0d0d", card: "#171717", gold: "#ffdf00", bg: "radial-gradient(circle at 50% 50%, #1a1a1a, #050505)" },
+  "chocolate-amber": { dark: "#160e09", main: "#241710", card: "#332117", gold: "#ffbf00", bg: "radial-gradient(circle at 70% 10%, #3b2416, #160e09)" },
+  "midnight-silver": { dark: "#080c14", main: "#0f1624", card: "#172237", gold: "#e0e6ed", bg: "radial-gradient(circle at 80% 10%, #1e2c47, #080c14)" },
+  "dark-mint": { dark: "#081714", main: "#0d2621", card: "#13372f", gold: "#70e0a5", bg: "radial-gradient(circle at 80% 20%, #15453a, #081714)" },
+  "crimson-sunset": { dark: "#180606", main: "#260a0a", card: "#381010", gold: "#ff6b6b", bg: "linear-gradient(145deg, #2b0808, #0d0404)" },
+  "royal-cyan": { dark: "#061517", main: "#0b2226", card: "#113339", gold: "#e4b952", bg: "radial-gradient(circle at 70% 10%, #13424a, #061517)" },
+  "platinum-slate": { dark: "#14171a", main: "#1e2227", card: "#2b3037", gold: "#e5c575", bg: "radial-gradient(circle at 60% 0%, #2b313a, #14171a)" },
+  "smoky-oud": { dark: "#140f0c", main: "#201814", card: "#2f231d", gold: "#d49b6a", bg: "radial-gradient(circle at 70% 15%, #382820, #140f0c)" },
+  "plum-velvet": { dark: "#150814", main: "#230e22", card: "#341632", gold: "#f7b731", bg: "linear-gradient(135deg, #2a0b28, #0c040b)" },
+  "pure-gold-black": { dark: "#080703", main: "#141208", card: "#221e0f", gold: "#f5b041", bg: "radial-gradient(circle at 80% 0%, #2f280a, #080703)" },
+  "cosmic-aurora": { dark: "#070b14", main: "#0e1526", card: "#17223b", gold: "#5eead4", bg: "linear-gradient(135deg, #091a24 0%, #1b0c26 100%)" }
+};
+
+onSnapshot(doc(db, "settings", "storeConfig"), (docSnap) => {
+  if (!docSnap.exists()) return;
+  const cfg = docSnap.data();
+
+  // 1. تفعيل / إلغاء شاشة الإغلاق
+  const closedScreen = document.getElementById("storeClosedScreen");
+  if (closedScreen) {
+    if (cfg.isClosed === true) {
+      closedScreen.style.setProperty("display", "flex", "important");
+      document.body.classList.add("no-scroll");
+    } else {
+      closedScreen.style.setProperty("display", "none", "important");
+      document.body.classList.remove("no-scroll");
+    }
+  }
+
+  // 2. تطبيق الثيم المختار
+  if (cfg.theme && THEME_PRESETS[cfg.theme]) {
+    const t = THEME_PRESETS[cfg.theme];
+    const root = document.documentElement;
+    root.style.setProperty("--black", t.dark);
+    root.style.setProperty("--black-2", t.main);
+    root.style.setProperty("--cream", t.card);
+    root.style.setProperty("--gold", t.gold);
+    document.body.style.background = t.bg;
+  }
+
+  // 3. تحديث شريط العروض
+  if (cfg.offerActive && cfg.activeOffer) {
+    const ticker = document.querySelector(".ticker-inner");
+    if (ticker) {
+      ticker.innerHTML = `<span>🔥 ${cfg.activeOffer}</span><span>💎 سراقة — فخامة العطور</span>`;
     }
   }
 });
