@@ -35,7 +35,7 @@
         <a href="#shop" data-ar="المتجر" data-en="Shop">المتجر</a>
         <a href="#collections" data-ar="التشكيلات" data-en="Collections">التشكيلات</a>
         <a href="#about" data-ar="من نحن" data-en="About">من نحن</a>
-        <a href="#contact" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a>
+        <a href="#footer" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a>        
       </nav>
 
       <div class="nav-actions">
@@ -100,7 +100,25 @@
         </div>
       </section>
     </div>
-
+    <!-- TRUST STRIP -->
+    <section class="trust-strip">
+      <div class="trust-item">
+        <span class="trust-icon">✦</span>
+        <p data-ar="توصيل لكل المحافظات" data-en="Delivery Nationwide">توصيل لكل المحافظات</p>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">◇</span>
+        <p data-ar="الدفع عند الاستلام" data-en="Cash on Delivery">الدفع عند الاستلام</p>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">↺</span>
+        <p data-ar="ضمان استرجاع 14 يوم" data-en="14-Day Return Guarantee">ضمان استرجاع 14 يوم</p>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">✓</span>
+        <p data-ar="منتج أصلي 100%" data-en="100% Authentic">منتج أصلي 100%</p>
+      </div>
+    </section>
     <!-- SHOP -->
     <section class="section shop-section" id="shop">
       <div class="section-heading">
@@ -276,27 +294,38 @@
       <div class="products-grid best-grid" id="bestProductsGrid"></div>
     </section>
 
-    <!-- NEWSLETTER -->
-    <section class="newsletter-section" id="contact">
-      <div class="newsletter-inner">
-        <p class="eyebrow" data-ar="عِش في عالم سراقة" data-en="STAY IN THE WORLD OF SURAKA">عِش في عالم سراقة</p>
-        <h2 data-ar-html="انضم إلى <em>عالم سراقة.</em>" data-en-html="Join the SURAKA <em>world.</em>">انضم إلى <em>عالم سراقة.</em></h2>
-        <p data-ar="كن أول من يكتشف عطورنا الجديدة وإطلاقاتنا الخاصة وعروضنا المميزة." data-en="Be the first to discover new fragrances, exclusive launches and private offers.">كن أول من يكتشف عطورنا الجديدة وإطلاقاتنا الخاصة وعروضنا المميزة.</p>
+    <!-- TESTIMONIALS -->
+    <section class="section testimonials-section">
+      <div class="section-heading centered">
+        <p class="eyebrow" data-ar="ثقة عملائنا" data-en="TRUSTED BY OUR CUSTOMERS">ثقة عملائنا</p>
+        <h2 data-ar-html="آراء <em>عملائنا</em>" data-en-html="What Our <em>Customers Say</em>">آراء <em>عملائنا</em></h2>
+      </div>
 
-        <form class="newsletter-form" id="newsletterForm" novalidate>
-          <div class="newsletter-input">
-            <input type="email" id="newsletterEmail" placeholder="بريدك الإلكتروني" data-ar-ph="بريدك الإلكتروني" data-en-ph="Your email address" aria-label="البريد الإلكتروني">
-            <button type="submit"><span data-ar="اشترك" data-en="Subscribe">اشترك</span> <span>←</span></button>
-          </div>
-          <small id="newsletterMessage"></small>
-        </form>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text" data-ar="عطر رائع وثبات حقيقي طول اليوم، التغليف كمان فخم جدًا." data-en="Amazing fragrance with real all-day lasting power, and the packaging is stunning.">عطر رائع وثبات حقيقي طول اليوم، التغليف كمان فخم جدًا.</p>
+          <strong class="testimonial-name" data-ar="أحمد س." data-en="Ahmed S.">أحمد س.</strong>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text" data-ar="التوصيل كان سريع والعطر مطابق للوصف تمامًا، هطلب تاني أكيد." data-en="Fast delivery and the scent matched the description perfectly. Ordering again for sure.">التوصيل كان سريع والعطر مطابق للوصف تمامًا، هطلب تاني أكيد.</p>
+          <strong class="testimonial-name" data-ar="مريم ع." data-en="Mariam A.">مريم ع.</strong>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text" data-ar="أول مرة أجرب سراقة ومش هتكون آخر مرة، رائحة مميزة فعلاً." data-en="First time trying SURAKA and definitely not the last — truly distinctive scent.">أول مرة أجرب سراقة ومش هتكون آخر مرة، رائحة مميزة فعلاً.</p>
+          <strong class="testimonial-name" data-ar="يوسف م." data-en="Youssef M.">يوسف م.</strong>
+        </div>
       </div>
     </section>
 
   </main>
 
   <!-- FOOTER -->
-  <footer class="footer">
+  <footer class="footer" id="footer">    
     <div class="footer-main">
       <div class="footer-brand">
         <a href="#home" class="footer-logo">SURAKA</a>
@@ -409,7 +438,39 @@
       <path d="M16 3C9.4 3 4 8.4 4 15c0 2.3.6 4.5 1.8 6.4L4 29l7.8-1.7c1.9 1 4 1.6 6.2 1.6 6.6 0 12-5.4 12-12S22.6 3 16 3Zm0 21.8c-1.9 0-3.7-.5-5.3-1.4l-.4-.2-4.4 1 1-4.3-.3-.4C5.5 17.9 5 16.5 5 15c0-6.1 4.9-11 11-11s11 4.9 11 11-4.9 10.8-11 10.8Zm6-8.2c-.3-.2-1.9-1-2.2-1s-.5-.1-.7.2-.8 1-1 1.2-.4.2-.7.1c-1.9-.8-3.1-2.6-3.2-2.8-.1-.2 0-.4.1-.5.2-.3.5-.6.7-.9.2-.3.1-.5 0-.7-.1-.2-.9-2.1-1.1-2.6-.2-.4-.4-.4-.6-.4h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1-1.1 2.5s1.1 2.9 1.3 3.1c.2.2 2.1 3.3 5.2 4.5 2.7 1.1 3.2.9 3.8.8.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.3.2-1.5-.1-.1-.3-.2-.6-.4Z" fill="currentColor" stroke="none"></path>
     </svg>
   </a>
+  <!-- SCENT FINDER FLOATING BUTTON -->
+  <button class="scent-finder-btn" id="scentFinderBtn" aria-label="دليل اختيار العطر" data-ar-aria="دليل اختيار العطر" data-en-aria="Scent Finder">
+    <span>✦</span>
+  </button>
 
+  <div class="scent-finder-overlay" id="scentFinderOverlay"></div>
+
+  <aside class="scent-finder-panel" id="scentFinderPanel" aria-label="دليل اختيار العطر">
+    <div class="sf-header">
+      <div>
+        <p class="eyebrow" data-ar="دليلك الشخصي" data-en="YOUR PERSONAL GUIDE">دليلك الشخصي</p>
+        <h2 data-ar="اختار عطرك" data-en="Find Your Scent">اختار عطرك</h2>
+      </div>
+      <button class="close-btn" id="sfClose" aria-label="إغلاق" data-ar-aria="إغلاق" data-en-aria="Close">&times;</button>
+    </div>
+
+    <div class="sf-body">
+      <div class="sf-step active" id="sfStep1">
+        <p class="sf-question" data-ar="مين اللي هيستخدم العطر؟" data-en="Who is this fragrance for?">مين اللي هيستخدم العطر؟</p>
+        <div class="sf-options">
+          <button class="sf-option" data-category="men" data-ar="رجالي" data-en="Him">رجالي</button>
+          <button class="sf-option" data-category="women" data-ar="نسائي" data-en="Her">نسائي</button>
+          <button class="sf-option" data-category="unisex" data-ar="للجنسين" data-en="Unisex">للجنسين</button>
+          <button class="sf-option" data-category="bestseller" data-ar="مش متأكد، اقترح عليا" data-en="Not sure, surprise me">مش متأكد، اقترح عليا</button>
+        </div>
+      </div>
+
+      <div class="sf-step" id="sfStep2">
+        <p class="sf-question" data-ar="تمام! هنوديك للعطور المناسبة." data-en="Great! Taking you to the matching fragrances.">تمام! هنوديك للعطور المناسبة.</p>
+        <button class="btn btn-dark sf-go" id="sfGoShop" data-ar="عرض العطور" data-en="View Fragrances">عرض العطور</button>
+      </div>
+    </div>
+  </aside>
   <!-- TOAST -->
   <div class="toast" id="toast">
     <span class="toast-icon">✓</span>
