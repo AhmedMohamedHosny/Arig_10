@@ -1423,8 +1423,9 @@ html[dir="rtl"] .cart-drawer {
   transform: translateX(-100%);
 }
 
+html[dir="rtl"] .cart-drawer.active,
 .cart-drawer.active {
-  transform: translateX(0);
+  transform: translateX(0) !important;
 }
 
 .drawer-header {
