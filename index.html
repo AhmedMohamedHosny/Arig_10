@@ -431,7 +431,93 @@
       </div>
     </div>
   </div>
+<!-- CHECKOUT MODAL -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop">
+    <div class="checkout-modal-content" role="dialog" aria-modal="true">
+      <button class="modal-close" id="checkoutClose" aria-label="إغلاق">&times;</button>
+      
+      <div class="checkout-header">
+        <p class="eyebrow">بيانات الشحن والدفع</p>
+        <h2>إتمام الطلب</h2>
+      </div>
 
+      <form id="checkoutForm" class="checkout-form">
+        <div class="form-group">
+          <label>الاسم بالكامل *</label>
+          <input type="text" id="custName" required placeholder="أدخل اسمك الثلاثي أو الرباعي">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>رقم الهاتف الأساسي *</label>
+            <input type="tel" id="custPhone" required maxlength="11" placeholder="مثال: 01012345678">
+          </div>
+          <div class="form-group">
+            <label>رقم هاتف بديل (اختياري)</label>
+            <input type="tel" id="custPhone2" maxlength="11" placeholder="رقم احتياطي للطوارئ">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>المحافظة *</label>
+          <select id="custGov" required>
+            <option value="" disabled selected>اختر المحافظة لمعرفة تكلفة الشحن</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>العنوان بالتفصيل *</label>
+          <textarea id="custAddress" rows="2" required placeholder="اسم الشارع، رقم العمارة، الشقة، علامة مميزة"></textarea>
+          <button type="button" class="btn-location" id="btnLocation">
+            <span>📍 تحديد موقعي الحالي تلقائياً عبر الخريطة</span>
+          </button>
+          <input type="hidden" id="custLocationMap">
+          <span id="locationStatus" class="location-status"></span>
+        </div>
+
+        <div class="form-group">
+          <label>طريقة الدفع *</label>
+          <div class="payment-methods">
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="cod" checked>
+              <span>الدفع عند الاستلام (COD)</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="instapay">
+              <span>InstaPay (انستا باي)</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="vodafone_cash">
+              <span>فودافون كاش (Vodafone Cash)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- تفاصيل الحساب للدفع الإلكتروني -->
+        <div id="transferDetails" class="transfer-info" style="display: none;">
+          <p id="transferText"></p>
+        </div>
+
+        <!-- ملخص الفاتورة -->
+        <div class="checkout-summary">
+          <div class="summary-line">
+            <span>قيمة المنتجات:</span>
+            <span id="summarySubtotal">0 جنيه</span>
+          </div>
+          <div class="summary-line">
+            <span>مصاريف الشحن:</span>
+            <span id="summaryShipping">0 جنيه</span>
+          </div>
+          <div class="summary-line total-line">
+            <strong>الإجمالي النهائي:</strong>
+            <strong id="summaryTotal">0 جنيه</strong>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark submit-order-btn" id="submitOrderBtn">تأكيد الطلب الآن</button>
+      </form>
+    </div>
+  </div>
   <!-- WHATSAPP FLOATING BUTTON -->
   <a
     class="whatsapp-btn"
