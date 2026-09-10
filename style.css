@@ -2957,3 +2957,12 @@ body {
 .submit-order-btn:hover {
   opacity: 0.9;
 }
+.dev-credit {
+  color: inherit;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.dev-credit:hover {
+  color: var(--gold) !important;
+}
