@@ -539,14 +539,18 @@ function getFilteredProducts() {
 }
 
 function renderProducts() {
+  if (!productsGrid) return;
+
   const filtered = getFilteredProducts();
 
   productsGrid.innerHTML = filtered.map(productCard).join("");
 
-  if (filtered.length === 0) {
-    noProducts.classList.add("visible");
-  } else {
-    noProducts.classList.remove("visible");
+  if (noProducts) {
+    if (filtered.length === 0) {
+      noProducts.classList.add("visible");
+    } else {
+      noProducts.classList.remove("visible");
+    }
   }
 }
 
@@ -810,7 +814,7 @@ document.addEventListener("click", event => {
    CATEGORY FILTERING
    ========================================================= */
 
-document.getElementById("categoryTabs").addEventListener("click", event => {
+document.getElementById("categoryTabs")?.addEventListener("click", event => { 
   const button = event.target.closest(".filter-btn");
 
   if (!button) return;
@@ -829,7 +833,7 @@ document.getElementById("categoryTabs").addEventListener("click", event => {
    SORT
    ========================================================= */
 
-document.getElementById("sortSelect").addEventListener("change", event => {
+document.getElementById("sortSelect")?.addEventListener("change", event => { 
   currentSort = event.target.value;
   renderProducts();
 });
@@ -841,24 +845,24 @@ document.getElementById("sortSelect").addEventListener("change", event => {
 const searchPanel = document.getElementById("searchPanel");
 const searchInput = document.getElementById("searchInput");
 
-document.getElementById("searchBtn").addEventListener("click", () => {
-  searchPanel.classList.toggle("open");
+document.getElementById("searchBtn")?.addEventListener("click", () => {
+  searchPanel?.classList.toggle("open");
 
-  if (searchPanel.classList.contains("open")) {
-    setTimeout(() => searchInput.focus(), 250);
+  if (searchPanel?.classList.contains("open")) {
+    setTimeout(() => searchInput?.focus(), 250);
   }
 });
 
-searchInput.addEventListener("input", event => {
+searchInput?.addEventListener("input", event => {
   currentSearch = event.target.value;
   renderProducts();
 });
 
-document.getElementById("clearSearch").addEventListener("click", () => {
-  searchInput.value = "";
+document.getElementById("clearSearch")?.addEventListener("click", () => {
+  if (searchInput) searchInput.value = "";
   currentSearch = "";
   renderProducts();
-  searchInput.focus();
+  searchInput?.focus();
 });
 
 /* =========================================================
@@ -1046,7 +1050,7 @@ document.addEventListener("keydown", event => {
    ANNOUNCEMENT
    ========================================================= */
 
-document.querySelector(".announcement-close").addEventListener("click", () => {
+document.querySelector(".announcement-close")?.addEventListener("click", () => {
   document.querySelector(".announcement").style.display = "none";
 });
 
