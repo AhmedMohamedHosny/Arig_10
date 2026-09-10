@@ -1935,29 +1935,40 @@ body.dark-mode .lang-btn {
     padding: 0 5%;
   }
 
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .desktop-nav {
+.desktop-nav {
     display: none;
   }
 
+  /* اللوجو يمين بالصورة فقط */
   .logo {
-    font-size: 29px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static;
+    transform: none;
+    order: 1;
+    display: flex;
+    align-items: center;
   }
 
+  .logo span {
+    display: none !important; /* إخفاء كلمة SURAKA في الموبايل */
+  }
+
+  .logo img {
+    height: 30px !important;
+  }
+
+  /* الأيقونات في المنتصف متجهة لليسار */
   .nav-actions {
-    gap: 4px;
-    margin-left: auto;
+    order: 2;
+    gap: 8px;
+    margin-right: auto !important;
+    margin-left: 10px !important;
   }
 
-  html[dir="rtl"] .nav-actions {
-    margin-left: 0;
-    margin-right: auto;
+  /* التلت شرط أقصى الشمال */
+  .mobile-menu-btn {
+    display: block;
+    order: 3;
+    margin: 0;
   }
 
   #themeBtn {
@@ -2112,16 +2123,44 @@ body.dark-mode .lang-btn {
     line-height: 1.6;
   }
 
-  .story-section {
-    grid-template-columns: 1fr;
+.story-section {
+    grid-template-columns: 1fr 1fr;
+    min-height: auto;
   }
 
-  .story-image {
-    min-height: 500px;
+.story-image {
+    min-height: 240px;
   }
 
   .story-content {
-    padding: 80px 7%;
+    padding: 18px 3%;
+  }
+
+  .story-content h2 {
+    font-size: 19px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .story-content p {
+    font-size: 9px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  .story-content {
+    padding: 25px 4%;
+  }
+
+  .story-content h2 {
+    font-size: clamp(22px, 5vw, 30px);
+    margin-bottom: 12px;
+  }
+
+  .story-content p {
+    font-size: 10.5px;
+    line-height: 1.6;
+    margin-bottom: 10px;
   }
 
   .footer-main {
