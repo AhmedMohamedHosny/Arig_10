@@ -1237,8 +1237,6 @@ checkoutForm.addEventListener("submit", async (e) => {
     createdAt: new Date()
   };
 
-  try {
-    // حفظ الطلب في فايربيز
 try {
     // 1. حفظ الطلب أولاً في فايربيز
     await addDoc(ordersCol, orderData);
