@@ -2894,7 +2894,63 @@ body {
   background: var(--gold);
   color: #061914;
 }
+/* ================= SIZES & WISHLIST UI ================= */
+.size-selector-wrap {
+  margin: 15px 0 10px;
+  text-align: right;
+}
 
+.size-title {
+  display: block;
+  font-size: 11px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.size-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.size-btn {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 4px;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.25s ease;
+}
+
+.size-btn span {
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.size-btn:hover {
+  border-color: var(--gold);
+}
+
+.size-btn.active {
+  background: var(--gold);
+  color: #0a221c;
+  border-color: var(--gold);
+  font-weight: bold;
+}
+
+.size-btn.active span {
+  color: #0a221c;
+}
+
+.wishlist-nav-btn {
+  cursor: pointer;
+}
 .submit-order-btn:hover {
   opacity: 0.9;
 }
