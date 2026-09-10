@@ -2488,3 +2488,50 @@ html[dir="ltr"] .sf-option {
   width: 100%;
   margin-top: 10px;
 }
+/* تصميم الشريط المتحرك */
+.ticker-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  height: 40px;
+  background-color: #11100e;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-move {
+  display: flex;
+  white-space: nowrap;
+  animation: tickerAnimation 25s linear infinite;
+}
+
+.ticker-move:hover {
+  animation-play-state: paused; /* يوقف الحركة عند مرور الماوس عليه */
+}
+
+.ticker-item {
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e6c687; /* لون ذهبي راقي */
+  padding: 0 40px;
+  display: inline-block;
+}
+
+@keyframes tickerAnimation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+/* تعديل للهيدر عشان ما يغطيش على الشريط الثابت */
+body {
+  padding-top: 40px;
+}
