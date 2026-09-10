@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم | عطور سراقة</title>
-  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-  
+
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --emerald-dark: #0a221c;
@@ -16,217 +17,1555 @@
       --text-light: #f3efe7;
       --text-muted: #a3b8b0;
       --danger: #e74c3c;
+
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --gold-border: rgba(212, 175, 55, 0.24);
+      --gold-strong: rgba(212, 175, 55, 0.42);
+      --surface-light: rgba(255,255,255,0.025);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+      --transition: 220ms ease;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-    body { background-color: var(--emerald-dark); color: var(--text-light); padding-bottom: 50px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 0%, rgba(212,175,55,0.055), transparent 26%),
+        radial-gradient(circle at 10% 70%, rgba(18,56,46,0.35), transparent 30%),
+        var(--emerald-dark);
+      color: var(--text-light);
+      font-family: 'Cairo', sans-serif;
+      padding-bottom: 60px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+      z-index: -1;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    label,
+    select {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    ::selection {
+      background: var(--gold);
+      color: var(--emerald-dark);
+    }
+
+    /* =========================
+       HEADER
+    ========================== */
 
     .admin-header {
-      background: var(--emerald-main);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-      padding: 15px 4%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      min-height: 82px;
+      padding: 14px clamp(18px, 4vw, 64px);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-    .brand-title {
-      font-family: 'Aref Ruqaa', serif;
-      font-size: 26px;
-      color: var(--gold);
-    }
-    .btn-store {
-      background: transparent;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 8px 18px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 600;
+      justify-content: space-between;
+      gap: 24px;
+      background: rgba(10, 34, 28, 0.94);
+      border-bottom: 1px solid var(--gold-border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
-    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-emblem {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold-strong);
+      border-radius: 50%;
+      color: var(--gold);
+      background: radial-gradient(circle, rgba(212,175,55,0.12), transparent 70%);
+      box-shadow: 0 0 28px rgba(212,175,55,0.08);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-title {
+      font-family: 'Aref Ruqaa', serif;
+      color: var(--gold);
+      font-size: clamp(22px, 3vw, 29px);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-subtitle {
+      margin-top: 3px;
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .btn-store {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 20px;
+      color: var(--gold);
+      background: transparent;
+      border: 1px solid var(--gold-strong);
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform var(--transition), background var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+
+    .btn-store:hover {
+      transform: translateY(-2px);
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      box-shadow: 0 8px 25px rgba(212,175,55,0.12);
+    }
+
+    /* =========================
+       MAIN
+    ========================== */
+
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding-top: 42px;
+    }
+
+    .dashboard-intro {
+      position: relative;
+      margin-bottom: 32px;
+      padding: 34px 36px;
+      overflow: hidden;
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 10% 50%, rgba(212,175,55,0.075), transparent 30%),
+        linear-gradient(135deg, rgba(18,56,46,0.9), rgba(13,44,36,0.94));
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-intro::after {
+      content: "SURAKA";
+      position: absolute;
+      left: -18px;
+      bottom: -42px;
+      color: rgba(212,175,55,0.035);
+      font-family: Georgia, serif;
+      font-size: 130px;
+      font-weight: 700;
+      letter-spacing: 8px;
+      direction: ltr;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 9px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 25px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .dashboard-intro h1 {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(25px, 4vw, 37px);
+      line-height: 1.35;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .dashboard-intro p {
+      position: relative;
+      z-index: 1;
+      max-width: 650px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    /* =========================
+       SECTION HEADERS
+    ========================== */
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .section-heading-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .section-kicker {
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .section-title {
+      color: var(--text-light);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .section-description {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* =========================
+       STATS
+    ========================== */
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 38px;
     }
+
     .stat-card {
-      background: var(--emerald-main);
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
+      position: relative;
+      min-height: 164px;
+      overflow: hidden;
+      padding: 22px;
+      border: 1px solid var(--gold-border);
+      border-radius: 9px;
+      background:
+        linear-gradient(145deg, rgba(18,56,46,0.96), rgba(13,44,36,0.96));
+      box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
     }
-    .stat-card .title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-    .stat-card .value { font-size: 26px; font-weight: 700; color: var(--gold); }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left: -45px;
+      bottom: -55px;
+      border-radius: 50%;
+      background: rgba(212,175,55,0.055);
+      pointer-events: none;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold-strong);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.25), 0 0 25px rgba(212,175,55,0.055);
+    }
+
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      background: var(--gold-soft);
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .stat-card .title {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .stat-card .value {
+      color: var(--gold);
+      font-size: 31px;
+      font-weight: 800;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================
+       PANELS
+    ========================== */
 
     .panel {
-      background: var(--emerald-main);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      border-radius: 8px;
-      padding: 25px;
+      position: relative;
+      padding: 28px;
       margin-bottom: 30px;
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      background:
+        linear-gradient(145deg, rgba(13,44,36,0.97), rgba(10,34,28,0.97));
+      box-shadow: var(--shadow);
     }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 28px;
+      width: 70px;
+      height: 1px;
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid rgba(212,175,55,0.12);
+    }
+
+    .panel-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .panel-title {
-      font-size: 18px;
       color: var(--gold);
-      margin-bottom: 20px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-      padding-bottom: 10px;
+      font-size: 19px;
+      font-weight: 800;
     }
+
+    .panel-subtitle {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* =========================
+       FORM
+    ========================== */
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .form-group label { font-size: 13px; color: var(--text-muted); }
-    .form-group input, .form-group select, .form-group textarea {
-      background: var(--emerald-card);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 4px;
-      padding: 10px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .required-mark {
+      color: var(--gold);
+      margin-right: 3px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      color: var(--text-light);
+      background: rgba(18,56,46,0.72);
+      border: 1px solid rgba(212,175,55,0.22);
+      border-radius: 6px;
+      padding: 13px 14px;
+      outline: none;
+      font-size: 12px;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(163,184,176,0.55);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      background: rgba(18,56,46,0.92);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.075);
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+        linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .form-group textarea {
+      min-height: 125px;
+      resize: vertical;
+      line-height: 1.9;
+    }
+
+    /* =========================
+       IMAGE UPLOAD
+    ========================== */
 
     .upload-box {
-      border: 2px dashed var(--gold);
-      background: var(--emerald-card);
+      position: relative;
+      min-height: 128px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 15px;
-      border-radius: 4px;
-      text-align: center;
-      cursor: pointer;
+      overflow: hidden;
       color: var(--gold);
-      font-size: 13px;
+      background:
+        radial-gradient(circle at center, rgba(212,175,55,0.07), transparent 58%),
+        rgba(18,56,46,0.65);
+      border: 1px dashed rgba(212,175,55,0.62);
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
     }
-    .upload-box input { display: none; }
+
+    .upload-box:hover {
+      border-color: var(--gold);
+      background:
+        radial-gradient(circle at center, rgba(212,175,55,0.11), transparent 62%),
+        rgba(18,56,46,0.85);
+      transform: translateY(-1px);
+    }
+
+    .upload-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .upload-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      border: 1px solid var(--gold-border);
+      font-size: 17px;
+    }
+
+    .upload-main {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .upload-hint {
+      color: var(--text-muted);
+      font-size: 9px;
+    }
+
+    .upload-preview {
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .upload-preview.visible {
+      display: flex;
+    }
+
+    .upload-preview img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--gold-strong);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .upload-file-name {
+      max-width: 170px;
+      color: var(--text-light);
+      font-size: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-box input {
+      display: none;
+    }
+
+    /* =========================
+       SAVE BUTTON
+    ========================== */
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-top: 24px;
+    }
 
     .btn-save {
-      background: var(--gold);
-      color: var(--emerald-dark);
-      border: 0;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
       padding: 12px 30px;
-      font-weight: 700;
-      font-size: 14px;
-      border-radius: 4px;
+      color: var(--emerald-dark);
+      background: linear-gradient(135deg, #d4af37, #c8a832);
+      border: 0;
+      border-radius: 5px;
+      box-shadow: 0 10px 28px rgba(212,175,55,0.14);
       cursor: pointer;
-      margin-top: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+    }
+
+    .btn-save:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px rgba(212,175,55,0.22);
+      filter: brightness(1.04);
+    }
+
+    .btn-save:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .save-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(10,34,28,0.25);
+      border-top-color: var(--emerald-dark);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .btn-save.loading .save-spinner {
+      display: block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* =========================
+       COLLECTION
+    ========================== */
+
+    .collection-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .collection-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border: 1px solid var(--gold-border);
+      border-radius: 5px;
+      color: var(--text-muted);
+      background: var(--surface-light);
+      font-size: 10px;
+    }
+
+    .collection-count strong {
+      color: var(--gold);
     }
 
     .perfumes-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
     }
+
     .perfume-card {
-      background: var(--emerald-card);
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      border-radius: 8px;
+      position: relative;
+      min-width: 0;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(150deg, #12382e, #0f3027);
+      border: 1px solid rgba(212,175,55,0.19);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.14);
+      transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+      animation: cardIn 400ms ease both;
     }
-    .perfume-card img { width: 100%; height: 180px; object-fit: cover; }
-    .perfume-info { padding: 15px; flex: 1; display: flex; flex-direction: column; }
-    .perfume-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 5px; }
-    .perfume-cat { font-size: 11px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
-    .perfume-price { font-size: 15px; font-weight: 700; color: var(--gold); margin-top: auto; }
-    .btn-delete {
-      background: rgba(231, 76, 60, 0.2);
-      color: var(--danger);
-      border: 1px solid var(--danger);
-      padding: 6px;
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .perfume-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(212,175,55,0.48);
+      box-shadow:
+        0 20px 45px rgba(0,0,0,0.25),
+        0 0 25px rgba(212,175,55,0.055);
+    }
+
+    .perfume-image-wrap {
+      position: relative;
+      height: 230px;
+      overflow: hidden;
+      background: #0c2921;
+    }
+
+    .perfume-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 500ms ease;
+    }
+
+    .perfume-card:hover img {
+      transform: scale(1.045);
+    }
+
+    .perfume-image-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(10,34,28,0.42));
+      pointer-events: none;
+    }
+
+    .perfume-category {
+      position: absolute;
+      z-index: 2;
+      top: 12px;
+      right: 12px;
+      padding: 5px 10px;
+      color: var(--gold);
+      background: rgba(10,34,28,0.87);
+      border: 1px solid rgba(212,175,55,0.48);
       border-radius: 4px;
-      font-size: 12px;
+      backdrop-filter: blur(8px);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .perfume-info {
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    .perfume-label {
+      color: var(--text-muted);
+      font-size: 9px;
+      margin-bottom: 4px;
+    }
+
+    .perfume-name {
+      color: var(--text-light);
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.6;
+      margin-bottom: 9px;
+    }
+
+    .perfume-price {
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
+      margin-top: auto;
+    }
+
+    .perfume-price span {
+      color: var(--text-muted);
+      font-size: 9px;
       font-weight: 600;
+      margin-right: 3px;
+    }
+
+    .btn-delete {
+      width: 100%;
+      min-height: 36px;
+      margin-top: 12px;
+      color: var(--danger);
+      background: rgba(231,76,60,0.055);
+      border: 1px solid rgba(231,76,60,0.34);
+      border-radius: 4px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
+    }
+
+    .btn-delete:hover {
+      background: rgba(231,76,60,0.12);
+      border-color: var(--danger);
+      transform: translateY(-1px);
+    }
+
+    /* =========================
+       STATES
+    ========================== */
+
+    .state-message {
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .state-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold-border);
+      border-radius: 50%;
+      background: var(--gold-soft);
+      color: var(--gold);
+      font-size: 24px;
+    }
+
+    .state-title {
+      color: var(--text-light);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .state-description {
+      max-width: 420px;
+      color: var(--text-muted);
+      font-size: 10px;
+      line-height: 1.9;
+    }
+
+    .loading-spinner {
+      width: 34px;
+      height: 34px;
+      border: 2px solid rgba(212,175,55,0.18);
+      border-top-color: var(--gold);
+      border-right-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* =========================
+       TOAST
+    ========================== */
+
+    .toast-container {
+      position: fixed;
+      left: 22px;
+      bottom: 22px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      width: min(360px, calc(100vw - 44px));
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 13px 15px;
+      background: rgba(13,44,36,0.97);
+      border: 1px solid var(--gold-border);
+      border-radius: 6px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.32);
+      backdrop-filter: blur(14px);
+      pointer-events: auto;
+      animation: toastIn 300ms ease both;
+    }
+
+    .toast.error {
+      border-color: rgba(231,76,60,0.42);
+    }
+
+    .toast-icon {
+      width: 29px;
+      height: 29px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      background: var(--gold-soft);
+      border-radius: 50%;
+      font-size: 13px;
+    }
+
+    .toast.error .toast-icon {
+      color: var(--danger);
+      background: rgba(231,76,60,0.09);
+    }
+
+    .toast-text {
+      color: var(--text-light);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .toast.hide {
+      animation: toastOut 250ms ease forwards;
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+    }
+
+    /* =========================
+       CONFIRM MODAL
+    ========================== */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .confirm-modal {
+      width: min(430px, 100%);
+      padding: 28px;
+      background: linear-gradient(145deg, #12382e, #0d2c24);
+      border: 1px solid var(--gold-border);
+      border-radius: 9px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      text-align: center;
+      animation: modalIn 220ms ease both;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-icon {
+      width: 55px;
+      height: 55px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 15px;
+      color: var(--danger);
+      background: rgba(231,76,60,0.08);
+      border: 1px solid rgba(231,76,60,0.3);
+      border-radius: 50%;
+      font-size: 21px;
+    }
+
+    .confirm-modal h3 {
+      color: var(--text-light);
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .confirm-modal p {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .modal-btn {
+      min-height: 42px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .modal-cancel {
+      color: var(--text-light);
+      background: transparent;
+      border: 1px solid rgba(163,184,176,0.25);
+    }
+
+    .modal-delete {
+      color: #fff;
+      background: rgba(231,76,60,0.83);
+      border: 1px solid var(--danger);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .perfumes-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .admin-header {
+        min-height: 72px;
+        padding: 11px 16px;
+      }
+
+      .brand-emblem {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+      }
+
+      .brand-title {
+        font-size: 21px;
+      }
+
+      .brand-subtitle {
+        display: none;
+      }
+
+      .btn-store {
+        min-height: 38px;
+        padding: 8px 12px;
+        font-size: 10px;
+      }
+
+      .container {
+        width: min(100% - 22px, 1240px);
+        padding-top: 22px;
+      }
+
+      .dashboard-intro {
+        padding: 25px 21px;
+        margin-bottom: 25px;
+      }
+
+      .dashboard-intro h1 {
+        font-size: 25px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 11px;
+        margin-bottom: 25px;
+      }
+
+      .stat-card {
+        min-height: 140px;
+        padding: 16px;
+      }
+
+      .stat-icon {
+        width: 35px;
+        height: 35px;
+        margin-bottom: 11px;
+        font-size: 15px;
+      }
+
+      .stat-card .title {
+        font-size: 9px;
+      }
+
+      .stat-card .value {
+        font-size: 25px;
+      }
+
+      .panel {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+      }
+
+      .panel-title {
+        font-size: 16px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .perfumes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 11px;
+      }
+
+      .perfume-image-wrap {
+        height: 190px;
+      }
+
+      .perfume-info {
+        min-height: 142px;
+        padding: 13px;
+      }
+
+      .perfume-name {
+        font-size: 12px;
+      }
+
+      .perfume-price {
+        font-size: 13px;
+      }
+
+      .btn-delete {
+        font-size: 9px;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand-area {
+        gap: 9px;
+      }
+
+      .brand-emblem {
+        display: none;
+      }
+
+      .brand-title {
+        font-size: 19px;
+      }
+
+      .btn-store {
+        padding-inline: 9px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat-card {
+        min-height: 130px;
+        padding: 14px;
+      }
+
+      .stat-card .value {
+        font-size: 23px;
+      }
+
+      .perfumes-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .perfume-image-wrap {
+        height: 235px;
+      }
+
+      .form-actions,
+      .btn-save {
+        width: 100%;
+      }
+
+      .toast-container {
+        left: 11px;
+        bottom: 11px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <header class="admin-header">
-    <div class="brand-title">✨ سراقة — إدارة العطور</div>
-    <a href="index.html" class="btn-store">العودة للمتجر ➔</a>
-  </header>
+  <!-- =========================
+       PREMIUM HEADER
+  ========================== -->
 
-  <div class="container">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="title">إجمالي العطور المتاحة</div>
-        <div class="value" id="countTotal">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="title">عطور التشكيلة الرجالية</div>
-        <div class="value" id="countMen">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="title">عطور التشكيلة النسائية</div>
-        <div class="value" id="countWomen">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="title">عطور للجنسين (Unisex)</div>
-        <div class="value" id="countUnisex">0</div>
+  <header class="admin-header">
+    <div class="brand-area">
+      <div class="brand-emblem" aria-hidden="true">✦</div>
+
+      <div class="brand-copy">
+        <div class="brand-title">✨ سراقة — إدارة العطور</div>
+        <div class="brand-subtitle">SURAKA · LUXURY FRAGRANCES</div>
       </div>
     </div>
 
-    <div class="panel">
-      <h2 class="panel-title">✨ إضافة عطر جديد لمجموعات سراقة</h2>
+    <a href="index.html" class="btn-store">
+      العودة للمتجر
+      <span>➔</span>
+    </a>
+  </header>
+
+
+  <main class="container">
+
+    <!-- =========================
+         DASHBOARD INTRO
+    ========================== -->
+
+    <section class="dashboard-intro">
+      <div class="eyebrow">LUXURY COLLECTION MANAGEMENT</div>
+
+      <h1>لوحة إدارة سراقة</h1>
+
+      <p>
+        إدارة مجموعات العطور ومتابعة تشكيلتك الفاخرة
+        من مساحة واحدة مصممة بهوية سراقة.
+      </p>
+    </section>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
+
+    <div class="section-heading">
+      <div class="section-heading-main">
+        <div class="section-kicker">OVERVIEW</div>
+        <div class="section-title">نظرة عامة على التشكيلة</div>
+      </div>
+    </div>
+
+    <section class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon">✦</div>
+        <div class="title">إجمالي العطور المتاحة</div>
+        <div class="value" id="countTotal">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">♜</div>
+        <div class="title">عطور التشكيلة الرجالية</div>
+        <div class="value" id="countMen">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">❈</div>
+        <div class="title">عطور التشكيلة النسائية</div>
+        <div class="value" id="countWomen">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">◇</div>
+        <div class="title">عطور للجنسين (Unisex)</div>
+        <div class="value" id="countUnisex">0</div>
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         ADD PERFUME
+    ========================== -->
+
+    <section class="panel">
+
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <div class="panel-title">✨ إضافة عطر جديد لمجموعات سراقة</div>
+          <div class="panel-subtitle">
+            أضف عطراً جديداً إلى مجموعة سراقة
+          </div>
+        </div>
+      </div>
+
       <form id="perfumeForm">
+
         <div class="form-grid">
+
+          <!-- Name -->
           <div class="form-group">
-            <label>اسم العطر:</label>
-            <input type="text" id="pName" placeholder="مثال: سراقة العود الملكي" required>
+            <label for="pName">
+              اسم العطر <span class="required-mark">*</span>
+            </label>
+
+            <input
+              type="text"
+              id="pName"
+              placeholder="مثال: سراقة العود الملكي"
+              required
+            >
           </div>
+
+
+          <!-- Price -->
           <div class="form-group">
-            <label>السعر (EGP):</label>
-            <input type="number" id="pPrice" placeholder="1500" required>
+            <label for="pPrice">
+              السعر (EGP) <span class="required-mark">*</span>
+            </label>
+
+            <input
+              type="number"
+              id="pPrice"
+              placeholder="1500"
+              min="0"
+              step="1"
+              required
+            >
           </div>
+
+
+          <!-- Category -->
           <div class="form-group">
-            <label>التصنيف:</label>
+            <label for="pCategory">
+              التصنيف <span class="required-mark">*</span>
+            </label>
+
             <select id="pCategory">
               <option value="men">رجالي</option>
               <option value="women">نسائي</option>
               <option value="unisex">للجنسين</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>صورة العطر (رفع مباشر):</label>
-            <div class="upload-box" onclick="document.getElementById('pFileInput').click()">
-              <span id="uploadLabel">📷 اختر صورة من الجهاز</span>
-              <input type="file" id="pFileInput" accept="image/*">
+
+
+          <!-- Image -->
+          <div class="form-group full-width">
+
+            <label>
+              صورة العطر (رفع مباشر)
+            </label>
+
+            <div
+              class="upload-box"
+              id="uploadBox"
+              onclick="document.getElementById('pFileInput').click()"
+            >
+
+              <div class="upload-content" id="uploadDefaultContent">
+
+                <div class="upload-icon">⌁</div>
+
+                <div class="upload-main" id="uploadLabel">
+                  اختر صورة من الجهاز
+                </div>
+
+                <div class="upload-hint">
+                  صورة واضحة وعالية الجودة للعطر
+                </div>
+
+              </div>
+
+
+              <div class="upload-preview" id="uploadPreview">
+
+                <img
+                  id="previewImage"
+                  src=""
+                  alt="معاينة صورة العطر"
+                >
+
+                <div class="upload-file-name" id="previewFileName">
+                  تم اختيار الصورة
+                </div>
+
+              </div>
+
+
+              <input
+                type="file"
+                id="pFileInput"
+                accept="image/*"
+              >
+
             </div>
+
+          </div>
+
+
+          <!-- Description -->
+          <div class="form-group full-width">
+
+            <label for="pDesc">
+              الوصف والنوتات العطرية
+            </label>
+
+            <textarea
+              id="pDesc"
+              rows="4"
+              placeholder="مقدمة العطر: الهيل والصندل..."
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="btn-save"
+            id="saveBtn"
+          >
+            <span class="save-spinner"></span>
+            <span class="save-icon">✦</span>
+            <span class="save-text">حفظ العطر ونشره سحابياً</span>
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <!-- =========================
+         COLLECTION
+    ========================== -->
+
+    <section class="panel">
+
+      <div class="panel-header">
+
+        <div class="panel-title-wrap">
+          <div class="panel-title">🛍️ تشكيلة العطور المعروضة حالياً</div>
+
+          <div class="panel-subtitle">
+            جميع العطور المسجلة في مجموعة سراقة
           </div>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
-          <label>الوصف والنوتات العطرية:</label>
-          <textarea id="pDesc" rows="3" placeholder="مقدمة العطر: الهيل والصندل..."></textarea>
+      </div>
+
+
+      <div class="collection-tools">
+        <div class="collection-count">
+          <span>إجمالي التشكيلة</span>
+          <strong id="collectionCount">0</strong>
+          <span>عطر</span>
         </div>
+      </div>
 
-        <button type="submit" class="btn-save" id="saveBtn">حفظ العطر ونشره سحابياً</button>
-      </form>
-    </div>
 
-    <div class="panel">
-      <h2 class="panel-title">🛍️ تشكيلة العطور المعروضة حالياً</h2>
       <div class="perfumes-grid" id="perfumesList"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       TOAST CONTAINER
+  ========================== -->
+
+  <div class="toast-container" id="toastContainer"></div>
+
+
+  <!-- =========================
+       DELETE MODAL
+  ========================== -->
+
+  <div class="modal-overlay" id="deleteModal">
+
+    <div
+      class="confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deleteModalTitle"
+    >
+
+      <div class="modal-icon">!</div>
+
+      <h3 id="deleteModalTitle">
+        حذف العطر
+      </h3>
+
+      <p>
+        هل تريد حذف هذا العطر نهائياً؟
+        <br>
+        لا يمكن التراجع عن هذا الإجراء.
+      </p>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="modal-btn modal-cancel"
+          id="cancelDelete"
+        >
+          إلغاء
+        </button>
+
+        <button
+          type="button"
+          class="modal-btn modal-delete"
+          id="confirmDelete"
+        >
+          حذف العطر
+        </button>
+
+      </div>
+
     </div>
+
   </div>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase Config الخاص بمشروعك
+  <!-- =========================
+       FIREBASE
+  ========================== -->
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+    /* =========================================
+       EXISTING FIREBASE CONFIGURATION
+    ========================================== */
+
     const firebaseConfig = {
       apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
       authDomain: "suraka-cfb2d.firebaseapp.com",
@@ -237,102 +1576,506 @@
       measurementId: "G-PTVR815MCF"
     };
 
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const perfumesCol = collection(db, "perfumes");
 
+
+    /* =========================================
+       EXISTING IMAGE DATA
+    ========================================== */
+
     let currentImageData = "image/S1.jpg";
 
-    document.getElementById("pFileInput").addEventListener("change", (e) => {
+    let pendingDeleteId = null;
+
+
+    /* =========================================
+       DOM REFERENCES
+    ========================================== */
+
+    const perfumeForm = document.getElementById("perfumeForm");
+
+    const pName = document.getElementById("pName");
+    const pPrice = document.getElementById("pPrice");
+    const pCategory = document.getElementById("pCategory");
+    const pFileInput = document.getElementById("pFileInput");
+    const uploadLabel = document.getElementById("uploadLabel");
+    const pDesc = document.getElementById("pDesc");
+    const saveBtn = document.getElementById("saveBtn");
+
+    const uploadBox = document.getElementById("uploadBox");
+    const uploadDefaultContent = document.getElementById("uploadDefaultContent");
+    const uploadPreview = document.getElementById("uploadPreview");
+    const previewImage = document.getElementById("previewImage");
+    const previewFileName = document.getElementById("previewFileName");
+
+    const deleteModal = document.getElementById("deleteModal");
+    const cancelDelete = document.getElementById("cancelDelete");
+    const confirmDelete = document.getElementById("confirmDelete");
+
+    const toastContainer = document.getElementById("toastContainer");
+
+
+    /* =========================================
+       TOAST SYSTEM
+    ========================================== */
+
+    function showToast(message, type = "success") {
+
+      const toast = document.createElement("div");
+
+      toast.className = `toast ${type === "error" ? "error" : ""}`;
+
+      toast.innerHTML = `
+        <div class="toast-icon">
+          ${type === "error" ? "!" : "✓"}
+        </div>
+
+        <div class="toast-text">
+          ${message}
+        </div>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add("hide");
+
+        setTimeout(() => {
+          toast.remove();
+        }, 250);
+
+      }, 3200);
+    }
+
+
+    /* =========================================
+       IMAGE UPLOAD + PREVIEW
+    ========================================== */
+
+    pFileInput.addEventListener("change", (e) => {
+
       const file = e.target.files[0];
-      if (file) {
-        document.getElementById("uploadLabel").innerText = "✅ تم اختيار: " + file.name;
-        const reader = new FileReader();
-        reader.onload = function(evt) { currentImageData = evt.target.result; };
-        reader.readAsDataURL(file);
-      }
+
+      if (!file) return;
+
+      uploadLabel.innerText = "✅ تم اختيار: " + file.name;
+
+      const reader = new FileReader();
+
+      reader.onload = function(evt) {
+
+        currentImageData = evt.target.result;
+
+        previewImage.src = currentImageData;
+        previewFileName.innerText = file.name;
+
+        uploadDefaultContent.style.display = "none";
+        uploadPreview.classList.add("visible");
+
+      };
+
+      reader.readAsDataURL(file);
     });
 
+
+    /* =========================================
+       LOAD PERFUMES
+    ========================================== */
+
     async function loadPerfumes() {
+
       const grid = document.getElementById("perfumesList");
-      grid.innerHTML = "<p style='color: var(--gold);'>جاري تحميل العطور من السحابة...</p>";
-      
+
+      grid.innerHTML = `
+        <div class="state-message" style="grid-column: 1 / -1;">
+          <div class="loading-spinner"></div>
+
+          <div class="state-title">
+            جاري تحميل العطور من السحابة...
+          </div>
+        </div>
+      `;
+
       try {
+
         const snapshot = await getDocs(perfumesCol);
+
         grid.innerHTML = "";
-        let men = 0, women = 0, unisex = 0, total = 0;
+
+        let men = 0;
+        let women = 0;
+        let unisex = 0;
+        let total = 0;
+
 
         snapshot.forEach((docSnap) => {
+
           total++;
+
           const p = docSnap.data();
           const pId = docSnap.id;
+
 
           if (p.category === "men") men++;
           if (p.category === "women") women++;
           if (p.category === "unisex") unisex++;
 
-          grid.innerHTML += `
-            <div class="perfume-card">
-              <img src="${p.image || 'image/S1.jpg'}" alt="${p.name}">
-              <div class="perfume-info">
-                <span class="perfume-cat">${p.category === 'men' ? 'رجالي' : p.category === 'women' ? 'نسائي' : 'للجنسين'}</span>
-                <div class="perfume-name">${p.name}</div>
-                <div class="perfume-price">${p.price} EGP</div>
-                <button class="btn-delete" data-id="${pId}">حذف</button>
-              </div>
+
+          const categoryLabel =
+            p.category === "men"
+              ? "رجالي"
+              : p.category === "women"
+                ? "نسائي"
+                : "للجنسين";
+
+
+          const card = document.createElement("div");
+
+          card.className = "perfume-card";
+
+
+          card.innerHTML = `
+
+            <div class="perfume-image-wrap">
+
+              <img
+                src="${p.image || "image/S1.jpg"}"
+                alt="${escapeHtml(p.name || "عطر سراقة")}"
+                loading="lazy"
+              >
+
+              <span class="perfume-category">
+                ${categoryLabel}
+              </span>
+
             </div>
+
+
+            <div class="perfume-info">
+
+              <div class="perfume-label">
+                عطر من مجموعة سراقة
+              </div>
+
+              <div class="perfume-name">
+                ${escapeHtml(p.name || "بدون اسم")}
+              </div>
+
+              <div class="perfume-price">
+                ${Number(p.price || 0).toLocaleString("en-US")}
+                <span>EGP</span>
+              </div>
+
+              <button
+                type="button"
+                class="btn-delete"
+                data-id="${pId}"
+              >
+                حذف العطر
+              </button>
+
+            </div>
+
           `;
+
+
+          grid.appendChild(card);
+
         });
+
 
         document.getElementById("countTotal").innerText = total;
         document.getElementById("countMen").innerText = men;
         document.getElementById("countWomen").innerText = women;
         document.getElementById("countUnisex").innerText = unisex;
 
+        document.getElementById("collectionCount").innerText = total;
+
+
+        if (total === 0) {
+
+          grid.innerHTML = `
+
+            <div class="state-message" style="grid-column: 1 / -1;">
+
+              <div class="state-icon">
+                ✦
+              </div>
+
+              <div class="state-title">
+                لا توجد عطور مضافة حالياً
+              </div>
+
+              <div class="state-description">
+                أضف أول عطر إلى مجموعة سراقة وابدأ ببناء تشكيلتك الفاخرة.
+              </div>
+
+            </div>
+
+          `;
+
+        }
+
+
         document.querySelectorAll(".btn-delete").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            if (confirm("هل تريد حذف هذا العطر نهائياً؟")) {
-              await deleteDoc(doc(db, "perfumes", e.target.dataset.id));
-              loadPerfumes();
-            }
+
+          btn.addEventListener("click", () => {
+
+            openDeleteModal(btn.dataset.id);
+
           });
+
         });
 
+
       } catch (err) {
-        grid.innerHTML = "<p style='color: var(--danger);'>حدث خطأ أثناء تحميل البيانات.</p>";
+
+        console.error("Firestore loading error:", err);
+
+        grid.innerHTML = `
+
+          <div class="state-message" style="grid-column: 1 / -1;">
+
+            <div
+              class="state-icon"
+              style="
+                color: var(--danger);
+                border-color: rgba(231,76,60,0.3);
+                background: rgba(231,76,60,0.07);
+              "
+            >
+              !
+            </div>
+
+            <div class="state-title">
+              تعذر تحميل التشكيلة
+            </div>
+
+            <div class="state-description">
+              حدث خطأ أثناء تحميل البيانات من السحابة.
+            </div>
+
+          </div>
+
+        `;
+
+        showToast("حدث خطأ أثناء تحميل البيانات.", "error");
+
       }
+
     }
 
-    document.getElementById("perfumeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("saveBtn");
-      btn.innerText = "جاري الحفظ...";
-      btn.disabled = true;
 
-      try {
-        await addDoc(perfumesCol, {
-          name: document.getElementById("pName").value,
-          price: Number(document.getElementById("pPrice").value),
-          category: document.getElementById("pCategory").value,
-          image: currentImageData,
-          desc: document.getElementById("pDesc").value,
-          createdAt: new Date()
-        });
+    /* =========================================
+       DELETE MODAL
+    ========================================== */
 
-        alert("تم رفع العطر بنجاح!");
-        e.target.reset();
-        document.getElementById("uploadLabel").innerText = "📷 اختر صورة من الجهاز";
-        currentImageData = "image/S1.jpg";
-        loadPerfumes();
-      } catch (err) {
-        alert("حدث خطأ أثناء الحفظ!");
-      } finally {
-        btn.innerText = "حفظ العطر ونشره سحابياً";
-        btn.disabled = false;
+    function openDeleteModal(id) {
+
+      pendingDeleteId = id;
+
+      deleteModal.classList.add("active");
+
+      document.body.style.overflow = "hidden";
+
+      setTimeout(() => {
+        cancelDelete.focus();
+      }, 50);
+    }
+
+
+    function closeDeleteModal() {
+
+      pendingDeleteId = null;
+
+      deleteModal.classList.remove("active");
+
+      document.body.style.overflow = "";
+
+    }
+
+
+    cancelDelete.addEventListener("click", closeDeleteModal);
+
+
+    deleteModal.addEventListener("click", (e) => {
+
+      if (e.target === deleteModal) {
+        closeDeleteModal();
       }
+
     });
 
+
+    document.addEventListener("keydown", (e) => {
+
+      if (e.key === "Escape" && deleteModal.classList.contains("active")) {
+        closeDeleteModal();
+      }
+
+    });
+
+
+    confirmDelete.addEventListener("click", async () => {
+
+      if (!pendingDeleteId) return;
+
+
+      const id = pendingDeleteId;
+
+      confirmDelete.disabled = true;
+      confirmDelete.innerText = "جاري الحذف...";
+
+
+      try {
+
+        await deleteDoc(
+          doc(db, "perfumes", id)
+        );
+
+        closeDeleteModal();
+
+        showToast("تم حذف العطر بنجاح.");
+
+        await loadPerfumes();
+
+
+      } catch (err) {
+
+        console.error("Delete error:", err);
+
+        confirmDelete.disabled = false;
+        confirmDelete.innerText = "حذف العطر";
+
+        showToast(
+          "حدث خطأ أثناء حذف العطر.",
+          "error"
+        );
+
+      }
+
+    });
+
+
+    /* =========================================
+       ADD PERFUME
+    ========================================== */
+
+    perfumeForm.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+
+      saveBtn.disabled = true;
+      saveBtn.classList.add("loading");
+
+      document.querySelector(".save-icon").style.display = "none";
+
+      document.querySelector(".save-text").innerText =
+        "جاري الحفظ...";
+
+
+      try {
+
+        await addDoc(perfumesCol, {
+
+          name: pName.value,
+
+          price: Number(pPrice.value),
+
+          category: pCategory.value,
+
+          image: currentImageData,
+
+          desc: pDesc.value,
+
+          createdAt: new Date()
+
+        });
+
+
+        showToast("تم رفع العطر بنجاح!");
+
+
+        perfumeForm.reset();
+
+
+        uploadLabel.innerText =
+          "اختر صورة من الجهاز";
+
+
+        uploadDefaultContent.style.display =
+          "flex";
+
+
+        uploadPreview.classList.remove("visible");
+
+
+        previewImage.src = "";
+
+        previewFileName.innerText = "";
+
+
+        currentImageData =
+          "image/S1.jpg";
+
+
+        await loadPerfumes();
+
+
+      } catch (err) {
+
+        console.error("Save error:", err);
+
+        showToast(
+          "حدث خطأ أثناء الحفظ!",
+          "error"
+        );
+
+      } finally {
+
+        saveBtn.disabled = false;
+
+        saveBtn.classList.remove("loading");
+
+        document.querySelector(".save-icon").style.display =
+          "inline";
+
+
+        document.querySelector(".save-text").innerText =
+          "حفظ العطر ونشره سحابياً";
+
+      }
+
+    });
+
+
+    /* =========================================
+       HTML ESCAPE
+    ========================================== */
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================================
+       INITIAL LOAD
+    ========================================== */
+
     loadPerfumes();
+
   </script>
+
 </body>
 </html>
