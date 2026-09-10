@@ -1293,6 +1293,8 @@ const previewName = document.getElementById("previewName");
 const removeReceiptBtn = document.getElementById("removeReceiptBtn");
 
 let receiptSelectedFile = null;
+let receiptBase64 = "";
+let selectedPaymentMethod = "cod"; // متغير مباشر لمنع قراءة طريقة الدفع بالخطأ
 
 function syncTransferAmount() {
   if (transferAmountVal) {
@@ -1301,13 +1303,15 @@ function syncTransferAmount() {
   }
 }
 
+// متابعة اختيار طريقة الدفع وحفظها لحظياً
 document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
   radio.addEventListener("change", (e) => {
+    selectedPaymentMethod = e.target.value;
     syncTransferAmount();
-    if (e.target.value === "instapay") {
+    if (selectedPaymentMethod === "instapay") {
       transferDetails.style.display = "flex";
       transferHeading.textContent = "تحويل الإجمالي عبر InstaPay";
-    } else if (e.target.value === "vodafone_cash") {
+    } else if (selectedPaymentMethod === "vodafone_cash") {
       transferDetails.style.display = "flex";
       transferHeading.textContent = "تحويل الإجمالي عبر Vodafone Cash";
     } else {
@@ -1346,6 +1350,7 @@ receiptFileInput?.addEventListener("change", (e) => {
 
   const reader = new FileReader();
   reader.onload = (ev) => {
+    receiptBase64 = ev.target.result;
     previewImg.src = ev.target.result;
     uploadPrompt.style.display = "none";
     uploadPreview.style.display = "flex";
@@ -1356,6 +1361,7 @@ receiptFileInput?.addEventListener("change", (e) => {
 removeReceiptBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
   receiptSelectedFile = null;
+  receiptBase64 = "";
   receiptFileInput.value = "";
   uploadPrompt.style.display = "block";
   uploadPreview.style.display = "none";
@@ -1364,7 +1370,7 @@ removeReceiptBtn?.addEventListener("click", (e) => {
 
 // تحديد الموقع الجغرافي بالـ GPS
 btnLocation?.addEventListener("click", () => {
- if (!navigator.geolocation) {
+  if (!navigator.geolocation) {
     locationStatus.textContent = "المتصفح لا يدعم تحديد الموقع.";
     return;
   }
@@ -1392,7 +1398,7 @@ function isValidEgyptianPhone(phone) {
 
 // تأكيد وإرسال الطلب
 checkoutForm?.addEventListener("submit", async (e) => {
- e.preventDefault();
+  e.preventDefault();
 
   const name = document.getElementById("custName").value.trim();
   const phone = document.getElementById("custPhone").value.trim();
@@ -1400,7 +1406,7 @@ checkoutForm?.addEventListener("submit", async (e) => {
   const gov = custGovSelect.value;
   const address = document.getElementById("custAddress").value.trim();
   const locationMap = custLocationMap.value;
-  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+  const paymentMethod = selectedPaymentMethod; // استخدام المتغير المباشر بدقة
 
   if (!isValidEgyptianPhone(phone)) {
     alert("رقم الهاتف الأساسي غير صحيح! يجب أن يتكون من 11 رقماً ويبدأ بـ (010 أو 011 أو 012 أو 015).");
@@ -1416,15 +1422,17 @@ checkoutForm?.addEventListener("submit", async (e) => {
     alert("يرجى اختيار المحافظة لحساب تكلفة الشحن.");
     return;
   }
-if ((paymentMethod === "instapay" || paymentMethod === "vodafone_cash") && !receiptSelectedFile) {
+
+  if ((paymentMethod === "instapay" || paymentMethod === "vodafone_cash") && !receiptSelectedFile) {
     alert("يرجى رفع صورة إيصال التحويل (Screenshot) أولاً لتأكيد الطلب!");
     return;
   }
+
   const submitBtn = document.getElementById("submitOrderBtn");
   submitBtn.disabled = true;
-  submitBtn.textContent = "جاري تسجيل الطلب...";
+  submitBtn.textContent = "جاري تأكيد الطلب...";
 
-const orderItems = cart.map(item => {
+  const orderItems = cart.map(item => {
     const prod = getProduct(item.id);
     const itemSize = item.size || 50;
     const itemPrice = prod ? getPriceForSize(prod.price, itemSize) : 0;
@@ -1440,6 +1448,26 @@ const orderItems = cart.map(item => {
   const subtotal = getCartTotal();
   const shippingFee = getShippingFee();
   const total = subtotal + shippingFee;
+
+  // رفع الصورة لسيرفر مجاني للحصول على رابط مباشر
+  let receiptLink = "";
+  if (receiptSelectedFile) {
+    try {
+      submitBtn.textContent = "جاري رفع صورة الإيصال...";
+      const uploadForm = new FormData();
+      uploadForm.append("input_file", receiptSelectedFile);
+      const res = await fetch("https://tmpfiles.org/api/v1/upload", {
+        method: "POST",
+        body: uploadForm
+      });
+      const resData = await res.json();
+      if (resData?.data?.url) {
+        receiptLink = resData.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+      }
+    } catch (err) {
+      console.warn("Upload fallback triggered:", err);
+    }
+  }
 
   const orderData = {
     customer: {
@@ -1457,51 +1485,35 @@ const orderItems = cart.map(item => {
       total
     },
     paymentMethod,
+    receiptImage: receiptBase64, // حفظ الصورة كـ Base64 في فايربيز حتى يراها الأدمن دائماً
+    receiptUrl: receiptLink || "تم إرفاقها في المحادثة",
     status: "new",
     createdAt: new Date()
   };
 
-try {
-    let receiptUrl = "لا يوجد (دفع عند الاستلام)";
-
-    // رفع الصورة إلى خادم سحابي للحصول على رابط مباشر يظهر في الواتساب
-    if (receiptSelectedFile) {
-      submitBtn.textContent = "جاري رفع صورة الإيصال...";
-      try {
-        const imgFormData = new FormData();
-        imgFormData.append("image", receiptSelectedFile);
-        // رفع مباشر سريع ومجاني بدون تسجيل عبر ImgBB API
-        const uploadRes = await fetch("https://api.imgbb.com/1/upload?key=2d2508ec22851cf549b0e2b96e053a48", {
-          method: "POST",
-          body: imgFormData
-        });
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          receiptUrl = uploadData.data.url;
-        }
-      } catch (uploadErr) {
-        console.warn("تعذر رفع الصورة سحابياً، سيتم تنبيه العميل بإرفاقها يدوياً:", uploadErr);
-        receiptUrl = "يرجى إرفاق الصورة في هذه المحادثة مباشرة";
-      }
-    }
-
-    orderData.receiptUrl = receiptUrl;
-
-    // 1. حفظ الطلب أولاً في فايربيز
+  try {
+    // 1. حفظ الطلب في فايربيز
     await addDoc(ordersCol, orderData);
 
-    // 2. إعداد نص رسالة الواتساب الاحترافية
+    // 2. إعداد مسميات طرق الدفع ورسالة الإيصال
     const paymentMethodsNames = {
       cod: "الدفع عند الاستلام (COD)",
       instapay: "انستا باي (InstaPay)",
       vodafone_cash: "فودافون كاش (Vodafone Cash)"
     };
 
+    let receiptMessageText = "غير مطلوب (الدفع عند الاستلام)";
+    if (paymentMethod !== "cod") {
+      receiptMessageText = receiptLink 
+        ? `${receiptLink}\n(ومرفق أيضاً صورة التحويل في هذه المحادثة 📸)` 
+        : `(مرفق صورة إيصال التحويل مع هذه الرسالة 📸)`;
+    }
+
     const itemsSummary = orderItems
       .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
       .join("\n");
 
-    const waMessage = `*طلب جديد من متجر سراقة — SURAQA* 💎
+    const waMessage = `*طلب جديد من متجر سراقة — SURAKA* 💎
 --------------------------------
 👤 *اسم العميل:* ${name}
 📱 *الهاتف الأساسي:* ${phone}
@@ -1517,7 +1529,7 @@ ${itemsSummary}
 🚚 *مصاريف الشحن:* ${shippingFee === 0 ? "مجاني" : `${shippingFee} جنيه`}
 💵 *الإجمالي النهائي:* ${total.toLocaleString("ar-EG")} جنيه
 💳 *طريقة الدفع:* ${paymentMethodsNames[paymentMethod]}
-🧾 *صورة إيصال الدفع:* ${receiptUrl}
+🧾 *إيصال التحويل:* ${receiptMessageText}
 --------------------------------
 ✨ تم تسجيل الطلب بنجاح عبر الموقع`;
 
@@ -1528,14 +1540,16 @@ ${itemsSummary}
     closeCheckout();
     checkoutForm.reset();
     locationStatus.textContent = "";
+    receiptSelectedFile = null;
+    receiptBase64 = "";
 
-    showToast("تم تسجيل طلبك بنجاح! 🎉", "جاري توجيهك إلى واتساب لإتمام التفاصيل...");
+    showToast("تم تسجيل طلبك بنجاح! 🎉", "جاري توجيهك إلى واتساب سراقة...");
 
-    // 4. التوجيه المباشر لواتساب سراقة
+    // 4. التوجيه لواتساب سراقة
     const waUrl = `https://wa.me/201016118242?text=${encodeURIComponent(waMessage)}`;
     setTimeout(() => {
       window.open(waUrl, "_blank");
-    }, 1200);
+    }, 1000);
 
   } catch (err) {
     console.error("Firebase Error: ", err);
