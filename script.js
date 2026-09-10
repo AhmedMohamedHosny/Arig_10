@@ -805,36 +805,38 @@ function updatePfpPriceDisplay() {
 
 function openProductFullPage(id) {
   const prod = getProduct(id);
-  if (!prod || !productFullPage) return;
+  if (!prod) return;
+
+  const pageEl = document.getElementById("productFullPage");
+  if (!pageEl) return;
 
   currentPfpProduct = prod;
   currentPfpSize = 50;
   currentPfpQty = 1;
 
-  if (pfpImage) { pfpImage.src = prod.image; pfpImage.alt = productName(prod); }
+  if (pfpImage) { pfpImage.src = prod.image || "image/S1.png"; pfpImage.alt = productName(prod); }
   if (pfpCategory) pfpCategory.textContent = productCategoryLabel(prod);
   if (pfpName) pfpName.textContent = productName(prod);
-  if (pfpRating) pfpRating.textContent = stars(prod.rating);
-  if (pfpReviews) pfpReviews.textContent = `(${prod.reviews} ${t("reviews")})`;
-  if (pfpDesc) pfpDesc.textContent = productDescription(prod);
-  if (pfpQtyVal) pfpQtyVal.textContent = currentPfpQty;
+  if (pfpRating) pfpRating.textContent = `★ ${Number(prod.rating || 5).toFixed(1)}`;
+  if (pfpReviews) pfpReviews.textContent = `(${prod.reviews || 1} ${t("reviews")})`;
+  if (pfpDesc) pfpDesc.textContent = productDescription(prod) || "";
+  if (pfpQtyVal) pfpQtyVal.textContent = "1";
 
   document.querySelectorAll("#pfpSizes .pfp-size-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.size === "50");
   });
 
   if (pfpNotes) {
-    pfpNotes.innerHTML = productNotes(prod)
-      .map(n => `<span>${escapeHtml(n)}</span>`)
-      .join("");
+    const notesList = (currentLang === "ar" ? prod.notesAr : prod.notes) || ["سراقة"];
+    pfpNotes.innerHTML = notesList.map(n => `<span>${escapeHtml(n)}</span>`).join("");
   }
 
   updatePfpPriceDisplay();
   renderRelatedPerfumes(prod);
 
-  productFullPage.style.display = "block";
+  pageEl.style.setProperty("display", "block", "important");
   document.body.classList.add("no-scroll");
-  productFullPage.scrollTop = 0;
+  pageEl.scrollTop = 0;
 }
 
 function closeProductFullPage() {
