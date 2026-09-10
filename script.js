@@ -492,11 +492,11 @@ function toggleLanguage() {
    ========================================================= */
 
 function productCard(product) {
-  const isFavorite = wishlist.includes(product.id);
+  const isFavorite = wishlist.some(favId => String(favId) === String(product.id));
   const badge = productBadge(product);
 
   return `
-    <article class="product-card" data-product-id="${product.id}">
+    <article class="product-card" data-product-id="${product.id}" data-selected-size="50" data-selected-qty="1">
       <div class="product-image-wrap">
         ${badge ? `<span class="product-badge">${escapeHtml(badge)}</span>` : ""}
 
@@ -514,15 +514,6 @@ function productCard(product) {
           alt="${escapeHtml(productName(product))}"
           loading="lazy"
         >
-
-        <div class="product-actions">
-          <button class="quick-btn" data-action="quick" data-id="${product.id}">
-            ${escapeHtml(t("quickView"))}
-          </button>
-          <button class="add-btn" data-action="add" data-id="${product.id}">
-            ${escapeHtml(t("addToCart"))}
-          </button>
-        </div>
       </div>
 
       <div class="product-info">
@@ -537,14 +528,34 @@ function productCard(product) {
           ${escapeHtml(productDescription(product))}
         </p>
 
+        <!-- اختيار الحجم مباشرة من الكارت -->
+        <div class="card-sizes">
+          <button type="button" class="card-size-btn" data-card-size="10">10 مل</button>
+          <button type="button" class="card-size-btn" data-card-size="30">30 مل</button>
+          <button type="button" class="card-size-btn active" data-card-size="50">50 مل</button>
+          <button type="button" class="card-size-btn" data-card-size="100">100 مل</button>
+        </div>
+
+        <!-- السعر والمراجعات -->
         <div class="product-bottom">
-          <span class="product-price">${formatPrice(product.price)}</span>
+          <span class="product-price card-price-display">${formatPrice(product.price)}</span>
           <span class="product-category">${product.reviews} ${escapeHtml(t("reviews"))}</span>
         </div>
 
-        <button class="mobile-add" data-action="add" data-id="${product.id}">
-          ${escapeHtml(t("addToCart"))}
-        </button>
+        <!-- أزرار الكمية + إضافة للسلة + تفاصيل -->
+        <div class="card-actions-row">
+          <div class="card-qty-picker">
+            <button type="button" class="card-qty-btn" data-qty-action="minus">−</button>
+            <span class="card-qty-num">1</span>
+            <button type="button" class="card-qty-btn" data-qty-action="plus">+</button>
+          </div>
+          <button class="card-add-submit" data-action="card-direct-add" data-id="${product.id}">
+            أضف إلى السلة
+          </button>
+          <button class="card-details-btn" data-action="quick" data-id="${product.id}" title="تفاصيل العطر">
+            عرض سريع
+          </button>
+        </div>
       </div>
     </article>
   `;
@@ -894,13 +905,62 @@ function showToast(title, text) {
    ========================================================= */
 
 document.addEventListener("click", event => {
-  const actionElement = event.target.closest("[data-action]");
+// 1. اختيار الحجم من الكارت وتحديث سعره فوراً
+  const cardSizeBtn = event.target.closest(".card-size-btn");
+  if (cardSizeBtn) {
+    const card = cardSizeBtn.closest(".product-card");
+    const prodId = card.dataset.productId;
+    const prod = getProduct(prodId);
+    if (card && prod) {
+      card.querySelectorAll(".card-size-btn").forEach(b => b.classList.remove("active"));
+      cardSizeBtn.classList.add("active");
+      
+      const newSize = Number(cardSizeBtn.dataset.cardSize);
+      card.dataset.selectedSize = newSize;
 
+      const currentQty = Number(card.dataset.selectedQty || 1);
+      const unitPrice = getPriceForSize(prod.price, newSize);
+      card.querySelector(".card-price-display").textContent = formatPrice(unitPrice * currentQty);
+    }
+    return;
+  }
+
+  // 2. تغيير الكمية (+ أو -) من الكارت وتحديث السعر
+  const qtyActionBtn = event.target.closest("[data-qty-action]");
+  if (qtyActionBtn) {
+    const card = qtyActionBtn.closest(".product-card");
+    const prodId = card.dataset.productId;
+    const prod = getProduct(prodId);
+    if (card && prod) {
+      let qty = Number(card.dataset.selectedQty || 1);
+      if (qtyActionBtn.dataset.qtyAction === "plus" && qty < 20) {
+        qty++;
+      } else if (qtyActionBtn.dataset.qtyAction === "minus" && qty > 1) {
+        qty--;
+      }
+      card.dataset.selectedQty = qty;
+      card.querySelector(".card-qty-num").textContent = qty;
+
+      const currentSize = Number(card.dataset.selectedSize || 50);
+      const unitPrice = getPriceForSize(prod.price, currentSize);
+      card.querySelector(".card-price-display").textContent = formatPrice(unitPrice * qty);
+    }
+    return;
+  }
+
+  // 3. الضغط على زر "أضف إلى السلة" المباشر بالكارت
+  const actionElement = event.target.closest("[data-action]");
   if (actionElement) {
     const action = actionElement.dataset.action;
-const id = actionElement.dataset.id;
-    if (action === "add") {
-      addToCart(id);
+    const id = actionElement.dataset.id;
+
+    if (action === "card-direct-add") {
+      const card = actionElement.closest(".product-card");
+      const size = Number(card.dataset.selectedSize || 50);
+      const qty = Number(card.dataset.selectedQty || 1);
+      addToCart(id, qty, size);
+      openCart();
+      return;
     }
 
     if (action === "quick") {
