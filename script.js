@@ -1,5 +1,19 @@
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
+  authDomain: "suraka-cfb2d.firebaseapp.com",
+  projectId: "suraka-cfb2d",
+  storageBucket: "suraka-cfb2d.firebasestorage.app",
+  messagingSenderId: "1082260408358",
+  appId: "1:1082260408358:web:41aa9f7cb0bd778408bee7",
+  measurementId: "G-PTVR815MCF"
+};
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const perfumesCol = collection(db, "perfumes"); 
 /* =========================================================
    SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
