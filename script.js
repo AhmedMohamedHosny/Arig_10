@@ -1012,42 +1012,7 @@ document.getElementById("viewBestSellers").addEventListener("click", () => {
   });
 });
 
-/* =========================================================
-   NEWSLETTER
-   ========================================================= */
 
-const newsletterForm = document.getElementById("newsletterForm");
-const newsletterEmail = document.getElementById("newsletterEmail");
-const newsletterMessage = document.getElementById("newsletterMessage");
-
-newsletterForm.addEventListener("submit", event => {
-  event.preventDefault();
-
-  const email = newsletterEmail.value.trim();
-
-  newsletterMessage.className = "";
-
-  if (!email) {
-    newsletterMessage.textContent = t("enterEmail");
-    newsletterMessage.classList.add("error");
-    return;
-  }
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailPattern.test(email)) {
-    newsletterMessage.textContent = t("invalidEmail");
-    newsletterMessage.classList.add("error");
-    return;
-  }
-
-  newsletterMessage.textContent = t("welcomeMessage");
-  newsletterMessage.classList.add("success");
-
-  newsletterEmail.value = "";
-
-  showToast(t("subscribedTitle"), t("subscribedText"));
-});
 
 /* =========================================================
    CHECKOUT
@@ -1176,3 +1141,52 @@ document.addEventListener("keydown", (e) => {
     checkAdminAuth();
   }
 });
+
+/* =========================================================
+   SCENT FINDER (Floating Guide Button)
+   ========================================================= */
+
+(function () {
+  const sfBtn = document.getElementById('scentFinderBtn');
+  const sfOverlay = document.getElementById('scentFinderOverlay');
+  const sfPanel = document.getElementById('scentFinderPanel');
+  const sfClose = document.getElementById('sfClose');
+  const sfStep1 = document.getElementById('sfStep1');
+  const sfStep2 = document.getElementById('sfStep2');
+  const sfGoShop = document.getElementById('sfGoShop');
+
+  let selectedCategory = 'all';
+
+  function openPanel() {
+    sfOverlay.classList.add('active');
+    sfPanel.classList.add('active');
+    document.body.classList.add('no-scroll');
+  }
+
+  function closePanel() {
+    sfOverlay.classList.remove('active');
+    sfPanel.classList.remove('active');
+    document.body.classList.remove('no-scroll');
+    sfStep1.classList.add('active');
+    sfStep2.classList.remove('active');
+  }
+
+  sfBtn?.addEventListener('click', openPanel);
+  sfClose?.addEventListener('click', closePanel);
+  sfOverlay?.addEventListener('click', closePanel);
+
+  document.querySelectorAll('.sf-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedCategory = btn.dataset.category;
+      sfStep1.classList.remove('active');
+      sfStep2.classList.add('active');
+    });
+  });
+
+  sfGoShop?.addEventListener('click', () => {
+    closePanel();
+    const targetBtn = document.querySelector(`.filter-btn[data-category="${selectedCategory}"]`);
+    if (targetBtn) targetBtn.click();
+    document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
+  });
+})();
