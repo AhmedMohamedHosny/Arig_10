@@ -702,8 +702,14 @@ html[dir="rtl"] .wishlist-btn {
   transform: scale(1.08);
 }
 
+.wishlist-btn {
+  color: #ffffff;
+  transition: var(--transition);
+}
+
 .wishlist-btn.active {
-  color: #9d665f;
+  color: #ffd700 !important; /* أصفر ذهبي ساطع للقلب */
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.75);
 }
 
 .product-actions {
@@ -3212,4 +3218,35 @@ body {
   cursor: pointer;
   text-align: right;
   padding: 0;
+}
+/* تأثيرات الإخفاء خارج الرئيسية */
+.ticker-wrap {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.ticker-wrap.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar {
+  transition: top 0.4s ease;
+}
+
+.navbar.top-zero {
+  top: 0 !important;
+}
+
+.whatsapp-btn,
+.scent-finder-btn {
+  transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s ease !important;
+}
+
+.whatsapp-btn.hidden,
+.scent-finder-btn.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: scale(0) !important;
+  pointer-events: none !important;
 }
