@@ -1251,15 +1251,13 @@ html[dir="rtl"] .footer-tagline::before {
   margin-top: 27px;
 }
 
-.footer-column .socials {
-  margin-top: 0;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
+.footer-column .socials,
 html[dir="rtl"] .footer-column .socials {
-  align-items: flex-start;
-  flex-direction: row;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 12px;
 }
 
 .socials a {
@@ -2283,8 +2281,13 @@ body.dark-mode .lang-btn {
     gap: 40px 20px;
   }
 
-  .footer-column:last-child {
-    grid-column: 1 / -1;
+.footer-column:last-child {
+    grid-column: auto;
+  }
+
+  .footer-column {
+    align-items: flex-start;
+    text-align: right;
   }
 
   .footer-bottom {
