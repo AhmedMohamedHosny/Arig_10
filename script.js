@@ -539,18 +539,14 @@ function getFilteredProducts() {
 }
 
 function renderProducts() {
-  if (!productsGrid) return;
-
   const filtered = getFilteredProducts();
 
   productsGrid.innerHTML = filtered.map(productCard).join("");
 
-  if (noProducts) {
-    if (filtered.length === 0) {
-      noProducts.classList.add("visible");
-    } else {
-      noProducts.classList.remove("visible");
-    }
+  if (filtered.length === 0) {
+    noProducts.classList.add("visible");
+  } else {
+    noProducts.classList.remove("visible");
   }
 }
 
@@ -804,18 +800,17 @@ document.addEventListener("click", event => {
 
   if (event.target.id === "continueShopping") {
     closeCart();
-    document.getElementById("shop")?.scrollIntoView({
+    document.getElementById("shop").scrollIntoView({
       behavior: "smooth"
     });
   }
- 
 });
 
 /* =========================================================
    CATEGORY FILTERING
    ========================================================= */
 
-document.getElementById("categoryTabs")?.addEventListener("click", event => { 
+document.getElementById("categoryTabs").addEventListener("click", event => {
   const button = event.target.closest(".filter-btn");
 
   if (!button) return;
@@ -834,7 +829,7 @@ document.getElementById("categoryTabs")?.addEventListener("click", event => {
    SORT
    ========================================================= */
 
-document.getElementById("sortSelect")?.addEventListener("change", event => { 
+document.getElementById("sortSelect").addEventListener("change", event => {
   currentSort = event.target.value;
   renderProducts();
 });
@@ -846,24 +841,24 @@ document.getElementById("sortSelect")?.addEventListener("change", event => {
 const searchPanel = document.getElementById("searchPanel");
 const searchInput = document.getElementById("searchInput");
 
-document.getElementById("searchBtn")?.addEventListener("click", () => {
-  searchPanel?.classList.toggle("open");
+document.getElementById("searchBtn").addEventListener("click", () => {
+  searchPanel.classList.toggle("open");
 
-  if (searchPanel?.classList.contains("open")) {
-    setTimeout(() => searchInput?.focus(), 250);
+  if (searchPanel.classList.contains("open")) {
+    setTimeout(() => searchInput.focus(), 250);
   }
 });
 
-searchInput?.addEventListener("input", event => {
+searchInput.addEventListener("input", event => {
   currentSearch = event.target.value;
   renderProducts();
 });
 
-document.getElementById("clearSearch")?.addEventListener("click", () => {
-  if (searchInput) searchInput.value = "";
+document.getElementById("clearSearch").addEventListener("click", () => {
+  searchInput.value = "";
   currentSearch = "";
   renderProducts();
-  searchInput?.focus();
+  searchInput.focus();
 });
 
 /* =========================================================
@@ -990,7 +985,7 @@ document.querySelectorAll(".collection-card").forEach(card => {
 
     renderProducts();
 
-    document.getElementById("shop")?.scrollIntoView({
+    document.getElementById("shop").scrollIntoView({
       behavior: "smooth"
     });
   });
@@ -1012,7 +1007,7 @@ document.getElementById("viewBestSellers").addEventListener("click", () => {
 
   renderProducts();
 
-  document.getElementById("shop")?.scrollIntoView({
+  document.getElementById("shop").scrollIntoView({
     behavior: "smooth"
   });
 });
@@ -1051,7 +1046,7 @@ document.addEventListener("keydown", event => {
    ANNOUNCEMENT
    ========================================================= */
 
-document.querySelector(".announcement-close")?.addEventListener("click", () => {
+document.querySelector(".announcement-close").addEventListener("click", () => {
   document.querySelector(".announcement").style.display = "none";
 });
 
@@ -1227,128 +1222,4 @@ document.addEventListener("keydown", (e) => {
       document.body.classList.remove('no-scroll');
     });
   }
-})();
-/* =========================================================
-   FULL SHOP PAGE (shop.html) WIRING
-   ========================================================= */
-(function () {
-  const grid = document.getElementById('fullShopGrid');
-  if (!grid) return; // مش في صفحة shop.html
-
-  const searchInputEl = document.getElementById('shopSearchInput');
-  const minPriceEl = document.getElementById('minPrice');
-  const maxPriceEl = document.getElementById('maxPrice');
-  const sortEl = document.getElementById('shopSortSelect');
-  const applyBtn = document.getElementById('applyFiltersBtn');
-  const clearBtn = document.getElementById('clearFiltersBtn');
-  const form = document.getElementById('productsFilterForm');
-  const pagination = document.getElementById('paginationControls');
-
-  const PER_PAGE = 8;
-  let page = 1;
-
-  function getFiltersState() {
-    const category = form?.querySelector('input[name="category"]:checked')?.value || 'all';
-    const search = searchInputEl?.value.trim().toLowerCase() || '';
-    const min = minPriceEl?.value ? Number(minPriceEl.value) : null;
-    const max = maxPriceEl?.value ? Number(maxPriceEl.value) : null;
-    const sort = sortEl?.value || 'recommended';
-    return { category, search, min, max, sort };
-  }
-
-  function applyShopFilters() {
-    const { category, search, min, max, sort } = getFiltersState();
-    let list = [...products];
-
-    if (category !== 'all') {
-      list = list.filter(p => p.category === category);
-    }
-
-    if (search) {
-      list = list.filter(p =>
-        productName(p).toLowerCase().includes(search) ||
-        productDescription(p).toLowerCase().includes(search) ||
-        productNotes(p).some(n => n.toLowerCase().includes(search))
-      );
-    }
-
-    if (min !== null) list = list.filter(p => p.price >= min);
-    if (max !== null) list = list.filter(p => p.price <= max);
-
-    switch (sort) {
-      case 'price-low': list.sort((a, b) => a.price - b.price); break;
-      case 'price-high': list.sort((a, b) => b.price - a.price); break;
-      default: list.sort((a, b) => Number(b.featured) - Number(a.featured));
-    }
-
-    return list;
-  }
-
-  function renderPagination(totalPages) {
-    if (!pagination) return;
-    let html = '';
-    for (let i = 1; i <= totalPages; i++) {
-      html += `<button class="page-num ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
-    }
-    pagination.innerHTML = html;
-  }
-
-  function renderShopPage() {
-    const filtered = applyShopFilters();
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-    if (page > totalPages) page = totalPages;
-
-    const start = (page - 1) * PER_PAGE;
-    const pageItems = filtered.slice(start, start + PER_PAGE);
-
-    grid.innerHTML = pageItems.length
-      ? pageItems.map(productCard).join('')
-      : `<p style="grid-column:1/-1; text-align:center; color:#888;">${currentLang === 'ar' ? 'لا توجد منتجات مطابقة.' : 'No matching products.'}</p>`;
-
-    renderPagination(totalPages);
-  }
-
-  pagination?.addEventListener('click', e => {
-    const btn = e.target.closest('.page-num');
-    if (!btn) return;
-    page = Number(btn.dataset.page);
-    renderShopPage();
-    grid.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  applyBtn?.addEventListener('click', () => {
-    page = 1;
-    renderShopPage();
-  });
-
-  clearBtn?.addEventListener('click', () => {
-    setTimeout(() => {
-      page = 1;
-      renderShopPage();
-    }, 0);
-  });
-
-  sortEl?.addEventListener('change', () => {
-    page = 1;
-    renderShopPage();
-  });
-
-  searchInputEl?.addEventListener('input', () => {
-    page = 1;
-    renderShopPage();
-  });
-
-  form?.addEventListener('change', e => {
-    if (e.target.name === 'category') {
-      page = 1;
-      renderShopPage();
-    }
-  });
-
-  // إعادة عرض المنتجات بعد تغيير اللغة
-  document.getElementById('langBtn')?.addEventListener('click', () => {
-    setTimeout(renderShopPage, 0);
-  });
-
-  renderShopPage();
 })();
