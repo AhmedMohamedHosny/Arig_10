@@ -1190,3 +1190,29 @@ document.addEventListener("keydown", (e) => {
     document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
   });
 })();
+// تشغيل وتفتيح السلة
+const cartBtn = document.getElementById('cartBtn');
+const closeCart = document.getElementById('closeCart');
+const cartDrawer = document.getElementById('cartDrawer');
+const overlay = document.getElementById('overlay');
+
+if (cartBtn) {
+  cartBtn.addEventListener('click', () => {
+    cartDrawer?.classList.add('active');
+    overlay?.classList.add('active');
+  });
+}
+
+if (closeCart) {
+  closeCart.addEventListener('click', () => {
+    cartDrawer?.classList.remove('active');
+    overlay?.classList.remove('active');
+  });
+}
+
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    cartDrawer?.classList.remove('active');
+    overlay?.classList.remove('active');
+  });
+}
