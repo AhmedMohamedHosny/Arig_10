@@ -1276,33 +1276,90 @@ function updateCheckoutSummary() {
   }
 
   summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
+ syncTransferAmount();
 }
 
 custGovSelect?.addEventListener("change", updateCheckoutSummary);
-// تفاصيل الدفع الإلكتروني (انستا باي وفودافون كاش)
-// تفاصيل الدفع الإلكتروني وزر نسخ الرقم
+// تفاصيل الدفع الإلكتروني، نسخ الرقم، ورفع صورة الإيصال
 const copyNumberBtn = document.getElementById("copyNumberBtn");
+const transferHeading = document.getElementById("transferHeading");
+const transferAmountVal = document.getElementById("transferAmountVal");
+const uploadDropzone = document.getElementById("uploadDropzone");
+const receiptFileInput = document.getElementById("receiptFile");
+const uploadPrompt = document.getElementById("uploadPrompt");
+const uploadPreview = document.getElementById("uploadPreview");
+const previewImg = document.getElementById("previewImg");
+const previewName = document.getElementById("previewName");
+const removeReceiptBtn = document.getElementById("removeReceiptBtn");
+
+let receiptSelectedFile = null;
+
+function syncTransferAmount() {
+  if (transferAmountVal) {
+    const total = getCartTotal() + getShippingFee();
+    transferAmountVal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
+  }
+}
 
 document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
   radio.addEventListener("change", (e) => {
+    syncTransferAmount();
     if (e.target.value === "instapay") {
-      transferDetails.style.display = "block";
-      transferText.innerHTML = "يرجى تحويل الإجمالي عبر <strong>InstaPay</strong> لرقم الهاتف الموضح أدناه:";
+      transferDetails.style.display = "flex";
+      transferHeading.textContent = "تحويل الإجمالي عبر InstaPay";
     } else if (e.target.value === "vodafone_cash") {
-      transferDetails.style.display = "block";
-      transferText.innerHTML = "يرجى تحويل الإجمالي لمحفظة <strong>فودافون كاش</strong> على الرقم التالي:";
+      transferDetails.style.display = "flex";
+      transferHeading.textContent = "تحويل الإجمالي عبر Vodafone Cash";
     } else {
       transferDetails.style.display = "none";
     }
   });
 });
 
+// نسخ الرقم
 copyNumberBtn?.addEventListener("click", () => {
   navigator.clipboard.writeText("01016118242").then(() => {
-    copyNumberBtn.textContent = "✓ تم النسخ";
-    showToast("تم النسخ بنجاح", "تم نسخ رقم التحويل إلى الحافظة.");
-    setTimeout(() => { copyNumberBtn.textContent = "📋 نسخ الرقم"; }, 2500);
+    copyNumberBtn.textContent = "تم النسخ ✓";
+    showToast("تم النسخ", "تم نسخ الرقم إلى الحافظة.");
+    setTimeout(() => { copyNumberBtn.textContent = "نسخ"; }, 2000);
   });
+});
+
+// إدارة رفع صورة الإيصال
+uploadDropzone?.addEventListener("click", (e) => {
+  if (e.target !== removeReceiptBtn) {
+    receiptFileInput.click();
+  }
+});
+
+receiptFileInput?.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("حجم الصورة كبير جداً! الحد الأقصى 5 ميجابايت.");
+    return;
+  }
+
+  receiptSelectedFile = file;
+  previewName.textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    previewImg.src = ev.target.result;
+    uploadPrompt.style.display = "none";
+    uploadPreview.style.display = "flex";
+  };
+  reader.readAsDataURL(file);
+});
+
+removeReceiptBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  receiptSelectedFile = null;
+  receiptFileInput.value = "";
+  uploadPrompt.style.display = "block";
+  uploadPreview.style.display = "none";
+  previewImg.src = "";
 });
 
 // تحديد الموقع الجغرافي بالـ GPS
@@ -1359,7 +1416,10 @@ checkoutForm?.addEventListener("submit", async (e) => {
     alert("يرجى اختيار المحافظة لحساب تكلفة الشحن.");
     return;
   }
-
+if ((paymentMethod === "instapay" || paymentMethod === "vodafone_cash") && !receiptSelectedFile) {
+    alert("يرجى رفع صورة إيصال التحويل (Screenshot) أولاً لتأكيد الطلب!");
+    return;
+  }
   const submitBtn = document.getElementById("submitOrderBtn");
   submitBtn.disabled = true;
   submitBtn.textContent = "جاري تسجيل الطلب...";
@@ -1402,6 +1462,31 @@ const orderItems = cart.map(item => {
   };
 
 try {
+    let receiptUrl = "لا يوجد (دفع عند الاستلام)";
+
+    // رفع الصورة إلى خادم سحابي للحصول على رابط مباشر يظهر في الواتساب
+    if (receiptSelectedFile) {
+      submitBtn.textContent = "جاري رفع صورة الإيصال...";
+      try {
+        const imgFormData = new FormData();
+        imgFormData.append("image", receiptSelectedFile);
+        // رفع مباشر سريع ومجاني بدون تسجيل عبر ImgBB API
+        const uploadRes = await fetch("https://api.imgbb.com/1/upload?key=2d2508ec22851cf549b0e2b96e053a48", {
+          method: "POST",
+          body: imgFormData
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadData.success) {
+          receiptUrl = uploadData.data.url;
+        }
+      } catch (uploadErr) {
+        console.warn("تعذر رفع الصورة سحابياً، سيتم تنبيه العميل بإرفاقها يدوياً:", uploadErr);
+        receiptUrl = "يرجى إرفاق الصورة في هذه المحادثة مباشرة";
+      }
+    }
+
+    orderData.receiptUrl = receiptUrl;
+
     // 1. حفظ الطلب أولاً في فايربيز
     await addDoc(ordersCol, orderData);
 
@@ -1432,6 +1517,7 @@ ${itemsSummary}
 🚚 *مصاريف الشحن:* ${shippingFee === 0 ? "مجاني" : `${shippingFee} جنيه`}
 💵 *الإجمالي النهائي:* ${total.toLocaleString("ar-EG")} جنيه
 💳 *طريقة الدفع:* ${paymentMethodsNames[paymentMethod]}
+🧾 *صورة إيصال الدفع:* ${receiptUrl}
 --------------------------------
 ✨ تم تسجيل الطلب بنجاح عبر الموقع`;
 
