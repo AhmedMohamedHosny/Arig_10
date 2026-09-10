@@ -63,7 +63,12 @@
             <path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"></path>
           </svg>
         </button>
-
+<button class="icon-btn wishlist-nav-btn" id="wishlistNavBtn" aria-label="المفضلة" title="المفضلة">
+          <svg viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.5; width: 20px; height: 20px;">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+          </svg>
+          <span class="cart-count" id="wishlistCount">0</span>
+        </button>
         <button class="cart-btn" id="cartBtn" aria-label="فتح السلة" data-ar-aria="فتح السلة" data-en-aria="Open cart">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 5h2l1.7 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L21 8H7"></path>
@@ -146,6 +151,7 @@
           <button class="filter-btn" data-category="women" data-ar="نسائي" data-en="Women">نسائي</button>
           <button class="filter-btn" data-category="unisex" data-ar="للجنسين" data-en="Unisex">للجنسين</button>
           <button class="filter-btn" data-category="bestseller" data-ar="الأكثر مبيعًا" data-en="Best Sellers">الأكثر مبيعًا</button>
+          
         </div>
 
         <div class="sort-wrapper">
@@ -291,19 +297,6 @@
       </div>
     </section>
 
-    <!-- BEST SELLERS -->
-    <section class="section best-section">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow" data-ar="الأكثر حبًا" data-en="MOST LOVED">الأكثر حبًا</p>
-          <h2 data-ar-html="الأكثر <em>مبيعًا</em>" data-en-html="Best <em>Sellers</em>">الأكثر <em>مبيعًا</em></h2>
-        </div>
-        <button class="text-link" id="viewBestSellers"><span data-ar="عرض الكل" data-en="View all">عرض الكل</span> <span>←</span></button>
-      </div>
-
-      <div class="products-grid best-grid" id="bestProductsGrid"></div>
-    </section>
-
     <!-- TESTIMONIALS -->
     <section class="section testimonials-section">
       <div class="section-heading centered">
@@ -418,9 +411,21 @@
         <div class="modal-rating" id="modalRating"></div>
         <p class="modal-description" id="modalDescription"></p>
 
-        <div class="notes" id="modalNotes"></div>
+<div class="notes" id="modalNotes"></div>
+
+        <!-- اختيار الحجم -->
+        <div class="size-selector-wrap">
+          <label class="size-title">اختر حجم العبوة:</label>
+          <div class="size-options" id="modalSizes">
+            <button type="button" class="size-btn" data-size="10">10 مل <span>(عينة)</span></button>
+            <button type="button" class="size-btn" data-size="30">30 مل</button>
+            <button type="button" class="size-btn active" data-size="50">50 مل</button>
+            <button type="button" class="size-btn" data-size="100">100 مل</button>
+          </div>
+        </div>
 
         <div class="modal-purchase">
+          
           <strong id="modalPrice"></strong>
           <div class="quantity-control">
             <button id="modalMinus">−</button>
