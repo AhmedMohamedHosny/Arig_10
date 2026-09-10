@@ -593,10 +593,10 @@
 
   <!-- فايربيز والمنطق البرمجي -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, onSnapshot, doc, updateDoc, 
-      setDoc, getDoc, addDoc
+      setDoc, getDoc, addDoc, deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -615,7 +615,7 @@
     const perfumesCol = collection(db, "perfumes");
     const settingsDoc = doc(db, "settings", "storeConfig");
 
-    // قائمة الـ 22 ثيماً ولوناً متداخلاً
+    // قائمة الـ 22 لون وثيم متداخل
     const STORE_THEMES = [
       { id: "emerald", name: "الزمردي الملكي (الأصلي)", gradient: "linear-gradient(135deg, #071914, #d4af37)" },
       { id: "obsidian", name: "الأسود الفاخر والذهب", gradient: "linear-gradient(135deg, #0a0a0a, #dfb743)" },
@@ -644,175 +644,95 @@
     let selectedThemeId = "emerald";
     let allOrders = [];
     let allPerfumes = [];
+    let currentBase64Image = "";
 
     function toast(msg) {
       const t = document.getElementById("toast");
+      if (!t) return;
       t.textContent = msg;
       t.classList.add("show");
       setTimeout(() => t.classList.remove("show"), 3000);
     }
 
-    // التنقل بين الأقسام من القائمة وإخفاء باقي الواجهة
+    // التنقل بين الأقسام وإخفاء الباقي
     window.openSection = function(secId) {
       document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
       document.getElementById(secId)?.classList.add("active");
-      document.getElementById("dropdownMenu").classList.remove("show");
+      document.getElementById("dropdownMenu")?.classList.remove("show");
     };
 
-    // زر القائمة ☰
-    document.getElementById("menuBtn").addEventListener("click", () => {
-      document.getElementById("dropdownMenu").classList.toggle("show");
+    document.getElementById("menuBtn")?.addEventListener("click", () => {
+      document.getElementById("dropdownMenu")?.classList.toggle("show");
     });
 
-    // توليد الـ 22 لون وثيم داخل المودال
-    const themesContainer = document.getElementById("themesContainer");
-    STORE_THEMES.forEach(th => {
-      const chip = document.createElement("div");
-      chip.className = `theme-chip ${th.id === selectedThemeId ? 'selected' : ''}`;
-      chip.dataset.theme = th.id;
-      chip.innerHTML = `
-        <div class="theme-preview-dot" style="background: ${th.gradient}"></div>
-        <span class="theme-name-text">${th.name}</span>
-      `;
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".theme-chip").forEach(c => c.classList.remove("selected"));
-        chip.classList.add("selected");
-        selectedThemeId = th.id;
+    // 1. ضغط الصورة المختارة من جهاز المشرف برمجياً
+    function compressImageFile(file, maxWidth = 700, quality = 0.8) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let w = img.width, h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+        };
       });
-      themesContainer.appendChild(chip);
-    });
-
-    // فتح مودال مظهر وحالة المتجر
-    document.getElementById("openThemeModalBtn").addEventListener("click", async () => {
-      document.getElementById("dropdownMenu").classList.remove("show");
-      const snap = await getDoc(settingsDoc);
-      if (snap.exists()) {
-        const d = snap.data();
-        document.getElementById("closeStoreCheckbox").checked = !!d.isClosed;
-        selectedThemeId = d.theme || "emerald";
-        
-        document.querySelectorAll(".theme-chip").forEach(c => {
-          c.classList.toggle("selected", c.dataset.theme === selectedThemeId);
-        });
-        updateStoreToggleUI(!!d.isClosed);
-      }
-      document.getElementById("themeModal").classList.add("open");
-    });
-
-    function updateStoreToggleUI(isClosed) {
-      const box = document.getElementById("storeToggleContainer");
-      const lbl = document.getElementById("storeStatusLabel");
-      const badge = document.getElementById("menuStatusBadge");
-      
-      if (isClosed) {
-        box.classList.remove("active-open");
-        lbl.textContent = "حالة المتجر: مغلق مؤقتاً (وضع الصيانة)";
-        lbl.style.color = "var(--danger)";
-        badge.textContent = "مغلق";
-        badge.style.color = "var(--danger)";
-      } else {
-        box.classList.add("active-open");
-        lbl.textContent = "حالة المتجر: يعمل ويستقبل الزوار";
-        lbl.style.color = "var(--success)";
-        badge.textContent = "يعمل";
-        badge.style.color = "var(--success)";
-      }
     }
 
-    document.getElementById("closeStoreCheckbox").addEventListener("change", (e) => {
-      updateStoreToggleUI(e.target.checked);
+    document.getElementById("pFileInput")?.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      currentBase64Image = await compressImageFile(file);
+      const previewImg = document.getElementById("previewImgEl");
+      const previewName = document.getElementById("previewNameEl");
+      if (previewImg) previewImg.src = currentBase64Image;
+      if (previewName) previewName.textContent = file.name;
+      const prompt = document.getElementById("uploadPromptText");
+      const container = document.getElementById("imagePreviewContainer");
+      if (prompt) prompt.style.display = "none";
+      if (container) container.style.display = "flex";
     });
 
-    // حفظ الثيم وحالة الإغلاق في Firebase
-    document.getElementById("saveThemeAndStatusBtn").addEventListener("click", async () => {
-      const isClosed = document.getElementById("closeStoreCheckbox").checked;
-      await setDoc(settingsDoc, { 
-        isClosed: isClosed, 
-        theme: selectedThemeId 
-      }, { merge: true });
-
-      document.getElementById("themeModal").classList.remove("open");
-      toast("تم تطبيق المظهر وحالة المتجر لجميع الزوار لحظياً! 🎨");
-    });
-
-    // 1. مراقبة الطلبات والأرباح
-    onSnapshot(ordersCol, (snapshot) => {
-      allOrders = [];
-      let totalRevenue = 0;
-      let newOrdersCount = 0;
-
-      snapshot.forEach(docSnap => {
-        const ord = { id: docSnap.id, ...docSnap.data() };
-        allOrders.push(ord);
-        totalRevenue += Number(ord.pricing?.total || 0);
-        if (ord.status === "new") newOrdersCount++;
-      });
-
-      document.getElementById("kpiTotalOrders").textContent = allOrders.length;
-      document.getElementById("kpiTotalRevenue").textContent = `${totalRevenue.toLocaleString("ar-EG")} ج`;
-      document.getElementById("kpiNewOrders").textContent = newOrdersCount;
-
-      renderOrdersTable();
-      renderAnalytics();
-    });
-
-    function renderOrdersTable() {
-      const tbody = document.getElementById("ordersTableBody");
-      if (allOrders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">لا توجد طلبات مسجلة حتى الآن.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = allOrders.map(o => {
-        const itemsText = (o.items || []).map(i => `${i.name} × ${i.quantity}`).join("<br>");
-        const isDone = o.status === "delivered";
-        return `
-          <tr>
-            <td><strong>${o.customer?.name || "بدون اسم"}</strong></td>
-            <td><a href="tel:${o.customer?.phone}" style="color:var(--gold); text-decoration:none;">${o.customer?.phone || ""}</a></td>
-            <td>${o.customer?.governorate || ""}</td>
-            <td style="font-size:11px;">${itemsText}</td>
-            <td>${o.paymentMethod === "cod" ? "عند الاستلام" : "إلكتروني"}</td>
-            <td><strong style="color:var(--gold);">${(o.pricing?.total || 0).toLocaleString("ar-EG")} ج</strong></td>
-            <td><span style="color:${isDone ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${isDone ? 'تم التسليم' : 'جديد'}</span></td>
-            <td>
-              ${!isDone ? `<button class="stock-btn" style="width:auto; padding:3px 8px; font-size:10px;" onclick="markDelivered('${o.id}')">✓ تأكيد التسليم</button>` : '—'}
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    window.markDelivered = async function(id) {
-      await updateDoc(doc(db, "orders", id), { status: "delivered" });
-      toast("تم تحويل الطلب إلى مكتمل! ✓");
-    };
-
-    // 2. مراقبة العطور والمخزون
+    // 2. مراقبة العطور والمخزون والتعديل
     onSnapshot(perfumesCol, (snapshot) => {
       allPerfumes = [];
-      snapshot.forEach(docSnap => {
-        allPerfumes.push({ id: docSnap.id, ...docSnap.data() });
-      });
-
-      document.getElementById("kpiPerfumesCount").textContent = allPerfumes.length;
+      snapshot.forEach(docSnap => allPerfumes.push({ id: docSnap.id, ...docSnap.data() }));
+      const countEl = document.getElementById("kpiPerfumesCount");
+      if (countEl) countEl.textContent = allPerfumes.length;
       renderStockGrid();
       renderAnalytics();
     });
 
     function renderStockGrid() {
       const grid = document.getElementById("perfumesStockList");
+      if (!grid) return;
+
       if (allPerfumes.length === 0) {
         grid.innerHTML = `<div style="color:var(--text-muted); font-size:12px;">لا توجد عطور، يمكنك مزامنة العطور الافتراضية من القائمة ☰.</div>`;
         return;
       }
 
       grid.innerHTML = allPerfumes.map(p => {
-        const currentStock = p.stock !== undefined ? p.stock : 20;
+        const stock = p.stock !== undefined ? p.stock : 20;
+        let badgeHtml = '<span class="stock-badge-pill badge-ok">متوفر بالمخزون</span>';
+        if (stock <= 0) badgeHtml = '<span class="stock-badge-pill badge-out">نفد المخزون ❌</span>';
+        else if (stock <= 5) badgeHtml = '<span class="stock-badge-pill badge-low">قارب على النفاد ⚠️</span>';
+
         const hasOld = p.oldPrice && Number(p.oldPrice) > Number(p.price);
 
         return `
-          <div class="stock-card">
+          <div class="stock-card" style="${stock <= 0 ? 'opacity:0.85; border-color:var(--danger);' : ''}">
             <div class="stock-card-top">
               <img src="${p.image || 'image/S1.png'}" class="stock-card-img" alt="${p.name}">
               <div class="stock-card-info">
@@ -821,16 +741,17 @@
                   ${hasOld ? `<span style="text-decoration:line-through; color:var(--danger); font-size:10px; margin-left:4px;">${p.oldPrice} ج</span>` : ''}
                   ${p.price} جنيه
                 </div>
-                <span style="font-size:10px; color:${currentStock > 0 ? 'var(--success)' : 'var(--danger)'};">
-                  ${currentStock > 0 ? `متوفر بالمخزون: ${currentStock}` : 'نفدت الكمية!'}
-                </span>
+                <div>${badgeHtml} (${stock} زجاجة)</div>
+              </div>
+              <div>
+                <button type="button" class="btn-card-edit" onclick="startEditPerfume('${p.id}')">✏️ تعديل</button>
               </div>
             </div>
             <div class="stock-control-bar">
               <span style="font-size:11px; color:var(--text-muted);">تعديل وفرة المحل:</span>
               <div class="stock-counter">
                 <button class="stock-btn" onclick="updateStock('${p.id}', -1)" title="بيع واحدة في المحل">−</button>
-                <span class="stock-num">${currentStock}</span>
+                <span class="stock-num">${stock}</span>
                 <button class="stock-btn" onclick="updateStock('${p.id}', 1)" title="إضافة للمخزون">+</button>
               </div>
             </div>
@@ -842,39 +763,270 @@
     window.updateStock = async function(id, delta) {
       const p = allPerfumes.find(x => x.id === id);
       if (!p) return;
-      const current = p.stock !== undefined ? p.stock : 20;
-      const newStock = Math.max(0, current + delta);
+      const newStock = Math.max(0, (p.stock || 0) + delta);
       await updateDoc(doc(db, "perfumes", id), { stock: newStock });
-      toast(delta < 0 ? "تم خصم زجاجة من المخزون (بيع محل)" : "تمت إضافة زجاجة للمخزون");
+      toast(delta < 0 ? "تم خصم زجاجة من المخزون" : "تمت إضافة زجاجة للمخزون");
     };
 
-    // إضافة عطر
-    document.getElementById("addPerfumeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("pName").value.trim();
-      const category = document.getElementById("pCategory").value;
-      const price = Number(document.getElementById("pPrice").value);
-      const oldPrice = document.getElementById("pOldPrice").value ? Number(document.getElementById("pOldPrice").value) : null;
-      const stock = Number(document.getElementById("pStock").value);
-      const image = document.getElementById("pImage").value.trim() || "image/S1.png";
-      const desc = document.getElementById("pDesc").value.trim();
+    // تعبئة نموذج التعديل السريع
+    window.startEditPerfume = function(id) {
+      const p = allPerfumes.find(x => x.id === id);
+      if (!p) return;
 
-      await addDoc(perfumesCol, {
-        name, category, price, oldPrice, stock, image, desc,
+      document.getElementById("pEditId").value = p.id;
+      document.getElementById("pName").value = p.name || "";
+      document.getElementById("pCategory").value = p.category || "men";
+      document.getElementById("pPrice").value = p.price || "";
+      document.getElementById("pOldPrice").value = p.oldPrice || "";
+      document.getElementById("pStock").value = p.stock !== undefined ? p.stock : 25;
+      document.getElementById("pDesc").value = p.desc || "";
+
+      if (p.image) {
+        currentBase64Image = p.image;
+        const pImg = document.getElementById("previewImgEl");
+        const pName = document.getElementById("previewNameEl");
+        if (pImg) pImg.src = p.image;
+        if (pName) pName.textContent = "الصورة الحالية";
+        const prompt = document.getElementById("uploadPromptText");
+        const container = document.getElementById("imagePreviewContainer");
+        if (prompt) prompt.style.display = "none";
+        if (container) container.style.display = "flex";
+      }
+
+      const submitBtn = document.getElementById("submitPerfumeBtn");
+      const cancelBtn = document.getElementById("cancelEditBtn");
+      if (submitBtn) submitBtn.textContent = "حفظ وتحديث العطر 💾";
+      if (cancelBtn) cancelBtn.style.display = "inline-block";
+      window.scrollTo({ top: 120, behavior: "smooth" });
+    };
+
+    document.getElementById("cancelEditBtn")?.addEventListener("click", () => {
+      document.getElementById("addPerfumeForm")?.reset();
+      document.getElementById("pEditId").value = "";
+      currentBase64Image = "";
+      const prompt = document.getElementById("uploadPromptText");
+      const container = document.getElementById("imagePreviewContainer");
+      if (prompt) prompt.style.display = "block";
+      if (container) container.style.display = "none";
+      const submitBtn = document.getElementById("submitPerfumeBtn");
+      const cancelBtn = document.getElementById("cancelEditBtn");
+      if (submitBtn) submitBtn.textContent = "حفظ العطر ونشره بالمتجر";
+      if (cancelBtn) cancelBtn.style.display = "none";
+    });
+
+    // إضافة أو تحديث عطر
+    document.getElementById("addPerfumeForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const editId = document.getElementById("pEditId").value;
+      const price = Number(document.getElementById("pPrice").value);
+
+      const perfumeData = {
+        name: document.getElementById("pName").value.trim(),
+        category: document.getElementById("pCategory").value,
+        price: price,
+        oldPrice: document.getElementById("pOldPrice").value ? Number(document.getElementById("pOldPrice").value) : null,
+        stock: Number(document.getElementById("pStock").value),
+        desc: document.getElementById("pDesc").value.trim(),
         sizes: {
           10: Math.round((price * 0.3) / 10) * 10,
           30: Math.round((price * 0.65) / 10) * 10,
           50: price,
           100: Math.round((price * 1.7) / 10) * 10
-        },
-        createdAt: new Date()
-      });
+        }
+      };
 
-      toast("تم حفظ العطر بالمتجر وتعيين المخزون!");
-      e.target.reset();
+      if (currentBase64Image) {
+        perfumeData.image = currentBase64Image;
+      }
+
+      if (editId) {
+        await updateDoc(doc(db, "perfumes", editId), perfumeData);
+        toast("تم تحديث بيانات العطر بنجاح! ✓");
+      } else {
+        if (!perfumeData.image) perfumeData.image = "image/S1.png";
+        perfumeData.createdAt = new Date();
+        await addDoc(perfumesCol, perfumeData);
+        toast("تم إضافة العطر ونشره بالمتجر! 💎");
+      }
+
+      document.getElementById("cancelEditBtn")?.click();
     });
 
-    // 3. التحليلات
+    // 3. مراقبة الطلبات والأرباح
+    onSnapshot(ordersCol, (snapshot) => {
+      allOrders = [];
+      let totalRevenue = 0, newOrdersCount = 0;
+
+      snapshot.forEach(docSnap => {
+        const ord = { id: docSnap.id, ...docSnap.data() };
+        allOrders.push(ord);
+        totalRevenue += Number(ord.pricing?.total || 0);
+        if (ord.status === "new") newOrdersCount++;
+      });
+
+      const totalOrdEl = document.getElementById("kpiTotalOrders");
+      const revEl = document.getElementById("kpiTotalRevenue");
+      const newOrdEl = document.getElementById("kpiNewOrders");
+      if (totalOrdEl) totalOrdEl.textContent = allOrders.length;
+      if (revEl) revEl.textContent = `${totalRevenue.toLocaleString("ar-EG")} ج`;
+      if (newOrdEl) newOrdEl.textContent = newOrdersCount;
+
+      renderOrdersTable();
+      renderAnalytics();
+    });
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById("ordersTableBody");
+      if (!tbody) return;
+
+      if (allOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">لا توجد طلبات مسجلة.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = allOrders.map(o => {
+        const itemsText = (o.items || []).map(i => `${i.name} × ${i.quantity}`).join("<br>");
+        const phone = o.customer?.phone || "";
+        const waLink = `https://wa.me/20${phone.startsWith("0") ? phone.slice(1) : phone}?text=${encodeURIComponent(`أهلاً بك، بخصوص طلبك من عطور سراقة بقيمة ${o.pricing?.total} ج`)}`;
+
+        return `
+          <tr>
+            <td>
+              <strong>${o.customer?.name || "بدون اسم"}</strong>
+              <div>
+                <button type="button" class="btn-action-copy" onclick="copyShippingLabel('${o.id}')">📋 نسخ بوليصة الشحن</button>
+              </div>
+            </td>
+            <td>
+              <a href="tel:${phone}" style="color:var(--gold); text-decoration:none; display:block; margin-bottom:4px;">${phone}</a>
+              <a href="${waLink}" target="_blank" class="btn-action-wa">💬 واتساب</a>
+            </td>
+            <td>${o.customer?.governorate || ""}<br><span style="font-size:10px; color:var(--text-muted);">${o.customer?.address || ""}</span></td>
+            <td style="font-size:11px;">${itemsText}</td>
+            <td>${o.paymentMethod === "cod" ? "عند الاستلام" : "إلكتروني"}</td>
+            <td><strong style="color:var(--gold);">${(o.pricing?.total || 0).toLocaleString("ar-EG")} ج</strong></td>
+            <td><span style="color:${o.status === 'delivered' ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${o.status === 'delivered' ? 'تم التسليم' : 'جديد'}</span></td>
+            <td>
+              ${o.status !== 'delivered' ? `<button class="stock-btn" style="width:auto; padding:3px 8px; font-size:10px;" onclick="markDelivered('${o.id}')">✓ تأكيد التسليم</button>` : '—'}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    window.copyShippingLabel = function(id) {
+      const o = allOrders.find(x => x.id === id);
+      if (!o) return;
+      const itemsList = (o.items || []).map(i => `${i.name} (عدد ${i.quantity})`).join(" + ");
+      const text = `💎 بوليصة شحن عطور سراقة — SURAKA
+العميل: ${o.customer?.name}
+المحافظة: ${o.customer?.governorate}
+العنوان: ${o.customer?.address}
+الهاتف: ${o.customer?.phone}
+الهاتف البديل: ${o.customer?.secondaryPhone || "لا يوجد"}
+المبلغ المطلوب: ${o.pricing?.total} جنيه
+المنتجات: ${itemsList}`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        toast("تم نسخ بوليصة الشحن بنجاح! 📋");
+      });
+    };
+
+    window.markDelivered = async function(id) {
+      await updateDoc(doc(db, "orders", id), { status: "delivered" });
+      toast("تم تحويل حالة الطلب إلى مكتمل! ✓");
+    };
+
+    // 4. تصدير تقرير الإكسيل
+    document.getElementById("exportExcelBtn")?.addEventListener("click", () => {
+      if (allOrders.length === 0) {
+        alert("لا توجد طلبات مسجلة بعد لتصديرها!");
+        return;
+      }
+
+      let csvContent = "\uFEFFاسم العميل,رقم الهاتف,الهاتف البديل,المحافظة,العنوان,المنتجات,الإجمالي (ج),طريقة الدفع,الحالة\n";
+      allOrders.forEach(o => {
+        const items = (o.items || []).map(i => `${i.name} × ${i.quantity}`).join(" | ");
+        csvContent += `"${o.customer?.name || ''}","${o.customer?.phone || ''}","${o.customer?.secondaryPhone || ''}","${o.customer?.governorate || ''}","${o.customer?.address || ''}","${items}","${o.pricing?.total || 0}","${o.paymentMethod || ''}","${o.status || ''}"\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `مبيعات_سراقة_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      toast("تم تنزيل شيت الإكسيل بنجاح! 📊");
+    });
+
+    // 5. نافذة مظهر وحالة المتجر والـ 22 ثيماً
+    const themesContainer = document.getElementById("themesContainer");
+    if (themesContainer) {
+      STORE_THEMES.forEach(th => {
+        const chip = document.createElement("div");
+        chip.className = `theme-chip ${th.id === selectedThemeId ? 'selected' : ''}`;
+        chip.dataset.theme = th.id;
+        chip.innerHTML = `
+          <div class="theme-preview-dot" style="background: ${th.gradient}"></div>
+          <span class="theme-name-text">${th.name}</span>
+        `;
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".theme-chip").forEach(c => c.classList.remove("selected"));
+          chip.classList.add("selected");
+          selectedThemeId = th.id;
+        });
+        themesContainer.appendChild(chip);
+      });
+    }
+
+    document.getElementById("openThemeModalBtn")?.addEventListener("click", async () => {
+      document.getElementById("dropdownMenu")?.classList.remove("show");
+      const snap = await getDoc(settingsDoc);
+      if (snap.exists()) {
+        const d = snap.data();
+        const chk = document.getElementById("closeStoreCheckbox");
+        if (chk) chk.checked = !!d.isClosed;
+        selectedThemeId = d.theme || "emerald";
+
+        document.querySelectorAll(".theme-chip").forEach(c => {
+          c.classList.toggle("selected", c.dataset.theme === selectedThemeId);
+        });
+        updateStoreToggleUI(!!d.isClosed);
+      }
+      document.getElementById("themeModal")?.classList.add("open");
+    });
+
+    function updateStoreToggleUI(isClosed) {
+      const box = document.getElementById("storeToggleContainer");
+      const lbl = document.getElementById("storeStatusLabel");
+      const badge = document.getElementById("menuStatusBadge");
+      
+      if (isClosed) {
+        box?.classList.remove("active-open");
+        if (lbl) { lbl.textContent = "حالة المتجر: مغلق مؤقتاً (وضع الصيانة)"; lbl.style.color = "var(--danger)"; }
+        if (badge) { badge.textContent = "مغلق"; badge.style.color = "var(--danger)"; }
+      } else {
+        box?.classList.add("active-open");
+        if (lbl) { lbl.textContent = "حالة المتجر: يعمل ويستقبل الزوار"; lbl.style.color = "var(--success)"; }
+        if (badge) { badge.textContent = "يعمل"; badge.style.color = "var(--success)"; }
+      }
+    }
+
+    document.getElementById("closeStoreCheckbox")?.addEventListener("change", (e) => {
+      updateStoreToggleUI(e.target.checked);
+    });
+
+    document.getElementById("saveThemeAndStatusBtn")?.addEventListener("click", async () => {
+      const isClosed = document.getElementById("closeStoreCheckbox").checked;
+      await setDoc(settingsDoc, { 
+        isClosed: isClosed, 
+        theme: selectedThemeId 
+      }, { merge: true });
+
+      document.getElementById("themeModal")?.classList.remove("open");
+      toast("تم حفظ وتطبيق المظهر وحالة المتجر لحظياً! 🎨");
+    });
+
+    // 6. التحليلات
     function renderAnalytics() {
       const salesMap = {};
       allOrders.forEach(o => {
@@ -896,7 +1048,7 @@
       }
 
       tbody.innerHTML = sorted.map(name => {
-        const prod = allPerfumes.find(p => p.name.includes(name));
+        const prod = allPerfumes.find(p => p.name && p.name.includes(name));
         return `
           <tr>
             <td><strong>${name}</strong></td>
@@ -908,17 +1060,8 @@
       }).join("");
     }
 
-    // 4. إدارة العروض
-    document.getElementById("offerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const bannerText = document.getElementById("offerBannerText").value.trim();
-      const status = document.getElementById("offerStatus").value;
-      await setDoc(settingsDoc, { activeOffer: bannerText, offerActive: status === "active" }, { merge: true });
-      toast("تم تحديث العرض بالمتجر بنجاح! 🔥");
-    });
-
-    // 5. مزامنة العطور الافتراضية
-    document.getElementById("syncDefaultsBtn").addEventListener("click", async () => {
+    // 7. مزامنة عطور الموقع الافتراضية
+    document.getElementById("syncDefaultsBtn")?.addEventListener("click", async () => {
       if (!confirm("هل تريد رفع تشكيلة سراقة الافتراضية كاملة إلى Firebase الآن؟")) return;
       const defs = [
         { name: "سراقة نوار", category: "men", price: 1290, oldPrice: 1590, stock: 30, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85" },
@@ -938,7 +1081,7 @@
         });
       }
       toast("تمت مزامنة العطور الافتراضية بنجاح!");
-      document.getElementById("dropdownMenu").classList.remove("show");
+      document.getElementById("dropdownMenu")?.classList.remove("show");
     });
   </script>
 </body>
