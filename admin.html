@@ -1211,6 +1211,206 @@
         transition-duration: 0.01ms !important;
       }
     }
+    /* =========================
+       LOGO & HAMBURGER MENU
+    ========================== */
+    .brand-logo-img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(212,175,55,0.4));
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hamburger-btn {
+      width: 44px;
+      height: 44px;
+      background: rgba(18,56,46,0.8);
+      border: 1px solid var(--gold-border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .hamburger-btn:hover {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .hamburger-btn span {
+      width: 20px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* القائمة المنسدلة للتحكم في المتجر */
+    .settings-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(340px, 85vw);
+      height: 100vh;
+      background: #09201a;
+      border-right: 1px solid var(--gold-border);
+      box-shadow: 20px 0 60px rgba(0,0,0,0.6);
+      z-index: 200;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      padding: 30px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .settings-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gold-border);
+      padding-bottom: 14px;
+    }
+
+    .drawer-title {
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .drawer-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .setting-label {
+      color: var(--text-light);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .switch-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(18,56,46,0.6);
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--gold-border);
+    }
+
+    .toggle-checkbox {
+      width: 44px;
+      height: 22px;
+      appearance: none;
+      background: #333;
+      border-radius: 20px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.3s;
+    }
+
+    .toggle-checkbox:checked {
+      background: var(--danger);
+    }
+
+    .toggle-checkbox::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      background: #fff;
+      transition: transform 0.3s;
+    }
+
+    .toggle-checkbox:checked::before {
+      transform: translateX(22px);
+    }
+
+    .btn-sync-default {
+      background: rgba(212,175,55,0.15);
+      border: 1px dashed var(--gold);
+      color: var(--gold);
+      padding: 11px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-sync-default:hover {
+      background: var(--gold);
+      color: #0a221c;
+    }
+
+    /* =========================
+       PRICING & SIZES UI
+    ========================== */
+    .pricing-box {
+      grid-column: 1 / -1;
+      background: rgba(18,56,46,0.45);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pricing-title {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(212,175,55,0.15);
+      padding-bottom: 8px;
+    }
+
+    .sizes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .sizes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .old-price-line {
+      text-decoration: line-through;
+      color: #e74c3c !important;
+      font-size: 11px !important;
+      margin-left: 6px;
+    }
   </style>
 </head>
 
@@ -1220,20 +1420,65 @@
        PREMIUM HEADER
   ========================== -->
 
+<!-- القائمة الجانبية لإعدادات المتجر -->
+  <div class="settings-drawer" id="settingsDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">⚙️ إعدادات المتجر المتقدمة</div>
+      <button type="button" class="drawer-close" id="closeDrawerBtn">&times;</button>
+    </div>
+
+    <!-- حالة إغلاق/فتح الموقع -->
+    <div class="setting-item">
+      <div class="switch-wrap">
+        <span class="setting-label">وضع الصيانة (إغلاق المتجر)</span>
+        <input type="checkbox" id="storeCloseToggle" class="toggle-checkbox">
+      </div>
+      <span style="font-size: 10px; color: var(--text-muted);">عند التفعيل، تظهر رسالة إغلاق مؤقت للعملاء فور دخول الموقع.</span>
+    </div>
+
+    <!-- تخصيص ألوان وثيم المتجر -->
+    <div class="setting-item">
+      <label class="setting-label">ألوان وهوية المتجر الرئيسية:</label>
+      <select id="storeThemeSelect" style="background: rgba(18,56,46,0.9); border: 1px solid var(--gold-border); color: #fff; padding: 8px; border-radius: 5px; font-size: 11px;">
+        <option value="emerald">الزمردي الملكي الأصلي (Emerald)</option>
+        <option value="obsidian">الأسود الفاخر (Midnight Obsidian)</option>
+        <option value="sapphire">الكحلي الأندلسي (Deep Royal Navy)</option>
+      </select>
+    </div>
+
+    <!-- زر مزامنة العطور الأساسية لفايربيز -->
+    <div class="setting-item" style="margin-top: 10px;">
+      <button type="button" class="btn-sync-default" id="btnSyncDefaults">
+        📥 رفع ومزامنة عطور الموقع الأساسية إلى Firebase
+      </button>
+      <span style="font-size: 9.5px; color: var(--text-muted); line-height: 1.5;">يرفع عطور الموقع الافتراضية (نوار، إيلان، عود، فيلفيت...) لتظهر في الجدول وتتمكن من تعديلها أو حذفها بنقرة واحدة.</span>
+    </div>
+  </div>
+
   <header class="admin-header">
     <div class="brand-area">
-      <div class="brand-emblem" aria-hidden="true">✦</div>
+      <!-- لوجو سراقة بدلاً من النجمة القديمة -->
+      <img src="image/logo.png" alt="SURAKA Logo" class="brand-logo-img">
 
       <div class="brand-copy">
-        <div class="brand-title">✨ سراقة — إدارة العطور</div>
-        <div class="brand-subtitle">SURAKA · LUXURY FRAGRANCES</div>
+        <div class="brand-title">سراقة — إدارة العطور</div>
+        <div class="brand-subtitle">SURAKA · LUXURY ADMIN</div>
       </div>
     </div>
 
-    <a href="index.html" class="btn-store">
-      العودة للمتجر
-      <span>➔</span>
-    </a>
+    <div class="header-actions">
+      <a href="index.html" class="btn-store">
+        العودة للمتجر
+        <span>➔</span>
+      </a>
+
+      <!-- زر الثلاث شُرط -->
+      <button type="button" class="hamburger-btn" id="openDrawerBtn" title="خيارات وإعدادات المتجر">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </header>
 
 
@@ -1329,20 +1574,42 @@
           </div>
 
 
-          <!-- Price -->
-          <div class="form-group">
-            <label for="pPrice">
-              السعر (EGP) <span class="required-mark">*</span>
-            </label>
+<!-- التسعير المتقدم وتحديد سعر كل عبوة وقبل/بعد -->
+          <div class="pricing-box">
+            <div class="pricing-title">💎 تسعير العطور والأحجام (EGP)</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="form-group">
+                <label for="pPrice">السعر الحالي (أساس عبوة 50 مل) <span class="required-mark">*</span></label>
+                <input type="number" id="pPrice" placeholder="مثال: 1290" min="0" required>
+              </div>
 
-            <input
-              type="number"
-              id="pPrice"
-              placeholder="1500"
-              min="0"
-              step="1"
-              required
-            >
+              <div class="form-group">
+                <label for="pOldPrice">السعر القديم قبل الخصم (اختياري - سيظهر مشطوباً)</label>
+                <input type="number" id="pOldPrice" placeholder="مثال: 1600" min="0">
+              </div>
+            </div>
+
+            <!-- أسعار الأحجام الأربعة المخصصة -->
+            <label style="font-size: 11px; color: var(--gold);">تخصيص أسعار الأحجام (تُملأ تلقائياً عند إدخال السعر الأساسي):</label>
+            <div class="sizes-grid">
+              <div class="form-group">
+                <label for="pSize10">10 مل (عينة):</label>
+                <input type="number" id="pSize10" placeholder="تلقائي" min="0">
+              </div>
+              <div class="form-group">
+                <label for="pSize30">30 مل:</label>
+                <input type="number" id="pSize30" placeholder="تلقائي" min="0">
+              </div>
+              <div class="form-group">
+                <label for="pSize50">50 مل:</label>
+                <input type="number" id="pSize50" placeholder="تلقائي" min="0">
+              </div>
+              <div class="form-group">
+                <label for="pSize100">100 مل:</label>
+                <input type="number" id="pSize100" placeholder="تلقائي" min="0">
+              </div>
+            </div>
           </div>
 
 
@@ -1549,7 +1816,7 @@
 
   <script type="module">
 
-    import { initializeApp }
+import { initializeApp }
       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
     import {
@@ -1558,13 +1825,10 @@
       addDoc,
       getDocs,
       deleteDoc,
+      setDoc,
+      getDoc,
       doc
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-
-    /* =========================================
-       EXISTING FIREBASE CONFIGURATION
-    ========================================== */
 
     const firebaseConfig = {
       apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
@@ -1576,504 +1840,317 @@
       measurementId: "G-PTVR815MCF"
     };
 
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const perfumesCol = collection(db, "perfumes");
+    const settingsDocRef = doc(db, "settings", "storeConfig");
 
-
-    /* =========================================
-       EXISTING IMAGE DATA
-    ========================================== */
+    // العطور الافتراضية الجاهزة للمزامنة بضغطة واحدة
+    const DEFAULT_PRODUCTS = [
+      { name: "سراقة نوار", category: "men", price: 1290, oldPrice: 1550, desc: "تركيبة عميقة وأنيقة من العود والعنبر والأخشاب الدافئة.", image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة إيلان", category: "unisex", price: 1450, oldPrice: 1700, desc: "حمضيات منعشة تلتقي بالمسك الأنيق لعطر عصري مميز.", image: "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة عود", category: "men", price: 1690, oldPrice: 1990, desc: "عود شرقي غني متوازن مع الزعفران والجلد وخشب الصندل الناعم.", image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة فيلفيت", category: "women", price: 1390, oldPrice: 1600, desc: "لمسة زهرية ناعمة ملفوفة بالفانيليا والورد وخشب الصندل الكريمي.", image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة أورا", category: "unisex", price: 1190, oldPrice: 1400, desc: "زهور بيضاء نقية ومسك يخلقان هالة أنيقة بلا عناء.", image: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة رويال", category: "men", price: 1850, oldPrice: 2200, desc: "مزيج ملكي قوي من التوابل والجلد والعنبر والأخشاب النفيسة.", image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة بلوم", category: "women", price: 1250, oldPrice: 1450, desc: "باقة زاهية من الأزهار المتفتحة بلمسة فاكهية رقيقة.", image: "https://images.unsplash.com/photo-1563170351-be82bc888aa4?auto=format&fit=crop&w=900&q=85" },
+      { name: "سراقة إنتنس", category: "unisex", price: 1590, oldPrice: 1850, desc: "عطر مسائي جذاب يقوم على البخور والفانيليا والأخشاب الداكنة.", image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=900&q=85" }
+    ];
 
     let currentImageData = "image/S1.jpg";
-
     let pendingDeleteId = null;
 
-
-    /* =========================================
-       DOM REFERENCES
-    ========================================== */
-
+    // DOM REFERENCES
     const perfumeForm = document.getElementById("perfumeForm");
-
     const pName = document.getElementById("pName");
     const pPrice = document.getElementById("pPrice");
+    const pOldPrice = document.getElementById("pOldPrice");
+    const pSize10 = document.getElementById("pSize10");
+    const pSize30 = document.getElementById("pSize30");
+    const pSize50 = document.getElementById("pSize50");
+    const pSize100 = document.getElementById("pSize100");
     const pCategory = document.getElementById("pCategory");
     const pFileInput = document.getElementById("pFileInput");
     const uploadLabel = document.getElementById("uploadLabel");
     const pDesc = document.getElementById("pDesc");
     const saveBtn = document.getElementById("saveBtn");
-
-    const uploadBox = document.getElementById("uploadBox");
-    const uploadDefaultContent = document.getElementById("uploadDefaultContent");
-    const uploadPreview = document.getElementById("uploadPreview");
-    const previewImage = document.getElementById("previewImage");
-    const previewFileName = document.getElementById("previewFileName");
-
-    const deleteModal = document.getElementById("deleteModal");
-    const cancelDelete = document.getElementById("cancelDelete");
-    const confirmDelete = document.getElementById("confirmDelete");
-
     const toastContainer = document.getElementById("toastContainer");
 
+    // Drawer & Store Settings
+    const settingsDrawer = document.getElementById("settingsDrawer");
+    const openDrawerBtn = document.getElementById("openDrawerBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const storeCloseToggle = document.getElementById("storeCloseToggle");
+    const storeThemeSelect = document.getElementById("storeThemeSelect");
+    const btnSyncDefaults = document.getElementById("btnSyncDefaults");
 
-    /* =========================================
-       TOAST SYSTEM
-    ========================================== */
+    // فتح وإغلاق القائمة الجانبية (الثلاث شُرط)
+    openDrawerBtn.addEventListener("click", () => settingsDrawer.classList.add("open"));
+    closeDrawerBtn.addEventListener("click", () => settingsDrawer.classList.remove("open"));
+
+    // التعبئة التلقائية لأسعار الأحجام عند كتابة السعر الأساسي
+    pPrice.addEventListener("input", () => {
+      const base = Number(pPrice.value);
+      if (base > 0) {
+        pSize50.value = base;
+        pSize10.value = Math.round((base * 0.3) / 10) * 10;
+        pSize30.value = Math.round((base * 0.65) / 10) * 10;
+        pSize100.value = Math.round((base * 1.7) / 10) * 10;
+      }
+    });
 
     function showToast(message, type = "success") {
-
       const toast = document.createElement("div");
-
       toast.className = `toast ${type === "error" ? "error" : ""}`;
-
       toast.innerHTML = `
-        <div class="toast-icon">
-          ${type === "error" ? "!" : "✓"}
-        </div>
-
-        <div class="toast-text">
-          ${message}
-        </div>
+        <div class="toast-icon">${type === "error" ? "!" : "✓"}</div>
+        <div class="toast-text">${message}</div>
       `;
-
       toastContainer.appendChild(toast);
-
       setTimeout(() => {
         toast.classList.add("hide");
-
-        setTimeout(() => {
-          toast.remove();
-        }, 250);
-
+        setTimeout(() => toast.remove(), 250);
       }, 3200);
     }
 
-
-    /* =========================================
-       IMAGE UPLOAD + PREVIEW
-    ========================================== */
-
+    // صورة العطر
     pFileInput.addEventListener("change", (e) => {
-
       const file = e.target.files[0];
-
       if (!file) return;
-
       uploadLabel.innerText = "✅ تم اختيار: " + file.name;
-
       const reader = new FileReader();
-
-      reader.onload = function(evt) {
-
+      reader.onload = (evt) => {
         currentImageData = evt.target.result;
-
-        previewImage.src = currentImageData;
-        previewFileName.innerText = file.name;
-
-        uploadDefaultContent.style.display = "none";
-        uploadPreview.classList.add("visible");
-
+        document.getElementById("previewImage").src = currentImageData;
+        document.getElementById("previewFileName").innerText = file.name;
+        document.getElementById("uploadDefaultContent").style.display = "none";
+        document.getElementById("uploadPreview").classList.add("visible");
       };
-
       reader.readAsDataURL(file);
     });
 
-
-    /* =========================================
-       LOAD PERFUMES
-    ========================================== */
-
+    // جلب وعرض العطور المسجلة في السحابة
     async function loadPerfumes() {
-
       const grid = document.getElementById("perfumesList");
-
-      grid.innerHTML = `
-        <div class="state-message" style="grid-column: 1 / -1;">
-          <div class="loading-spinner"></div>
-
-          <div class="state-title">
-            جاري تحميل العطور من السحابة...
-          </div>
-        </div>
-      `;
+      grid.innerHTML = `<div class="state-message" style="grid-column: 1 / -1;"><div class="loading-spinner"></div><div class="state-title">جاري تحميل العطور من السحابة...</div></div>`;
 
       try {
-
         const snapshot = await getDocs(perfumesCol);
-
         grid.innerHTML = "";
-
-        let men = 0;
-        let women = 0;
-        let unisex = 0;
-        let total = 0;
-
+        let men = 0, women = 0, unisex = 0, total = 0;
 
         snapshot.forEach((docSnap) => {
-
           total++;
-
           const p = docSnap.data();
           const pId = docSnap.id;
-
 
           if (p.category === "men") men++;
           if (p.category === "women") women++;
           if (p.category === "unisex") unisex++;
 
-
-          const categoryLabel =
-            p.category === "men"
-              ? "رجالي"
-              : p.category === "women"
-                ? "نسائي"
-                : "للجنسين";
-
-
+          const categoryLabel = p.category === "men" ? "رجالي" : p.category === "women" ? "نسائي" : "للجنسين";
           const card = document.createElement("div");
-
           card.className = "perfume-card";
 
+          const hasOld = p.oldPrice && Number(p.oldPrice) > Number(p.price);
 
           card.innerHTML = `
-
             <div class="perfume-image-wrap">
-
-              <img
-                src="${p.image || "image/S1.jpg"}"
-                alt="${escapeHtml(p.name || "عطر سراقة")}"
-                loading="lazy"
-              >
-
-              <span class="perfume-category">
-                ${categoryLabel}
-              </span>
-
+              <img src="${p.image || "image/S1.jpg"}" alt="${escapeHtml(p.name)}" loading="lazy">
+              <span class="perfume-category">${categoryLabel}</span>
             </div>
-
-
             <div class="perfume-info">
-
-              <div class="perfume-label">
-                عطر من مجموعة سراقة
-              </div>
-
-              <div class="perfume-name">
-                ${escapeHtml(p.name || "بدون اسم")}
-              </div>
-
+              <div class="perfume-label">عطر من مجموعة سراقة</div>
+              <div class="perfume-name">${escapeHtml(p.name || "بدون اسم")}</div>
               <div class="perfume-price">
-                ${Number(p.price || 0).toLocaleString("en-US")}
-                <span>EGP</span>
+                ${hasOld ? `<span class="old-price-line">${Number(p.oldPrice).toLocaleString("ar-EG")} ج</span>` : ""}
+                <strong>${Number(p.price || 0).toLocaleString("ar-EG")}</strong> <span>جنيه</span>
               </div>
-
-              <button
-                type="button"
-                class="btn-delete"
-                data-id="${pId}"
-              >
-                حذف العطر
-              </button>
-
+              <button type="button" class="btn-delete" data-id="${pId}">حذف العطر</button>
             </div>
-
           `;
-
-
           grid.appendChild(card);
-
         });
-
 
         document.getElementById("countTotal").innerText = total;
         document.getElementById("countMen").innerText = men;
         document.getElementById("countWomen").innerText = women;
         document.getElementById("countUnisex").innerText = unisex;
-
         document.getElementById("collectionCount").innerText = total;
 
-
         if (total === 0) {
-
-          grid.innerHTML = `
-
-            <div class="state-message" style="grid-column: 1 / -1;">
-
-              <div class="state-icon">
-                ✦
-              </div>
-
-              <div class="state-title">
-                لا توجد عطور مضافة حالياً
-              </div>
-
-              <div class="state-description">
-                أضف أول عطر إلى مجموعة سراقة وابدأ ببناء تشكيلتك الفاخرة.
-              </div>
-
-            </div>
-
-          `;
-
+          grid.innerHTML = `<div class="state-message" style="grid-column: 1 / -1;"><div class="state-icon">✦</div><div class="state-title">لا توجد عطور حالياً</div><div class="state-description">اضغط على زر (الثلاث شُرط) بالأعلى لمزامنة عطور المتجر الافتراضية دفعة واحدة.</div></div>`;
         }
 
-
         document.querySelectorAll(".btn-delete").forEach(btn => {
-
-          btn.addEventListener("click", () => {
-
-            openDeleteModal(btn.dataset.id);
-
-          });
-
+          btn.addEventListener("click", () => openDeleteModal(btn.dataset.id));
         });
 
-
       } catch (err) {
-
         console.error("Firestore loading error:", err);
-
-        grid.innerHTML = `
-
-          <div class="state-message" style="grid-column: 1 / -1;">
-
-            <div
-              class="state-icon"
-              style="
-                color: var(--danger);
-                border-color: rgba(231,76,60,0.3);
-                background: rgba(231,76,60,0.07);
-              "
-            >
-              !
-            </div>
-
-            <div class="state-title">
-              تعذر تحميل التشكيلة
-            </div>
-
-            <div class="state-description">
-              حدث خطأ أثناء تحميل البيانات من السحابة.
-            </div>
-
-          </div>
-
-        `;
-
         showToast("حدث خطأ أثناء تحميل البيانات.", "error");
-
       }
-
     }
 
+    // مزامنة العطور الافتراضية دفعة واحدة
+    btnSyncDefaults.addEventListener("click", async () => {
+      if (!confirm("هل تريد رفع ومزامنة جميع عطور الموقع الافتراضية إلى Firebase الآن؟")) return;
+      btnSyncDefaults.disabled = true;
+      btnSyncDefaults.innerText = "جاري المزامنة...";
 
-    /* =========================================
-       DELETE MODAL
-    ========================================== */
+      try {
+        for (const prod of DEFAULT_PRODUCTS) {
+          await addDoc(perfumesCol, {
+            name: prod.name,
+            price: prod.price,
+            oldPrice: prod.oldPrice || null,
+            sizes: {
+              10: Math.round((prod.price * 0.3) / 10) * 10,
+              30: Math.round((prod.price * 0.65) / 10) * 10,
+              50: prod.price,
+              100: Math.round((prod.price * 1.7) / 10) * 10
+            },
+            category: prod.category,
+            desc: prod.desc,
+            image: prod.image,
+            createdAt: new Date()
+          });
+        }
+        showToast("تمت مزامنة جميع العطور الافتراضية بنجاح! 🎉");
+        await loadPerfumes();
+      } catch (e) {
+        showToast("فشلت المزامنة، تأكد من الاتصال.", "error");
+      } finally {
+        btnSyncDefaults.disabled = false;
+        btnSyncDefaults.innerText = "📥 رفع ومزامنة عطور الموقع الأساسية إلى Firebase";
+        settingsDrawer.classList.remove("open");
+      }
+    });
+
+    // إدارة إعدادات المتجر (إغلاق الموقع وتغيير الثيم)
+    async function loadStoreConfig() {
+      try {
+        const snap = await getDoc(settingsDocRef);
+        if (snap.exists()) {
+          const cfg = snap.data();
+          storeCloseToggle.checked = !!cfg.isClosed;
+          if (cfg.theme) storeThemeSelect.value = cfg.theme;
+        }
+      } catch (e) {
+        console.warn("Could not load store config:", e);
+      }
+    }
+
+    storeCloseToggle.addEventListener("change", async () => {
+      const isClosed = storeCloseToggle.checked;
+      await setDoc(settingsDocRef, { isClosed }, { merge: true });
+      showToast(isClosed ? "تم تفعيل إغلاق المتجر (وضع الصيانة)" : "تم فتح المتجر للزوار بنجاح!");
+    });
+
+    storeThemeSelect.addEventListener("change", async () => {
+      const theme = storeThemeSelect.value;
+      await setDoc(settingsDocRef, { theme }, { merge: true });
+      showToast("تم تحديث مظهر وثيم المتجر للعملاء!");
+    });
+
+    // حذف العطر
+    const deleteModal = document.getElementById("deleteModal");
+    const cancelDelete = document.getElementById("cancelDelete");
+    const confirmDelete = document.getElementById("confirmDelete");
 
     function openDeleteModal(id) {
-
       pendingDeleteId = id;
-
       deleteModal.classList.add("active");
-
       document.body.style.overflow = "hidden";
-
-      setTimeout(() => {
-        cancelDelete.focus();
-      }, 50);
     }
-
 
     function closeDeleteModal() {
-
       pendingDeleteId = null;
-
       deleteModal.classList.remove("active");
-
       document.body.style.overflow = "";
-
     }
-
 
     cancelDelete.addEventListener("click", closeDeleteModal);
 
-
-    deleteModal.addEventListener("click", (e) => {
-
-      if (e.target === deleteModal) {
-        closeDeleteModal();
-      }
-
-    });
-
-
-    document.addEventListener("keydown", (e) => {
-
-      if (e.key === "Escape" && deleteModal.classList.contains("active")) {
-        closeDeleteModal();
-      }
-
-    });
-
-
     confirmDelete.addEventListener("click", async () => {
-
       if (!pendingDeleteId) return;
-
-
-      const id = pendingDeleteId;
-
       confirmDelete.disabled = true;
       confirmDelete.innerText = "جاري الحذف...";
 
-
       try {
-
-        await deleteDoc(
-          doc(db, "perfumes", id)
-        );
-
+        await deleteDoc(doc(db, "perfumes", pendingDeleteId));
         closeDeleteModal();
-
-        showToast("تم حذف العطر بنجاح.");
-
+        showToast("تم حذف العطر من السحابة بنجاح.");
         await loadPerfumes();
-
-
       } catch (err) {
-
-        console.error("Delete error:", err);
-
+        showToast("تعذر حذف العطر.", "error");
+      } finally {
         confirmDelete.disabled = false;
         confirmDelete.innerText = "حذف العطر";
-
-        showToast(
-          "حدث خطأ أثناء حذف العطر.",
-          "error"
-        );
-
       }
-
     });
 
-
-    /* =========================================
-       ADD PERFUME
-    ========================================== */
-
+    // إضافة عطر جديد مع كل الأحجام والأسعار قبل/بعد
     perfumeForm.addEventListener("submit", async (e) => {
-
       e.preventDefault();
-
-
       saveBtn.disabled = true;
       saveBtn.classList.add("loading");
-
       document.querySelector(".save-icon").style.display = "none";
+      document.querySelector(".save-text").innerText = "جاري الحفظ...";
 
-      document.querySelector(".save-text").innerText =
-        "جاري الحفظ...";
+      const basePrice = Number(pPrice.value);
+      const oldPriceVal = pOldPrice.value ? Number(pOldPrice.value) : null;
 
+      const customSizes = {
+        10: pSize10.value ? Number(pSize10.value) : Math.round((basePrice * 0.3) / 10) * 10,
+        30: pSize30.value ? Number(pSize30.value) : Math.round((basePrice * 0.65) / 10) * 10,
+        50: pSize50.value ? Number(pSize50.value) : basePrice,
+        100: pSize100.value ? Number(pSize100.value) : Math.round((basePrice * 1.7) / 10) * 10
+      };
 
       try {
-
         await addDoc(perfumesCol, {
-
-          name: pName.value,
-
-          price: Number(pPrice.value),
-
+          name: pName.value.trim(),
+          price: basePrice,
+          oldPrice: oldPriceVal,
+          sizes: customSizes,
           category: pCategory.value,
-
           image: currentImageData,
-
-          desc: pDesc.value,
-
+          desc: pDesc.value.trim(),
           createdAt: new Date()
-
         });
 
-
-        showToast("تم رفع العطر بنجاح!");
-
-
+        showToast("تم إضافة العطر ونشره سحابياً بنجاح! 💎");
         perfumeForm.reset();
-
-
-        uploadLabel.innerText =
-          "اختر صورة من الجهاز";
-
-
-        uploadDefaultContent.style.display =
-          "flex";
-
-
-        uploadPreview.classList.remove("visible");
-
-
-        previewImage.src = "";
-
-        previewFileName.innerText = "";
-
-
-        currentImageData =
-          "image/S1.jpg";
-
+        document.getElementById("uploadLabel").innerText = "اختر صورة من الجهاز";
+        document.getElementById("uploadDefaultContent").style.display = "flex";
+        document.getElementById("uploadPreview").classList.remove("visible");
+        currentImageData = "image/S1.jpg";
 
         await loadPerfumes();
-
-
       } catch (err) {
-
         console.error("Save error:", err);
-
-        showToast(
-          "حدث خطأ أثناء الحفظ!",
-          "error"
-        );
-
+        showToast("حدث خطأ أثناء الحفظ!", "error");
       } finally {
-
         saveBtn.disabled = false;
-
         saveBtn.classList.remove("loading");
-
-        document.querySelector(".save-icon").style.display =
-          "inline";
-
-
-        document.querySelector(".save-text").innerText =
-          "حفظ العطر ونشره سحابياً";
-
+        document.querySelector(".save-icon").style.display = "inline";
+        document.querySelector(".save-text").innerText = "حفظ العطر ونشره سحابياً";
       }
-
     });
 
-
-    /* =========================================
-       HTML ESCAPE
-    ========================================== */
-
     function escapeHtml(value) {
-
-      return String(value)
+      return String(value || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
     }
 
-
-    /* =========================================
-       INITIAL LOAD
-    ========================================== */
-
+    // التشغيل المبدئي
     loadPerfumes();
+    loadStoreConfig();
 
   </script>
 
