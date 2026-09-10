@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر سراقة — التشكيلة الكاملة</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- الهيدر الرئيسي -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="image/S2.png" alt="SURAKA" style="height:35px;">
+        <span>SURAKA</span>
+      </a>
+      <nav class="desktop-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="shop.html" class="active">المتجر</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="cart-btn" id="cartBtn">
+          <svg viewBox="0 0 24 24"><path d="M4 5h2l1.7 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L21 8H7"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shop-page-container">
+    <!-- الشريط الجانبي للفلاتر -->
+    <aside class="shop-sidebar">
+      <div class="filter-group">
+        <h3>البحث باسم العطر</h3>
+        <input type="text" id="shopSearchInput" placeholder="اكتب اسم العطر..." class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <h3>نطاق السعر (جنيه)</h3>
+        <div class="price-range-inputs">
+          <input type="number" id="minPrice" placeholder="الحد الأدنى" class="filter-input">
+          <input type="number" id="maxPrice" placeholder="الحد الأقصى" class="filter-input">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>التصنيف</h3>
+        <label><input type="radio" name="shopCategory" value="all" checked> الكل</label>
+        <label><input type="radio" name="shopCategory" value="men"> رجالي</label>
+        <label><input type="radio" name="shopCategory" value="women"> نسائي</label>
+        <label><input type="radio" name="shopCategory" value="unisex"> للجنسين</label>
+      </div>
+
+      <button id="applyFiltersBtn" class="btn btn-dark w-100">تطبيق الفلترة</button>
+      <button id="clearFiltersBtn" class="btn btn-outline-light w-100" style="margin-top: 8px;">إعادة ضبط</button>
+    </aside>
+
+    <!-- منطقة عرض المنتجات -->
+    <section class="shop-main-content">
+      <div class="shop-header-status">
+        <span id="productCountStatus">عرض 1-12 من المنتجات</span>
+        <select id="shopSortSelect">
+          <option value="featured">الموصى به</option>
+          <option value="price-low">السعر: من الأقل للأعلى</option>
+          <option value="price-high">السعر: من الأعلى للأقل</option>
+        </select>
+      </div>
+
+      <!-- شبكة الـ 12 عطر -->
+      <div class="products-grid" id="fullShopGrid"></div>
+
+      <!-- أزرار الترقيم Pagination -->
+      <div class="pagination" id="paginationControls"></div>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
