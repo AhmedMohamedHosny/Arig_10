@@ -940,7 +940,7 @@ html[lang="ar"] .collection-content strong {
 /* WHY */
 
 .why-section {
-  background: var(--black);
+  background: linear-gradient(rgba(10, 34, 28, 0.85), rgba(10, 34, 28, 0.85)), url("image/W.jpg") center/cover no-repeat;
   color: #fff;
   padding: 120px 5%;
 }
@@ -971,10 +971,18 @@ html[lang="ar"] .collection-content strong {
 }
 
 .benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 65px 55px;
-}
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px 12px;
+  }
+
+  .benefit p {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .benefit h3 {
+    font-size: 18px;
+  }
 
 .benefit {
   border-top: 1px solid rgba(255,255,255,.18);
@@ -2088,12 +2096,20 @@ body.dark-mode .lang-btn {
     padding: 80px 5%;
   }
 
-  .why-inner {
-    display: block;
+.why-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 20px;
+    align-items: start;
   }
 
-  .why-intro {
-    margin-bottom: 60px;
+  .why-intro h2 {
+    font-size: clamp(28px, 6vw, 38px);
+  }
+
+  .why-intro > p:last-child {
+    font-size: 10px;
+    line-height: 1.6;
   }
 
   .story-section {
