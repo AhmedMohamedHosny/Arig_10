@@ -708,27 +708,7 @@ function changeQuantity(id, change, size = 50) {
   updateCartUI();
 }
 
-function removeFromCart(id) {
-  cart = cart.filter(item => item.id !== Number(id));
-  saveCart();
-  updateCartUI();
-}
 
-function changeQuantity(id, change) {
-  const item = cart.find(item => item.id === Number(id));
-
-  if (!item) return;
-
-  item.quantity += change;
-
-  if (item.quantity <= 0) {
-    removeFromCart(id);
-    return;
-  }
-
-  saveCart();
-  updateCartUI();
-}
 
 function updateCartUI() {
   cartCount.textContent = getCartCount();
