@@ -1148,11 +1148,12 @@ currentCategory = collection;
   });
 });
 
+
 /* =========================================================
    BEST SELLERS BUTTON
    ========================================================= */
 
-document.getElementById("viewBestSellers").addEventListener("click", () => {
+document.getElementById("viewBestSellers")?.addEventListener("click", () => {
   currentCategory = "bestseller";
 
   document.querySelectorAll(".filter-btn").forEach(btn => {
@@ -1164,7 +1165,7 @@ document.getElementById("viewBestSellers").addEventListener("click", () => {
 
   renderProducts();
 
-  document.getElementById("shop").scrollIntoView({
+  document.getElementById("shop")?.scrollIntoView({
     behavior: "smooth"
   });
 });
@@ -1219,13 +1220,15 @@ const transferDetails = document.getElementById("transferDetails");
 const transferText = document.getElementById("transferText");
 const checkoutForm = document.getElementById("checkoutForm");
 
-// ملء قائمة المحافظات
-GOVERNORATES.forEach(gov => {
-  const opt = document.createElement("option");
-  opt.value = gov.name;
-  opt.textContent = `${gov.name} (${gov.fee} جنيه)`;
-  custGovSelect.appendChild(opt);
-});
+// ملء قائمة المحافظات بأمان
+if (custGovSelect) {
+  GOVERNORATES.forEach(gov => {
+    const opt = document.createElement("option");
+    opt.value = gov.name;
+    opt.textContent = `${gov.name} (${gov.fee} جنيه)`;
+    custGovSelect.appendChild(opt);
+  });
+}
 
 // فتح وإغلاق نافذة الشراء
 function openCheckout() {
@@ -1235,18 +1238,18 @@ function openCheckout() {
   }
   closeCart();
   updateCheckoutSummary();
-  checkoutModal.classList.add("active");
+  checkoutModal?.classList.add("active");
   document.body.classList.add("no-scroll");
 }
 
 function closeCheckout() {
-  checkoutModal.classList.remove("active");
+  checkoutModal?.classList.remove("active");
   document.body.classList.remove("no-scroll");
 }
 
-document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
-checkoutClose.addEventListener("click", closeCheckout);
-checkoutModal.addEventListener("click", (e) => {
+document.getElementById("checkoutBtn")?.addEventListener("click", openCheckout);
+checkoutClose?.addEventListener("click", closeCheckout);
+checkoutModal?.addEventListener("click", (e) => {
   if (e.target === checkoutModal) closeCheckout();
 });
 
@@ -1275,8 +1278,7 @@ function updateCheckoutSummary() {
   summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
 }
 
-custGovSelect.addEventListener("change", updateCheckoutSummary);
-
+custGovSelect?.addEventListener("change", updateCheckoutSummary);
 // تفاصيل الدفع الإلكتروني (انستا باي وفودافون كاش)
 // تفاصيل الدفع الإلكتروني وزر نسخ الرقم
 const copyNumberBtn = document.getElementById("copyNumberBtn");
@@ -1304,8 +1306,8 @@ copyNumberBtn?.addEventListener("click", () => {
 });
 
 // تحديد الموقع الجغرافي بالـ GPS
-btnLocation.addEventListener("click", () => {
-  if (!navigator.geolocation) {
+btnLocation?.addEventListener("click", () => {
+ if (!navigator.geolocation) {
     locationStatus.textContent = "المتصفح لا يدعم تحديد الموقع.";
     return;
   }
@@ -1332,8 +1334,8 @@ function isValidEgyptianPhone(phone) {
 }
 
 // تأكيد وإرسال الطلب
-checkoutForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+checkoutForm?.addEventListener("submit", async (e) => {
+ e.preventDefault();
 
   const name = document.getElementById("custName").value.trim();
   const phone = document.getElementById("custPhone").value.trim();
