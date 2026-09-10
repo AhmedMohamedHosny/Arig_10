@@ -15,13 +15,13 @@ const db = getFirestore(app);
 const perfumesCol = collection(db, "perfumes"); 
 const ordersCol = collection(db, "orders");
 /* =========================================================
-   SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
+   SURAQA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
 
 const products = [
   {
     id: 1,
-    name: "SURAKA Noir",
+    name: "SURAQA Noir",
     nameAr: "سراقة نوار",
     category: "men",
     categoryLabel: "For Him",
@@ -41,7 +41,7 @@ const products = [
   },
   {
     id: 2,
-    name: "SURAKA Élan",
+    name: "SURAQA Élan",
     nameAr: "سراقة إيلان",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -61,7 +61,7 @@ const products = [
   },
   {
     id: 3,
-    name: "SURAKA Oud",
+    name: "SURAQA Oud",
     nameAr: "سراقة عود",
     category: "men",
     categoryLabel: "For Him",
@@ -81,7 +81,7 @@ const products = [
   },
   {
     id: 4,
-    name: "SURAKA Velvet",
+    name: "SURAQA Velvet",
     nameAr: "سراقة فيلفيت",
     category: "women",
     categoryLabel: "For Her",
@@ -101,7 +101,7 @@ const products = [
   },
   {
     id: 5,
-    name: "SURAKA Aura",
+    name: "SURAQA Aura",
     nameAr: "سراقة أورا",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -121,7 +121,7 @@ const products = [
   },
   {
     id: 6,
-    name: "SURAKA Royal",
+    name: "SURAQA Royal",
     nameAr: "سراقة رويال",
     category: "men",
     categoryLabel: "For Him",
@@ -141,7 +141,7 @@ const products = [
   },
   {
     id: 7,
-    name: "SURAKA Bloom",
+    name: "SURAQA Bloom",
     nameAr: "سراقة بلوم",
     category: "women",
     categoryLabel: "For Her",
@@ -161,7 +161,7 @@ const products = [
   },
    {
     id: 7,
-    name: "SURAKA Bloom",
+    name: "SURAQA Bloom",
     nameAr: "سراقة بلوم",
     category: "women",
     categoryLabel: "For Her",
@@ -181,7 +181,7 @@ const products = [
   },
    {
     id: 7,
-    name: "SURAKA Bloom",
+    name: "SURAQA Bloom",
     nameAr: "سراقة بلوم",
     category: "women",
     categoryLabel: "For Her",
@@ -201,7 +201,7 @@ const products = [
   },
   {
     id: 8,
-    name: "SURAKA Intense",
+    name: "SURAQA Intense",
     nameAr: "سراقة إنتنس",
     category: "unisex",
     categoryLabel: "Unisex",
@@ -277,10 +277,10 @@ const i18n = {
     checkoutReadyTitle: "Checkout ready",
     checkoutReadyText: "This demo is ready to connect to your payment system.",
     subscribedTitle: "You're on the list",
-    subscribedText: "Thank you for joining the SURAKA world.",
+    subscribedText: "Thank you for joining the SURAQA world.",
     enterEmail: "Please enter your email address.",
     invalidEmail: "Please enter a valid email address.",
-    welcomeMessage: "Welcome to the SURAKA world.",
+    welcomeMessage: "Welcome to the SURAQA world.",
     addToWishlist: "Add to wishlist",
     removeFromWishlist: "Remove from wishlist"
   }
@@ -1501,7 +1501,7 @@ try {
       .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
       .join("\n");
 
-    const waMessage = `*طلب جديد من متجر سراقة — SURAKA* 💎
+    const waMessage = `*طلب جديد من متجر سراقة — SURAQA* 💎
 --------------------------------
 👤 *اسم العميل:* ${name}
 📱 *الهاتف الأساسي:* ${phone}
