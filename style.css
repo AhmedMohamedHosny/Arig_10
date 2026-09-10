@@ -2535,3 +2535,81 @@ html[dir="ltr"] .sf-option {
 body {
   padding-top: 40px;
 }
+/* ================= SHOP PAGE LAYOUT ================= */
+.shop-page-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 5%;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 35px;
+}
+
+.shop-sidebar {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  height: fit-content;
+}
+
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group h3 {
+  font-size: 14px;
+  color: var(--gold, #c5a059);
+  margin-bottom: 10px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: #1a1917;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 6px;
+}
+
+.price-range-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.shop-header-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.page-num {
+  width: 38px;
+  height: 38px;
+  background: #1a1917;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.page-num.active {
+  background: var(--gold, #c5a059);
+  color: #000;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .shop-page-container {
+    grid-template-columns: 1fr;
+  }
+}
