@@ -1057,10 +1057,8 @@ html[lang="ar"] .collection-content strong {
 
 .story-image {
   min-height: 650px;
-  background:
-    linear-gradient(rgba(0,0,0,.05), rgba(0,0,0,.15)),
-    url("https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=1400&q=90")
-    center / cover;
+  background-position: center;
+  background-size: cover;
 }
 
 .story-content {
