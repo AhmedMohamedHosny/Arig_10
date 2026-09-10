@@ -549,7 +549,10 @@
               <label>تفاصيل ووصف العرض</label>
               <input type="text" id="offerDesc" placeholder="عطرين بحجم 100 مل من اختيارك + شحن مجاني لكافة المحافظات">
             </div>
-
+<div class="form-group">
+              <label>تاريخ ووقت انتهاء العرض (اختياري) ⏳</label>
+              <input type="datetime-local" id="offerExpiry">
+            </div>
             <!-- رفع صورة العرض من الجهاز -->
             <div class="form-group" style="grid-column: 1 / -1;">
               <label>صورة العرض الترويجي *</label>
@@ -1171,12 +1174,13 @@
       }
 
       try {
-        await addDoc(offersCol, {
+await addDoc(offersCol, {
           title: document.getElementById("offerTitle").value.trim(),
           tag: document.getElementById("offerTag").value.trim(),
           price: Number(document.getElementById("offerPrice").value),
           oldPrice: document.getElementById("offerOldPrice").value ? Number(document.getElementById("offerOldPrice").value) : null,
           desc: document.getElementById("offerDesc").value.trim(),
+          expiryDate: document.getElementById("offerExpiry").value || null,
           image: currentOfferImgBase64 || "image/S1.png",
           active: true,
           createdAt: new Date()
