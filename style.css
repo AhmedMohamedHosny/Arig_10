@@ -641,17 +641,7 @@ html[lang="ar"] .sort-wrapper label {
   height: 410px;
   position: relative;
   overflow: hidden;
-  background: var(--cream);
-  border: 1px solid rgba(212, 175, 55, .35);
-  box-shadow: 0 0 12px rgba(212, 175, 55, .25),
-              inset 0 0 20px rgba(212, 175, 55, .05);
-  transition: box-shadow .4s ease, border-color .4s ease;
-}
-
-.product-card:hover .product-image-wrap {
-  border-color: rgba(212, 175, 55, .7);
-  box-shadow: 0 0 22px rgba(212, 175, 55, .45),
-              inset 0 0 25px rgba(212, 175, 55, .1);
+  background: #e8e2d7;
 }
 
 .product-image {
@@ -695,13 +685,11 @@ html[lang="ar"] .product-badge {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: rgba(212,175,55,.15);
-  border: 1px solid var(--line);
+  background: rgba(247,244,237,.9);
   display: grid;
   place-items: center;
   z-index: 2;
   font-size: 17px;
-  color: var(--text);
   transition: var(--transition);
 }
 
@@ -748,8 +736,8 @@ html[lang="ar"] .product-actions button {
 }
 
 .quick-btn {
-  background: rgba(212,175,55,.9);
-  color: var(--black);
+  background: rgba(255,255,255,.92);
+  color: var(--text);
 }
 
 .add-btn {
@@ -867,7 +855,7 @@ html[lang="ar"] .product-description {
   position: relative;
   overflow: hidden;
   text-align: left;
-  background: var(--black-2);
+  background: #222;
 }
 
 html[dir="rtl"] .collection-card {
@@ -1462,9 +1450,7 @@ html[dir="rtl"] .cart-drawer {
 .modal-close {
   width: 36px;
   height: 36px;
-  background: rgba(212,175,55,.15);
-  border: 1px solid var(--line);
-  border-radius: 50%;
+  background: transparent;
   font-size: 28px;
   color: var(--text);
 }
@@ -1661,6 +1647,8 @@ html[lang="ar"] .shipping-note {
   top: 12px;
   right: 12px;
   z-index: 4;
+  background: rgba(247,244,237,.9);
+  border-radius: 50%;
 }
 
 html[dir="rtl"] .modal-close {
@@ -1670,9 +1658,7 @@ html[dir="rtl"] .modal-close {
 
 .modal-image-wrap {
   min-height: 560px;
-  background: var(--cream);
-  border: 1px solid rgba(212, 175, 55, .35);
-  box-shadow: 0 0 15px rgba(212, 175, 55, .25);
+  background: #e4ded2;
 }
 
 .modal-image-wrap img {
@@ -2170,7 +2156,7 @@ body.dark-mode .lang-btn {
   }
 
   .hero h1 {
-    font-size: 42px;
+    font-size: 59px;
   }
 
   .hero-text {
@@ -2184,13 +2170,6 @@ body.dark-mode .lang-btn {
     padding: 0 21px;
   }
 
-  .section-heading h2,
-  .why-intro h2,
-  .story-content h2,
-  .newsletter-inner h2 {
-    font-size: 30px !important;
-  }
-
   .products-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 30px 10px;
@@ -2201,7 +2180,7 @@ body.dark-mode .lang-btn {
   }
 
   .product-name {
-    font-size: 20px;
+    font-size: 23px;
   }
 
   .product-description {
@@ -2230,27 +2209,9 @@ body.dark-mode .lang-btn {
     height: 450px;
   }
 
-  .collection-content h3 {
-    font-size: 26px;
-  }
-
-  .collection-content p {
-    font-size: 9px;
-    margin-bottom: 14px;
-  }
-
   .benefits-grid {
     grid-template-columns: 1fr;
     gap: 35px;
-  }
-
-  .benefit-icon {
-    font-size: 26px;
-    margin: 15px 0 8px;
-  }
-
-  .benefit h3 {
-    font-size: 20px;
   }
 
   .story-image {
@@ -2259,10 +2220,6 @@ body.dark-mode .lang-btn {
 
   .footer {
     padding-top: 60px;
-  }
-
-  .footer-logo {
-    font-size: 30px;
   }
 
   .footer-main {
@@ -2285,12 +2242,12 @@ body.dark-mode .lang-btn {
   }
 
   .modal-image-wrap {
-    min-height: 260px;
-    height: 260px;
+    min-height: 300px;
+    height: 300px;
   }
 
   .modal-image-wrap img {
-    min-height: 260px;
+    min-height: 300px;
   }
 
   .modal-info {
@@ -2298,7 +2255,7 @@ body.dark-mode .lang-btn {
   }
 
   .modal-info h2 {
-    font-size: 30px;
+    font-size: 43px;
   }
 
   .modal-description {
