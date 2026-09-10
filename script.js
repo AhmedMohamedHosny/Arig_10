@@ -1,5 +1,5 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
   authDomain: "suraka-cfb2d.firebaseapp.com",
@@ -1478,7 +1478,17 @@ checkoutForm?.addEventListener("submit", async (e) => {
 
   try {
     await addDoc(ordersCol, orderData);
-
+// خصم الزجاجات المطلوبة تلقائياً من مخزون فايربيز
+    for (const item of cart) {
+      try {
+        const perfumeDocRef = doc(db, "perfumes", String(item.id));
+        await updateDoc(perfumeDocRef, {
+          stock: increment(-Number(item.quantity || 1))
+        });
+      } catch (stockErr) {
+        console.warn("Stock update skipped for item:", item.id);
+      }
+    }
     const paymentMethodsNames = {
       cod: "الدفع عند الاستلام (COD)",
       instapay: "انستا باي (InstaPay)",
@@ -1717,3 +1727,26 @@ if (homeSec) {
 
   homeObserver.observe(homeSec);
 }
+/* =========================================================
+   مراقبة إغلاق المتجر وعروض الأدمن الترويجية
+   ========================================================= */
+const closedScreen = document.getElementById("storeClosedScreen");
+onSnapshot(doc(db, "settings", "storeConfig"), (docSnap) => {
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    
+    // شاشة قفل المتجر والصلاة على النبي
+    if (closedScreen) {
+      closedScreen.style.display = data.isClosed ? "flex" : "none";
+      document.body.classList.toggle("no-scroll", !!data.isClosed);
+    }
+
+    // شريط العروض الترويجية بالأعلى
+    if (data.offerActive && data.activeOffer) {
+      const ticker = document.querySelector(".ticker-inner");
+      if (ticker) {
+        ticker.innerHTML = `<span>🔥 ${data.activeOffer}</span><span>💎 سراقة — فخامة العطور</span>`;
+      }
+    }
+  }
+});
