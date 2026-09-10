@@ -675,13 +675,8 @@ function renderBestSellers() {
 
 function addToCart(id, quantity = 1, size = 50) {
   const product = getProduct(id);
+  if (!product) return;
 
-  if (!product) {
-    showToast(t("unavailable"), t("unavailableText"));
-    return;
-  }
-
-  // تمييز المنتج في السلة بحسب الحجم المختار
   const existing = cart.find(item => String(item.id) === String(product.id) && Number(item.size || 50) === Number(size));
 
   if (existing) {
@@ -696,7 +691,8 @@ function addToCart(id, quantity = 1, size = 50) {
 
   saveCart();
   updateCartUI();
-  showToast(t("addedTitle"), `${productName(product)} (${size} مل)`);
+  showToast("تمت الإضافة للسلة 🛍️", `${productName(product)} (${size} مل)`);
+  // لا يوجد openCart() هنا إطلاقاً، فقط يتحدث عداد السلة بالأعلى
 }
 
 function removeFromCart(id, size = 50) {
@@ -796,47 +792,137 @@ function closeCart() {
 }
 
 /* =========================================================
-   QUICK VIEW
+   FULL PRODUCT PAGE LOGIC (صفحة العطر الشاملة)
    ========================================================= */
+const productFullPage = document.getElementById("productFullPage");
+const closeProductPageBtn = document.getElementById("closeProductPage");
+const pfpImage = document.getElementById("pfpImage");
+const pfpCategory = document.getElementById("pfpCategory");
+const pfpName = document.getElementById("pfpName");
+const pfpRating = document.getElementById("pfpRating");
+const pfpReviews = document.getElementById("pfpReviews");
+const pfpDesc = document.getElementById("pfpDesc");
+const pfpNotes = document.getElementById("pfpNotes");
+const pfpPrice = document.getElementById("pfpPrice");
+const pfpQtyVal = document.getElementById("pfpQtyVal");
+const pfpAddBtn = document.getElementById("pfpAddBtn");
+const pfpRelatedGrid = document.getElementById("pfpRelatedGrid");
 
-function openQuickView(id) {
-  const product = getProduct(id);
-  if (!product) return;
+let currentPfpProduct = null;
+let currentPfpSize = 50;
+let currentPfpQty = 1;
 
-  selectedProduct = product;
-  modalQty = 1;
-  selectedSize = 50; // ضبط الحجم الافتراضي على 50 مل
+function updatePfpPriceDisplay() {
+  if (!currentPfpProduct) return;
+  const unitPrice = getPriceForSize(currentPfpProduct.price, currentPfpSize);
+  pfpPrice.textContent = formatPrice(unitPrice * currentPfpQty);
+}
 
-  modalImage.src = product.image;
-  modalImage.alt = productName(product);
-  modalCategory.textContent = productCategoryLabel(product);
-  modalName.textContent = productName(product);
-  modalRating.textContent = `${stars(product.rating)} · ${product.reviews} ${t("reviews")}`;
-  modalDescription.textContent = productDescription(product);
-  modalQuantityEl.textContent = modalQty;
+function openProductFullPage(id) {
+  const prod = getProduct(id);
+  if (!prod) return;
 
-  // إعادة ضبط أزرار الأحجام وتعيين 50 مل كافتراضي
-  document.querySelectorAll("#modalSizes .size-btn").forEach(btn => {
+  currentPfpProduct = prod;
+  currentPfpSize = 50;
+  currentPfpQty = 1;
+
+  pfpImage.src = prod.image;
+  pfpImage.alt = productName(prod);
+  pfpCategory.textContent = productCategoryLabel(prod);
+  pfpName.textContent = productName(prod);
+  pfpRating.textContent = stars(prod.rating);
+  pfpReviews.textContent = `(${prod.reviews} ${t("reviews")})`;
+  pfpDesc.textContent = productDescription(prod);
+  pfpQtyVal.textContent = currentPfpQty;
+
+  // إعادة ضبط أزرار الأحجام
+  document.querySelectorAll("#pfpSizes .pfp-size-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.size === "50");
   });
 
-  // تحديث السعر بناءً على حجم 50 مل
-  modalPrice.textContent = formatPrice(getPriceForSize(product.price, selectedSize));
-
-  modalNotes.innerHTML = productNotes(product)
-    .map(note => `<span class="note">${escapeHtml(note)}</span>`)
+  // النوتات العطرية
+  pfpNotes.innerHTML = productNotes(prod)
+    .map(n => `<span>${escapeHtml(n)}</span>`)
     .join("");
 
-  modalBackdrop.classList.add("active");
+  updatePfpPriceDisplay();
+
+  // جلب عطور أخرى من نفس الصنف
+  renderRelatedPerfumes(prod);
+
+  productFullPage.style.display = "block";
   document.body.classList.add("no-scroll");
+  productFullPage.scrollTop = 0;
 }
 
-
-
-function closeQuickView() {
-  modalBackdrop.classList.remove("active");
+function closeProductFullPage() {
+  productFullPage.style.display = "none";
   document.body.classList.remove("no-scroll");
-  selectedProduct = null;
+  currentPfpProduct = null;
+}
+
+closeProductPageBtn?.addEventListener("click", closeProductFullPage);
+
+// تغيير الحجم داخل الصفحة الكاملة
+document.getElementById("pfpSizes")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".pfp-size-btn");
+  if (!btn || !currentPfpProduct) return;
+
+  document.querySelectorAll("#pfpSizes .pfp-size-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  currentPfpSize = Number(btn.dataset.size);
+  updatePfpPriceDisplay();
+});
+
+// تغيير الكمية داخل الصفحة الكاملة
+document.getElementById("pfpQtyMinus")?.addEventListener("click", () => {
+  if (currentPfpQty > 1) {
+    currentPfpQty--;
+    pfpQtyVal.textContent = currentPfpQty;
+    updatePfpPriceDisplay();
+  }
+});
+
+document.getElementById("pfpQtyPlus")?.addEventListener("click", () => {
+  if (currentPfpQty < 20) {
+    currentPfpQty++;
+    pfpQtyVal.textContent = currentPfpQty;
+    updatePfpPriceDisplay();
+  }
+});
+
+// إضافة للسلة (تحديث العداد بالأعلى فقط دون فتح السلة تلقائياً)
+pfpAddBtn?.addEventListener("click", () => {
+  if (!currentPfpProduct) return;
+
+  // إضافة للمنتج
+  addToCart(currentPfpProduct.id, currentPfpQty, currentPfpSize);
+
+  // تأثير حركي سريع على الزر للتأكيد
+  pfpAddBtn.style.background = "#2ecc71";
+  pfpAddBtn.querySelector("span:last-child").textContent = "✓ تمت الإضافة بنجاح!";
+  
+  setTimeout(() => {
+    pfpAddBtn.style.background = "var(--gold)";
+    pfpAddBtn.querySelector("span:last-child").textContent = "أضف إلى السلة";
+  }, 1800);
+});
+
+// عرض عطور أخرى من نفس الصنف (رجالي مع رجالي، نسائي مع نسائي)
+function renderRelatedPerfumes(mainProduct) {
+  if (!pfpRelatedGrid) return;
+
+  const related = products
+    .filter(p => p.category === mainProduct.category && String(p.id) !== String(mainProduct.id))
+    .slice(0, 4);
+
+  // إذا لم نجد عطور كافية من نفس الصنف، نأتي بعطور مميزة
+  const fallback = related.length > 0 
+    ? related 
+    : products.filter(p => String(p.id) !== String(mainProduct.id)).slice(0, 4);
+
+  pfpRelatedGrid.innerHTML = fallback.map(productCard).join("");
 }
 
 /* =========================================================
@@ -905,23 +991,11 @@ function showToast(title, text) {
    ========================================================= */
 
 document.addEventListener("click", event => {
-// 1. اختيار الحجم من الكارت وتحديث سعره فوراً
-  const cardSizeBtn = event.target.closest(".card-size-btn");
-  if (cardSizeBtn) {
-    const card = cardSizeBtn.closest(".product-card");
-    const prodId = card.dataset.productId;
-    const prod = getProduct(prodId);
-    if (card && prod) {
-      card.querySelectorAll(".card-size-btn").forEach(b => b.classList.remove("active"));
-      cardSizeBtn.classList.add("active");
-      
-      const newSize = Number(cardSizeBtn.dataset.cardSize);
-      card.dataset.selectedSize = newSize;
-
-      const currentQty = Number(card.dataset.selectedQty || 1);
-      const unitPrice = getPriceForSize(prod.price, newSize);
-      card.querySelector(".card-price-display").textContent = formatPrice(unitPrice * currentQty);
-    }
+// فتح صفحة العطر الكاملة عند الضغط على العين أو الكارت
+  const openPageTrigger = event.target.closest('[data-action="open-full-page"]');
+  if (openPageTrigger && !event.target.closest('.wishlist-btn')) {
+    const id = openPageTrigger.dataset.id;
+    openProductFullPage(id);
     return;
   }
 
