@@ -524,28 +524,12 @@
             <strong class="transfer-val gold" id="transferAmountVal">0 جنيه</strong>
           </div>
 
-          <!-- صندوق رفع صورة الإيصال -->
-          <div class="upload-section">
-            <label class="upload-title">صورة إيصال التحويل (Screenshot) *</label>
-            <div class="upload-dropzone" id="uploadDropzone">
-              <input type="file" id="receiptFile" accept="image/*" style="display: none;">
-              <div class="upload-prompt" id="uploadPrompt">
-                <svg viewBox="0 0 24 24" class="upload-icon" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M4 16.5v1.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5M16 10l-4-4m0 0l-4 4m4-4v12" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <p><strong>اضغط هنا لرفع الصورة</strong> أو اسحبها إلى هذا المربع</p>
-                <span>PNG, JPG حتى 5 ميجابايت</span>
-              </div>
-              <div class="upload-preview" id="uploadPreview" style="display: none;">
-                <img id="previewImg" src="" alt="إيصال التحويل">
-                <div class="preview-info">
-                  <span id="previewName">receipt.jpg</span>
-                  <button type="button" id="removeReceiptBtn" class="remove-receipt-btn">&times; حذف وتغيير الصورة</button>
-                </div>
-              </div>
-            </div>
+<!-- تنبيه إرسال الإيصال في الشات -->
+          <div class="transfer-alert" style="background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--gold); padding: 10px 12px; border-radius: 4px; margin-top: 8px;">
+            <p style="font-size: 11px; color: var(--text); line-height: 1.6; margin: 0;">
+              📸 <strong>خطوة أخيرة:</strong> بعد الضغط على "تأكيد الطلب"، سيتم فتح محادثة الواتساب تلقائياً؛ يرجى إرسال لقطة شاشة التحويل (Screenshot) في الشات لتأكيد شحنتك فوراً.
+            </p>
           </div>
-        </div>
 
         <!-- ملخص الفاتورة -->
         <div class="checkout-summary">
