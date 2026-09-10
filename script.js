@@ -1546,7 +1546,7 @@ ${itemsSummary}
     showToast("تم تسجيل طلبك بنجاح! 🎉", "جاري توجيهك إلى واتساب سراقة...");
 
     // 4. التوجيه لواتساب سراقة
-    const waUrl = `https://wa.me/201016118242?text=${encodeURIComponent(waMessage)}`;
+    const waUrl = `https://wa.me/201101579399?text=${encodeURIComponent(waMessage)}`;
     setTimeout(() => {
       window.open(waUrl, "_blank");
     }, 1000);
