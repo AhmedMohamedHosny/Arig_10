@@ -1,6 +1,5 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
   authDomain: "suraka-cfb2d.firebaseapp.com",
@@ -14,6 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const perfumesCol = collection(db, "perfumes"); 
+const ordersCol = collection(db, "orders");
 /* =========================================================
    SURAKA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
@@ -1013,16 +1013,289 @@ document.getElementById("viewBestSellers").addEventListener("click", () => {
 
 
 /* =========================================================
-   CHECKOUT
+   CHECKOUT & SHIPPING SYSTEM
    ========================================================= */
 
-document.getElementById("checkoutBtn").addEventListener("click", () => {
+// قائمة المحافظات المصرية وأسعار الشحن
+const GOVERNORATES = [
+  { name: "القاهرة", fee: 45 },
+  { name: "الجيزة", fee: 45 },
+  { name: "الإسكندرية", fee: 55 },
+  { name: "القليوبية", fee: 50 },
+  { name: "الغربية", fee: 55 },
+  { name: "المنوفية", fee: 55 },
+  { name: "الشرقية", fee: 55 },
+  { name: "الدقهلية", fee: 55 },
+  { name: "البحيرة", fee: 60 },
+  { name: "كفر الشيخ", fee: 60 },
+  { name: "دمياط", fee: 60 },
+  { name: "بورسعيد", fee: 60 },
+  { name: "الإسماعيلية", fee: 60 },
+  { name: "السويس", fee: 60 },
+  { name: "الفيوم", fee: 65 },
+  { name: "بني سويف", fee: 70 },
+  { name: "المنيا", fee: 75 },
+  { name: "أسيوط", fee: 80 },
+  { name: "سوهاج", fee: 85 },
+  { name: "قنا", fee: 90 },
+  { name: "الأقصر", fee: 95 },
+  { name: "أسوان", fee: 95 },
+  { name: "البحر الأحمر", fee: 100 },
+  { name: "مطروح", fee: 90 },
+  { name: "الوادي الجديد", fee: 100 },
+  { name: "شمال سيناء", fee: 110 },
+  { name: "جنوب سيناء", fee: 110 }
+];
+
+const checkoutModal = document.getElementById("checkoutModalBackdrop");
+const checkoutClose = document.getElementById("checkoutClose");
+const custGovSelect = document.getElementById("custGov");
+const summarySubtotal = document.getElementById("summarySubtotal");
+const summaryShipping = document.getElementById("summaryShipping");
+const summaryTotal = document.getElementById("summaryTotal");
+const btnLocation = document.getElementById("btnLocation");
+const locationStatus = document.getElementById("locationStatus");
+const custLocationMap = document.getElementById("custLocationMap");
+const transferDetails = document.getElementById("transferDetails");
+const transferText = document.getElementById("transferText");
+const checkoutForm = document.getElementById("checkoutForm");
+
+// ملء قائمة المحافظات
+GOVERNORATES.forEach(gov => {
+  const opt = document.createElement("option");
+  opt.value = gov.name;
+  opt.textContent = `${gov.name} (${gov.fee} جنيه)`;
+  custGovSelect.appendChild(opt);
+});
+
+// فتح وإغلاق نافذة الشراء
+function openCheckout() {
   if (cart.length === 0) {
-    showToast(t("emptyCartToastTitle"), t("emptyCartToastText"));
+    showToast("سلتك فارغة", "أضف عطوراً أولاً لإتمام الشراء.");
+    return;
+  }
+  closeCart();
+  updateCheckoutSummary();
+  checkoutModal.classList.add("active");
+  document.body.classList.add("no-scroll");
+}
+
+function closeCheckout() {
+  checkoutModal.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+}
+
+document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
+checkoutClose.addEventListener("click", closeCheckout);
+checkoutModal.addEventListener("click", (e) => {
+  if (e.target === checkoutModal) closeCheckout();
+});
+
+// حساب تكلفة الشحن والإجمالي (شحن مجاني فوق 1500 ج)
+function getShippingFee() {
+  const subtotal = getCartTotal();
+  if (subtotal >= 1500) return 0;
+
+  const selectedGov = GOVERNORATES.find(g => g.name === custGovSelect.value);
+  return selectedGov ? selectedGov.fee : 0;
+}
+
+function updateCheckoutSummary() {
+  const subtotal = getCartTotal();
+  const shipping = getShippingFee();
+  const total = subtotal + shipping;
+
+  summarySubtotal.textContent = `${subtotal.toLocaleString("ar-EG")} جنيه`;
+  
+  if (subtotal >= 1500 && custGovSelect.value) {
+    summaryShipping.textContent = "مجاني (عرض الطلبات فوق 1,500)";
+  } else {
+    summaryShipping.textContent = custGovSelect.value ? `${shipping.toLocaleString("ar-EG")} جنيه` : "اختر المحافظة";
+  }
+
+  summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
+}
+
+custGovSelect.addEventListener("change", updateCheckoutSummary);
+
+// تفاصيل الدفع الإلكتروني (انستا باي وفودافون كاش)
+// تفاصيل الدفع الإلكتروني وزر نسخ الرقم
+const copyNumberBtn = document.getElementById("copyNumberBtn");
+
+document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+  radio.addEventListener("change", (e) => {
+    if (e.target.value === "instapay") {
+      transferDetails.style.display = "block";
+      transferText.innerHTML = "يرجى تحويل الإجمالي عبر <strong>InstaPay</strong> لرقم الهاتف الموضح أدناه:";
+    } else if (e.target.value === "vodafone_cash") {
+      transferDetails.style.display = "block";
+      transferText.innerHTML = "يرجى تحويل الإجمالي لمحفظة <strong>فودافون كاش</strong> على الرقم التالي:";
+    } else {
+      transferDetails.style.display = "none";
+    }
+  });
+});
+
+copyNumberBtn?.addEventListener("click", () => {
+  navigator.clipboard.writeText("01016118242").then(() => {
+    copyNumberBtn.textContent = "✓ تم النسخ";
+    showToast("تم النسخ بنجاح", "تم نسخ رقم التحويل إلى الحافظة.");
+    setTimeout(() => { copyNumberBtn.textContent = "📋 نسخ الرقم"; }, 2500);
+  });
+});
+
+// تحديد الموقع الجغرافي بالـ GPS
+btnLocation.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    locationStatus.textContent = "المتصفح لا يدعم تحديد الموقع.";
+    return;
+  }
+  locationStatus.textContent = "جاري تحديد موقعك بدقة...";
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const mapLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+      custLocationMap.value = mapLink;
+      locationStatus.textContent = "✓ تم التقاط موقعك بنجاح وسيرفق مع الطلب.";
+      locationStatus.style.color = "#557c5c";
+    },
+    (err) => {
+      locationStatus.textContent = "تعذر تحديد الموقع. يرجى كتابة العنوان يدوياً.";
+      locationStatus.style.color = "#a34e4e";
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+});
+
+// التحقق من صحة رقم الهاتف المصري
+function isValidEgyptianPhone(phone) {
+  const regex = /^01[0125][0-9]{8}$/;
+  return regex.test(phone.trim());
+}
+
+// تأكيد وإرسال الطلب
+checkoutForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("custName").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const phone2 = document.getElementById("custPhone2").value.trim();
+  const gov = custGovSelect.value;
+  const address = document.getElementById("custAddress").value.trim();
+  const locationMap = custLocationMap.value;
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+  if (!isValidEgyptianPhone(phone)) {
+    alert("رقم الهاتف الأساسي غير صحيح! يجب أن يتكون من 11 رقماً ويبدأ بـ (010 أو 011 أو 012 أو 015).");
     return;
   }
 
-  showToast(t("checkoutReadyTitle"), t("checkoutReadyText"));
+  if (phone2 && !isValidEgyptianPhone(phone2)) {
+    alert("رقم الهاتف البديل غير صحيح! يجب أن يتكون من 11 رقماً ويبدأ بـ (010 أو 011 أو 012 أو 015).");
+    return;
+  }
+
+  if (!gov) {
+    alert("يرجى اختيار المحافظة لحساب تكلفة الشحن.");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitOrderBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "جاري تسجيل الطلب...";
+
+  const orderItems = cart.map(item => {
+    const prod = getProduct(item.id);
+    return {
+      id: item.id,
+      name: prod ? (prod.nameAr || prod.name) : "منتج",
+      price: prod ? prod.price : 0,
+      quantity: item.quantity
+    };
+  });
+
+  const subtotal = getCartTotal();
+  const shippingFee = getShippingFee();
+  const total = subtotal + shippingFee;
+
+  const orderData = {
+    customer: {
+      name,
+      phone,
+      secondaryPhone: phone2 || "غير محدد",
+      governorate: gov,
+      address,
+      googleMapsUrl: locationMap || "لم يحدد موقع GPS"
+    },
+    items: orderItems,
+    pricing: {
+      subtotal,
+      shippingFee,
+      total
+    },
+    paymentMethod,
+    status: "new",
+    createdAt: new Date()
+  };
+
+  try {
+    // حفظ الطلب في فايربيز
+try {
+    // 1. حفظ الطلب أولاً في فايربيز
+    await addDoc(ordersCol, orderData);
+
+    // 2. إعداد نص رسالة الواتساب الاحترافية
+    const paymentMethodsNames = {
+      cod: "الدفع عند الاستلام (COD)",
+      instapay: "انستا باي (InstaPay)",
+      vodafone_cash: "فودافون كاش (Vodafone Cash)"
+    };
+
+    const itemsSummary = orderItems
+      .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
+      .join("\n");
+
+    const waMessage = `*طلب جديد من متجر سراقة — SURAKA* 💎
+--------------------------------
+👤 *اسم العميل:* ${name}
+📱 *الهاتف الأساسي:* ${phone}
+📞 *الهاتف البديل:* ${phone2 || "لا يوجد"}
+📍 *المحافظة:* ${gov}
+🏠 *العنوان بالتفصيل:* ${address}
+🗺️ *موقع GPS:* ${locationMap ? locationMap : "لم يُحدد"}
+--------------------------------
+🛍️ *تفاصيل المنتجات:*
+${itemsSummary}
+--------------------------------
+💰 *قيمة المنتجات:* ${subtotal.toLocaleString("ar-EG")} جنيه
+🚚 *مصاريف الشحن:* ${shippingFee === 0 ? "مجاني" : `${shippingFee} جنيه`}
+💵 *الإجمالي النهائي:* ${total.toLocaleString("ar-EG")} جنيه
+💳 *طريقة الدفع:* ${paymentMethodsNames[paymentMethod]}
+--------------------------------
+✨ تم تسجيل الطلب بنجاح عبر الموقع`;
+
+    // 3. تفريغ السلة والواجهة
+    cart = [];
+    saveCart();
+    updateCartUI();
+    closeCheckout();
+    checkoutForm.reset();
+    locationStatus.textContent = "";
+
+    showToast("تم تسجيل طلبك بنجاح! 🎉", "جاري توجيهك إلى واتساب لإتمام التفاصيل...");
+
+    // 4. التوجيه المباشر لواتساب سراقة
+    const waUrl = `https://wa.me/201016118242?text=${encodeURIComponent(waMessage)}`;
+    setTimeout(() => {
+      window.open(waUrl, "_blank");
+    }, 1200);
+
+  } catch (err) {
+    console.error("Firebase Error: ", err);
+    alert("حدث خطأ أثناء إرسال الطلب، تأكد من اتصال الإنترنت وحاول مجدداً.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "تأكيد الطلب الآن";
+  }
 });
 
 /* =========================================================
