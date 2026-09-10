@@ -437,16 +437,35 @@
               <label>الكمية المتوفرة بالمخزون (عدد الزجاجات) *</label>
               <input type="number" id="pStock" placeholder="50" min="0" value="25" required>
             </div>
-            <div class="form-group">
-              <label>رابط الصورة أو صورة افتراضية</label>
-              <input type="text" id="pImage" value="image/S1.png" placeholder="image/S1.png">
+<!-- حقل تتبع التعديل السريع -->
+            <input type="hidden" id="pEditId" value="">
+
+            <!-- صندوق اختيار الصورة المباشر من جهازك مع المعاينة -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>صورة العطر (اختر من ملفاتك مباشرة) *</label>
+              <div class="file-uploader-box" id="fileDropzone" onclick="document.getElementById('pFileInput').click()">
+                <input type="file" id="pFileInput" accept="image/*" style="display:none;">
+                <div id="uploadPromptText">
+                  <span style="font-size:20px; color:var(--gold);">📁</span>
+                  <p style="font-size:12px; margin:4px 0;">اضغط هنا لاختيار الصورة من الكمبيوتر أو الموبايل</p>
+                  <span style="font-size:10px; color:var(--text-muted);">يتم ضغط الصورة وتنسيق أبعادها سحابياً تلقائياً</span>
+                </div>
+                <div id="imagePreviewContainer" style="display:none; align-items:center; gap:12px; justify-content:center;">
+                  <img id="previewImgEl" src="" style="width:70px; height:70px; object-fit:cover; border-radius:6px; border:1px solid var(--gold);">
+                  <span id="previewNameEl" style="font-size:11px; color:var(--gold); font-weight:700;"></span>
+                </div>
+              </div>
             </div>
+            
             <div class="form-group" style="grid-column: 1 / -1;">
               <label>وصف العطر والنوتات</label>
               <input type="text" id="pDesc" placeholder="عود، عنبر، وخشب الصندل...">
             </div>
           </div>
-          <button type="submit" class="btn-submit">حفظ العطر ونشره بالمتجر</button>
+<div style="display:flex; gap:10px; align-items:center;">
+            <button type="submit" class="btn-submit" id="submitPerfumeBtn">حفظ العطر ونشره بالمتجر</button>
+            <button type="button" class="btn-exit" id="cancelEditBtn" style="display:none; margin-top:14px; background:rgba(255,255,255,0.1); border:1px solid var(--line);">إلغاء التعديل</button>
+          </div>          
         </form>
       </div>
 
@@ -462,10 +481,16 @@
     <!-- 2. قسم إدارة الطلبات -->
     <section id="ordersSec" class="section-view">
       <div class="panel">
-        <div class="panel-title">
+<div class="panel-title">
           <span>سجل الطلبات الواردة من الموقع</span>
-          <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="btn-submit" id="exportExcelBtn" style="margin:0; padding:6px 14px; font-size:11px; background:#217346; color:#fff;">
+              📊 تصدير شيت Excel
+            </button>
+            <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
+          </div>
         </div>
+        
         <div class="table-wrap">
           <table>
             <thead>
