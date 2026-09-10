@@ -296,7 +296,16 @@ html[dir="rtl"] .cart-count {
   color: #fff;
   overflow: hidden;
 }
-
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
 html[dir="rtl"] .hero {
   background:
     linear-gradient(270deg, rgba(0,0,0,.68) 0%, rgba(0,0,0,.28) 52%, rgba(0,0,0,.05) 100%),
