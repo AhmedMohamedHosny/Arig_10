@@ -2494,9 +2494,9 @@ html[dir="ltr"] .sf-option {
   top: 0;
   left: 0;
   width: 100%;
-  height: 46px; /* زيادة الارتفاع ليتناسب مع الخط الكبير */
-  background: #11100e;
-  border-bottom: 1px solid rgba(230, 198, 135, 0.3);
+  height: 40px;
+  background: #0a221c;
+  border-bottom: 1px solid var(--line);
   z-index: 10000;
   overflow: hidden;
   display: flex;
@@ -2506,7 +2506,7 @@ html[dir="ltr"] .sf-option {
 .ticker-move {
   display: flex;
   white-space: nowrap;
-  animation: tickerSlide 22s linear infinite;
+  animation: tickerSlide 50s linear infinite; /* زيادة الوقت لـ 50 ثانية لجعل الحركة بطيئة جداً */
 }
 
 .ticker-move:hover {
@@ -2514,30 +2514,30 @@ html[dir="ltr"] .sf-option {
 }
 
 .ticker-item {
-  font-family: 'Cairo', sans-serif;
-  font-size: 17px; /* تكبير الخط */
-  font-weight: 700;
-  color: #e6c687;
-  padding: 0 100vw; /* إعطاء مسافة بطول الشاشة بين كل جملة والتانية لتعرض جملة واحدة فقط */
+  font-family: var(--sans-ar);
+  font-size: 14px; /* حجم خط ممتاز ومناسب للعين */
+  font-weight: 600;
+  color: #d4af37;
+  padding: 0 80px; /* مسافة مريحة جداً بين الجمل */
   display: inline-block;
 }
 
 @keyframes tickerSlide {
   0% {
-    transform: translateX(0);
+    transform: translateX(-100%);
   }
   100% {
     transform: translateX(100%);
   }
 }
 
-/* ضبط مكان الهيدر لعدم التداخل مع الشريط العلوي */
+/* ضبط الهيدر والمحتوى أسفل الشريط العلوي */
 .navbar {
-  top: 46px !important;
+  top: 40px !important;
 }
 
 body {
-  padding-top: 46px !important;
+  padding-top: 40px !important;
 }
 /* ================= SHOP PAGE LAYOUT ================= */
 .shop-page-container {
