@@ -1653,9 +1653,18 @@ html[lang="ar"] .shipping-note {
   position: absolute;
   top: 12px;
   right: 12px;
-  z-index: 4;
-  background: rgba(247,244,237,.9);
+  z-index: 10;
+  background: #0a221c !important;
+  color: var(--gold) !important;
+  border: 1px solid var(--line);
   border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 html[dir="rtl"] .modal-close {
@@ -2161,12 +2170,30 @@ body.dark-mode .lang-btn {
     margin-bottom: 10px;
   }
 
-  .footer-main {
-    grid-template-columns: repeat(2, 1fr);
+.footer {
+    padding: 40px 5% 20px !important;
   }
 
   .footer-brand {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1 !important;
+    margin-bottom: 8px;
+  }
+
+  .footer-logo {
+    font-size: 26px !important;
+  }
+
+  .footer-tagline {
+    font-size: 13px !important;
+    margin-top: 4px !important;
+  }
+
+  /* توزيع الأقسام الثلاثة جنب بعض في صف واحد تماماً كالكمبيوتر */
+  .footer-main {
+    display: grid !important;
+    grid-template-columns: 1fr 1.2fr auto !important;
+    gap: 20px 10px !important;
+    padding-bottom: 25px !important;
   }
 
   .product-modal {
@@ -2272,53 +2299,119 @@ body.dark-mode .lang-btn {
     min-height: 390px;
   }
 
-  .footer {
-    padding-top: 60px;
+.footer-column h4 {
+    font-size: 11px !important;
   }
 
-  .footer-main {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px 20px;
+  .footer-column a,
+  html[lang="ar"] .footer-column a {
+    font-size: 10px !important;
   }
 
-.footer-column:last-child {
-    grid-column: auto;
+  .socials a {
+    width: 30px !important;
+    height: 30px !important;
   }
 
-  .footer-column {
-    align-items: flex-start;
-    text-align: right;
+  .socials a svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
+  /* شريط الحقوق في سطر واحد أفقي: اليمين للحقوق واليسار للمطور */
   .footer-bottom {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
 
-  .product-modal {
-    display: block;
-    max-height: 92vh;
+  .footer-bottom span,
+  .footer-bottom a {
+    font-size: 8px !important;
   }
 
-  .modal-image-wrap {
-    min-height: 300px;
-    height: 300px;
+.product-modal {
+    display: grid !important;
+    grid-template-columns: 42% 58% !important;
+    max-height: 90vh;
+    width: 96%;
   }
 
+  .modal-image-wrap,
   .modal-image-wrap img {
-    min-height: 300px;
+    min-height: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
   }
 
   .modal-info {
-    padding: 30px 25px 25px;
+    padding: 16px 12px !important;
   }
 
   .modal-info h2 {
-    font-size: 43px;
+    font-size: 20px !important;
+    margin: 4px 0 !important;
+  }
+
+  .modal-rating {
+    font-size: 8.5px !important;
+    margin-bottom: 8px !important;
   }
 
   .modal-description {
-    font-size: 10px;
+    font-size: 9px !important;
+    line-height: 1.4 !important;
+  }
+
+  .notes {
+    margin: 8px 0 !important;
+    gap: 4px !important;
+  }
+
+  .note {
+    padding: 3px 6px !important;
+    font-size: 7.5px !important;
+  }
+
+  .size-title {
+    font-size: 9px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .size-options {
+    gap: 4px !important;
+  }
+
+  .size-btn {
+    padding: 5px 2px !important;
+    font-size: 8.5px !important;
+  }
+
+  .size-btn span {
+    display: none !important;
+  }
+
+  .modal-purchase {
+    padding: 8px 0 !important;
+  }
+
+  .modal-purchase > strong {
+    font-size: 16px !important;
+  }
+
+  .quantity-control button {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .quantity-control span {
+    width: 20px !important;
+    font-size: 10px !important;
+  }
+
+  .modal-add {
+    height: 38px !important;
+    font-size: 11px !important;
   }
 
   .toast {
