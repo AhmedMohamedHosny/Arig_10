@@ -336,27 +336,6 @@ html[dir="rtl"] .hero-content {
   margin-right: 6%;
 }
 
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(38px, 5vw, 64px);
-  line-height: 1.1;
-  font-weight: 400;
-}
-
-html[lang="ar"] .hero h1 {
-  font-family: var(--serif-ar);
-  font-size: clamp(40px, 6vw, 72px);
-  line-height: 1.15;
-}
-
-.hero-text {
-  max-width: 420px;
-  margin: 15px 0 25px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: rgba(255,255,255,.85);
-}
-
 @keyframes heroIn {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
@@ -382,16 +361,16 @@ html[lang="ar"] .eyebrow {
 
 .hero h1 {
   font-family: var(--serif);
-  font-size: clamp(58px, 8vw, 112px);
-  line-height: .84;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1.1;
   font-weight: 400;
-  letter-spacing: -2px;
 }
 
 html[lang="ar"] .hero h1 {
+  font-family: var(--serif-ar);
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1.15;
   letter-spacing: 0;
-  line-height: 1.05;
-  font-size: clamp(50px, 7vw, 96px);
 }
 
 .hero h1 em,
@@ -410,11 +389,11 @@ html[lang="ar"] h2 em {
 }
 
 .hero-text {
-  max-width: 410px;
-  margin: 30px 0;
-  font-size: 14px;
-  line-height: 1.8;
-  color: rgba(255,255,255,.82);
+  max-width: 420px;
+  margin: 15px 0 25px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255,255,255,.85);
 }
 
 .hero-buttons {
@@ -423,60 +402,11 @@ html[lang="ar"] h2 em {
   flex-wrap: wrap;
 }
 
-.btn {
-  min-height: 50px;
-  padding: 0 29px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: uppercase;
-  letter-spacing: 1.8px;
-  font-size: 9px;
-  transition: var(--transition);
-}
-
-html[lang="ar"] .btn {
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 12px;
-}
-
-.btn-light {
-  color: var(--black);
-  background: #fff;
-}
-
-.btn-light:hover {
-  background: var(--beige);
-  transform: translateY(-2px);
-}
-
-.btn-outline-light {
-  border: 1px solid rgba(255,255,255,.6);
-  color: #fff;
-  background: transparent;
-}
-
-.btn-outline-light:hover {
-  background: #fff;
-  color: var(--black);
-}
-
-.btn-dark {
-  background: var(--black);
-  color: #fff;
-}
-
-.btn-dark:hover {
-  background: #2c2924;
-  transform: translateY(-2px);
-}
-
 .hero-scroll {
   position: absolute;
   right: 6%;
   bottom: 35px;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 13px;
