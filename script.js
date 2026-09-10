@@ -820,18 +820,7 @@ function openQuickView(id) {
   document.body.classList.add("no-scroll");
 }
 
-// الاستماع للضغط على أزرار الأحجام وتغيير السعر لحظياً
-document.getElementById("modalSizes")?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".size-btn");
-  if (!btn || !selectedProduct) return;
 
-  document.querySelectorAll("#modalSizes .size-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-
-  selectedSize = Number(btn.dataset.size);
-  // تحديث السعر المعروض
-  modalPrice.textContent = formatPrice(getPriceForSize(selectedProduct.price, selectedSize));
-});
 
 function closeQuickView() {
   modalBackdrop.classList.remove("active");
@@ -1030,10 +1019,17 @@ modalBackdrop.addEventListener("click", event => {
   }
 });
 
+function updateModalPrice() {
+  if (!selectedProduct) return;
+  const unitPrice = getPriceForSize(selectedProduct.price, selectedSize);
+  modalPrice.textContent = formatPrice(unitPrice * modalQty);
+}
+
 document.getElementById("modalMinus").addEventListener("click", () => {
   if (modalQty > 1) {
     modalQty--;
     modalQuantityEl.textContent = modalQty;
+    updateModalPrice();
   }
 });
 
@@ -1041,7 +1037,19 @@ document.getElementById("modalPlus").addEventListener("click", () => {
   if (modalQty < 20) {
     modalQty++;
     modalQuantityEl.textContent = modalQty;
+    updateModalPrice();
   }
+});
+
+document.getElementById("modalSizes")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".size-btn");
+  if (!btn || !selectedProduct) return;
+
+  document.querySelectorAll("#modalSizes .size-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  selectedSize = Number(btn.dataset.size);
+  updateModalPrice();
 });
 
 document.getElementById("modalAdd").addEventListener("click", () => {
