@@ -1725,4 +1725,25 @@ document.addEventListener("keydown", (e) => {
     document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
   });
 })();
+/* =========================================================
+   إخفاء أزرار التواصل والشريط خارج الرئيسية
+   ========================================================= */
+const homeSec = document.getElementById("home");
+const tickerWrap = document.querySelector(".ticker-wrap");
+const navbarEl = document.getElementById("navbar");
+const waBtn = document.querySelector(".whatsapp-btn");
+const sfBtn = document.getElementById("scentFinderBtn");
 
+if (homeSec) {
+  const homeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const isHome = entry.isIntersecting;
+      tickerWrap?.classList.toggle("hidden", !isHome);
+      navbarEl?.classList.toggle("top-zero", !isHome);
+      waBtn?.classList.toggle("hidden", !isHome);
+      sfBtn?.classList.toggle("hidden", !isHome);
+    });
+  }, { threshold: 0.15 });
+
+  homeObserver.observe(homeSec);
+}
