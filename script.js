@@ -340,7 +340,7 @@ function saveLang() {
 }
 
 function getProduct(id) {
-  return products.find(product => product.id === Number(id));
+  return products.find(product => String(product.id) === String(id));
 }
 
 function getCartQuantity(id) {
@@ -666,15 +666,15 @@ function updateCartUI() {
 }
 
 function openCart() {
-  cartDrawer.classList.add("active");
-  overlay.classList.add("active");
+  cartDrawer.classList.add("active", "open");
+  overlay.classList.add("active", "open");
   document.body.classList.add("no-scroll");
   updateCartUI();
 }
 
 function closeCart() {
-  cartDrawer.classList.remove("active");
-  overlay.classList.remove("active");
+  cartDrawer.classList.remove("active", "open");
+  overlay.classList.remove("active", "open");
   document.body.classList.remove("no-scroll");
 }
 
@@ -763,8 +763,7 @@ document.addEventListener("click", event => {
 
   if (actionElement) {
     const action = actionElement.dataset.action;
-    const id = Number(actionElement.dataset.id);
-
+const id = actionElement.dataset.id;
     if (action === "add") {
       addToCart(id);
     }
@@ -782,8 +781,7 @@ document.addEventListener("click", event => {
 
   if (cartAction) {
     const action = cartAction.dataset.cartAction;
-    const id = Number(cartAction.dataset.id);
-
+const id = cartAction.dataset.id;
     if (action === "increase") {
       changeQuantity(id, 1);
     }
@@ -1042,13 +1040,7 @@ document.addEventListener("keydown", event => {
   }
 });
 
-/* =========================================================
-   ANNOUNCEMENT
-   ========================================================= */
 
-document.querySelector(".announcement-close").addEventListener("click", () => {
-  document.querySelector(".announcement").style.display = "none";
-});
 
 /* =========================================================
    IMAGE ERROR FALLBACK
@@ -1190,36 +1182,4 @@ document.addEventListener("keydown", (e) => {
     document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
   });
 })();
-/* =========================================================
-   SAFE CART CONTROLS
-   ========================================================= */
-(function () {
-  const cBtn = document.getElementById('cartBtn');
-  const cClose = document.getElementById('closeCart');
-  const cDrawer = document.getElementById('cartDrawer');
-  const cOverlay = document.getElementById('overlay');
 
-  if (cBtn && cDrawer && cOverlay) {
-    cBtn.addEventListener('click', () => {
-      cDrawer.classList.add('active');
-      cOverlay.classList.add('active');
-      document.body.classList.add('no-scroll');
-    });
-  }
-
-  if (cClose) {
-    cClose.addEventListener('click', () => {
-      cDrawer?.classList.remove('active');
-      cOverlay?.classList.remove('active');
-      document.body.classList.remove('no-scroll');
-    });
-  }
-
-  if (cOverlay) {
-    cOverlay.addEventListener('click', () => {
-      cDrawer?.classList.remove('active');
-      cOverlay?.classList.remove('active');
-      document.body.classList.remove('no-scroll');
-    });
-  }
-})();
