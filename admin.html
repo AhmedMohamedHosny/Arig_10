@@ -1139,6 +1139,104 @@
       toast("تمت مزامنة العطور الافتراضية بنجاح!");
       document.getElementById("dropdownMenu")?.classList.remove("show");
     });
+    toast("تمت مزامنة العطور الافتراضية بنجاح!");
+      document.getElementById("dropdownMenu")?.classList.remove("show");
+    });
+
+    /* =========================================================
+       إدارة ونشر عروض سراقة الـ 3D
+       ========================================================= */
+    const offersCol = collection(db, "offers");
+    let currentOfferImgBase64 = "";
+
+    // 1. ضغط ومعاينة صورة العرض المرفوعة من الجهاز
+    document.getElementById("offerFileInput")?.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      currentOfferImgBase64 = await compressImageFile(file, 800, 0.85);
+      const previewImg = document.getElementById("offerPreviewImg");
+      const previewName = document.getElementById("offerPreviewName");
+      if (previewImg) previewImg.src = currentOfferImgBase64;
+      if (previewName) previewName.textContent = file.name;
+      const textPrompt = document.getElementById("offerUploadText");
+      const previewBox = document.getElementById("offerPreviewBox");
+      if (textPrompt) textPrompt.style.display = "none";
+      if (previewBox) previewBox.style.display = "flex";
+    });
+
+    // 2. نشر العرض في السحابة
+    document.getElementById("createOfferForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById("saveOfferBtn");
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "جاري نشر العرض...";
+      }
+
+      try {
+        await addDoc(offersCol, {
+          title: document.getElementById("offerTitle").value.trim(),
+          tag: document.getElementById("offerTag").value.trim(),
+          price: Number(document.getElementById("offerPrice").value),
+          oldPrice: document.getElementById("offerOldPrice").value ? Number(document.getElementById("offerOldPrice").value) : null,
+          desc: document.getElementById("offerDesc").value.trim(),
+          image: currentOfferImgBase64 || "image/S1.png",
+          active: true,
+          createdAt: new Date()
+        });
+
+        toast("تم نشر العرض بنجاح وسيعرض في السلايدر الآن! 🔥");
+        e.target.reset();
+        currentOfferImgBase64 = "";
+        const textPrompt = document.getElementById("offerUploadText");
+        const previewBox = document.getElementById("offerPreviewBox");
+        if (textPrompt) textPrompt.style.display = "block";
+        if (previewBox) previewBox.style.display = "none";
+      } catch (err) {
+        toast("حدث خطأ أثناء حفظ العرض!");
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "نشر العرض في المتجر الآن 🚀";
+        }
+      }
+    });
+
+    // 3. عرض العروض النشطة في الجدول مع زر الحذف
+    onSnapshot(offersCol, (snapshot) => {
+      const tbody = document.getElementById("offersTableBody");
+      if (!tbody) return;
+      
+      const list = [];
+      snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">لا توجد عروض منشورة حالياً.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(o => `
+        <tr>
+          <td><img src="${o.image || 'image/S1.png'}" style="width:45px; height:45px; object-fit:cover; border-radius:4px;"></td>
+          <td><strong>${o.title}</strong></td>
+          <td style="color:var(--gold); font-weight:800;">${o.price} ج</td>
+          <td style="color:#e74c3c; text-decoration:line-through;">${o.oldPrice ? `${o.oldPrice} ج` : '—'}</td>
+          <td><span style="background:#e74c3c; color:#fff; font-size:9.5px; padding:2px 6px; border-radius:3px;">${o.tag}</span></td>
+          <td>
+            <button type="button" class="btn-exit" style="padding:3px 8px; font-size:10px;" onclick="deleteOffer('${o.id}')">حذف العرض</button>
+          </td>
+        </tr>
+      `).join("");
+    });
+
+    window.deleteOffer = async function(id) {
+      if (!confirm("هل تريد حذف هذا العرض نهائياً من المتجر؟")) return;
+      await deleteDoc(doc(db, "offers", id));
+      toast("تم حذف العرض بنجاح!");
+    };
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
