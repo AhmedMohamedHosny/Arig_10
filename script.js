@@ -804,10 +804,11 @@ document.addEventListener("click", event => {
 
   if (event.target.id === "continueShopping") {
     closeCart();
-    document.getElementById("shop").scrollIntoView({
+    document.getElementById("shop")?.scrollIntoView({
       behavior: "smooth"
     });
   }
+ 
 });
 
 /* =========================================================
@@ -989,7 +990,7 @@ document.querySelectorAll(".collection-card").forEach(card => {
 
     renderProducts();
 
-    document.getElementById("shop").scrollIntoView({
+    document.getElementById("shop")?.scrollIntoView({
       behavior: "smooth"
     });
   });
@@ -1011,7 +1012,7 @@ document.getElementById("viewBestSellers").addEventListener("click", () => {
 
   renderProducts();
 
-  document.getElementById("shop").scrollIntoView({
+  document.getElementById("shop")?.scrollIntoView({
     behavior: "smooth"
   });
 });
