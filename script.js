@@ -1190,29 +1190,36 @@ document.addEventListener("keydown", (e) => {
     document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
   });
 })();
-// تشغيل وتفتيح السلة
-const cartBtn = document.getElementById('cartBtn');
-const closeCart = document.getElementById('closeCart');
-const cartDrawer = document.getElementById('cartDrawer');
-const overlay = document.getElementById('overlay');
+/* =========================================================
+   SAFE CART CONTROLS
+   ========================================================= */
+(function () {
+  const cBtn = document.getElementById('cartBtn');
+  const cClose = document.getElementById('closeCart');
+  const cDrawer = document.getElementById('cartDrawer');
+  const cOverlay = document.getElementById('overlay');
 
-if (cartBtn) {
-  cartBtn.addEventListener('click', () => {
-    cartDrawer?.classList.add('active');
-    overlay?.classList.add('active');
-  });
-}
+  if (cBtn && cDrawer && cOverlay) {
+    cBtn.addEventListener('click', () => {
+      cDrawer.classList.add('active');
+      cOverlay.classList.add('active');
+      document.body.classList.add('no-scroll');
+    });
+  }
 
-if (closeCart) {
-  closeCart.addEventListener('click', () => {
-    cartDrawer?.classList.remove('active');
-    overlay?.classList.remove('active');
-  });
-}
+  if (cClose) {
+    cClose.addEventListener('click', () => {
+      cDrawer?.classList.remove('active');
+      cOverlay?.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    });
+  }
 
-if (overlay) {
-  overlay.addEventListener('click', () => {
-    cartDrawer?.classList.remove('active');
-    overlay?.classList.remove('active');
-  });
-}
+  if (cOverlay) {
+    cOverlay.addEventListener('click', () => {
+      cDrawer?.classList.remove('active');
+      cOverlay?.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    });
+  }
+})();
