@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم  | عطور سراقة</title>
+  <title>لوحة التحكم | عطور سراقة</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
@@ -27,10 +27,10 @@
       color: var(--text-light);
       font-family: 'Cairo', sans-serif;
       min-height: 100vh;
-      padding-bottom: 40px;
+      padding-bottom: 50px;
     }
 
-    /* شريط الرأس كاشير سراقة */
+    /* شريط الرأس */
     .top-bar {
       background: var(--emerald-main);
       border-bottom: 1px solid var(--line);
@@ -42,21 +42,9 @@
       top: 0;
       z-index: 100;
     }
-    .brand-side {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-logo {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-    }
-    .brand-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--gold);
-    }
+    .brand-side { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { height: 38px; width: auto; object-fit: contain; }
+    .brand-title { font-size: 16px; font-weight: 800; color: var(--gold); }
     .brand-badge {
       background: rgba(212,175,55,0.15);
       border: 1px solid var(--gold);
@@ -66,44 +54,44 @@
       border-radius: 4px;
       font-weight: 700;
     }
-    .actions-side {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .actions-side { display: flex; align-items: center; gap: 10px; position: relative; }
     .btn-exit {
       background: var(--danger);
       color: #fff;
       text-decoration: none;
       font-size: 11px;
       font-weight: 700;
-      padding: 7px 16px;
+      padding: 8px 16px;
       border-radius: 5px;
       transition: 0.2s;
     }
+    .btn-exit:hover { opacity: 0.9; }
+    
     .menu-trigger-btn {
       background: var(--emerald-card);
       border: 1px solid var(--line);
       color: var(--gold);
-      font-size: 18px;
-      width: 36px;
-      height: 36px;
-      border-radius: 5px;
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
       cursor: pointer;
       display: grid;
       place-items: center;
+      transition: 0.2s;
     }
+    .menu-trigger-btn:hover { border-color: var(--gold); background: var(--emerald-light); }
 
     /* القائمة المنسدلة للثلاث شرط */
     .dropdown-menu {
       position: absolute;
-      top: 60px;
-      left: 24px;
+      top: 50px;
+      left: 0;
       background: #09201a;
-      border: 1px solid var(--line);
+      border: 1px solid var(--gold);
       border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      width: 220px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      width: 250px;
       display: none;
       flex-direction: column;
       overflow: hidden;
@@ -111,10 +99,10 @@
     }
     .dropdown-menu.show { display: flex; }
     .dropdown-item {
-      padding: 12px 16px;
+      padding: 13px 16px;
       color: var(--text-light);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -122,9 +110,10 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
       transition: background 0.2s;
     }
-    .dropdown-item:hover { background: rgba(212,175,55,0.1); color: var(--gold); }
+    .dropdown-item:hover { background: rgba(212,175,55,0.12); color: var(--gold); }
+    .dropdown-item.active-item { color: var(--gold); background: rgba(212,175,55,0.08); }
 
-    /* كروت إحصائيات المبيعات والطلبات العلوية (ستايل عجيبه) */
+    /* كروت إحصائيات المبيعات والأرقام العلوية */
     .container { width: 95%; max-width: 1400px; margin: 20px auto 0; }
     .kpi-row {
       display: grid;
@@ -144,37 +133,10 @@
     .kpi-value.green { color: var(--success); }
     .kpi-value.red { color: var(--danger); }
 
-    /* التبويبات الرئيسية */
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 2px solid rgba(212,175,55,0.2);
-      margin-bottom: 24px;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 10px 18px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: 0.2s;
-      white-space: nowrap;
-    }
-    .tab-btn.active {
-      color: var(--gold);
-      border-bottom-color: var(--gold);
-      background: rgba(212,175,55,0.05);
-    }
+    /* محتوى الأقسام (مخفية عدا إدارة العطور افتراضياً) */
+    .section-view { display: none; }
+    .section-view.active { display: block; }
 
-    /* محتوى التبويبات */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* الجداول والبطاقات */
     .panel {
       background: var(--emerald-card);
       border: 1px solid var(--line);
@@ -192,17 +154,7 @@
       align-items: center;
     }
 
-    /* جدول الطلبات */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: right; }
-    th { background: rgba(0,0,0,0.2); color: var(--gold); padding: 12px 10px; border-bottom: 1px solid var(--line); }
-    td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    tr:hover { background: rgba(255,255,255,0.02); }
-    .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
-    .status-new { background: rgba(241,196,15,0.15); color: #f1c40f; border: 1px solid #f1c40f; }
-    .status-done { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
-
-    /* شبكة العطور والمخزون */
+    /* شبكة المخزون والوفرة */
     .perfumes-stock-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -216,23 +168,12 @@
       display: flex;
       flex-direction: column;
     }
-    .stock-card-top {
-      display: flex;
-      gap: 12px;
-      padding: 12px;
-    }
-    .stock-card-img {
-      width: 70px;
-      height: 70px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid var(--line);
-    }
+    .stock-card-top { display: flex; gap: 12px; padding: 12px; }
+    .stock-card-img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line); }
     .stock-card-info { flex: 1; }
     .stock-card-name { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px; }
     .stock-card-price { font-size: 12px; color: var(--gold); font-weight: 700; }
     
-    /* عداد المخزون المباشر للمحل والاونلاين */
     .stock-control-bar {
       background: rgba(0,0,0,0.25);
       padding: 10px 14px;
@@ -241,11 +182,7 @@
       align-items: center;
       border-top: 1px solid rgba(255,255,255,0.05);
     }
-    .stock-counter {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .stock-counter { display: flex; align-items: center; gap: 8px; }
     .stock-btn {
       width: 26px;
       height: 26px;
@@ -261,11 +198,11 @@
     .stock-btn:hover { background: var(--gold); color: #000; }
     .stock-num { font-size: 13px; font-weight: 800; color: var(--gold); min-width: 24px; text-align: center; }
 
-    /* أشكال الفورم */
+    /* الفورم */
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     label { font-size: 11px; color: var(--text-muted); font-weight: 700; }
-    input, select, textarea {
+    input, select {
       background: var(--emerald-dark);
       border: 1px solid var(--line);
       color: #fff;
@@ -289,34 +226,108 @@
     }
     .btn-submit:hover { background: var(--gold-hover); }
 
-    /* نافذة حالة إغلاق المتجر */
+    /* الجداول */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: right; }
+    th { background: rgba(0,0,0,0.25); color: var(--gold); padding: 12px 10px; border-bottom: 1px solid var(--line); }
+    td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+    /* نافذة مظهر وحالة المتجر الشاملة (الألوان + الفتح/الإغلاق) */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       display: none;
       place-items: center;
       z-index: 1000;
+      padding: 15px;
     }
     .modal-overlay.open { display: grid; }
-    .modal-box {
-      background: var(--emerald-card);
+    .theme-modal-box {
+      background: #09201a;
       border: 1px solid var(--gold);
       padding: 24px;
-      border-radius: 8px;
-      width: min(400px, 90vw);
-      text-align: center;
+      border-radius: 10px;
+      width: min(720px, 95vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
     }
-    .toggle-switch-lg {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-    }
-    .toggle-switch-lg input { width: 50px; height: 26px; cursor: pointer; }
 
-    /* إشعار التوست */
+    /* كارت قفل المتجر */
+    .store-toggle-box {
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.3);
+      padding: 14px 18px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    .store-toggle-box.active-open {
+      background: rgba(46,204,113,0.1);
+      border-color: rgba(46,204,113,0.3);
+    }
+    .switch-ui {
+      width: 50px;
+      height: 26px;
+      appearance: none;
+      background: #444;
+      border-radius: 20px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: 0.3s;
+    }
+    .switch-ui:checked { background: var(--danger); }
+    .switch-ui::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      background: #fff;
+      transition: 0.3s;
+    }
+    .switch-ui:checked::before { transform: translateX(24px); }
+
+    /* شبكة الـ 22 لون وثيم متداخل */
+    .themes-palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 15px 0 20px;
+    }
+    .theme-chip {
+      background: rgba(18,56,46,0.6);
+      border: 1px solid var(--line);
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+    }
+    .theme-chip:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .theme-chip.selected {
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.18);
+      box-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+    .theme-preview-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+    .theme-name-text { font-size: 11px; font-weight: 700; line-height: 1.3; }
+
+    /* التوست */
     .toast {
       position: fixed;
       bottom: 20px;
@@ -341,28 +352,34 @@
     <div class="brand-side">
       <img src="image/logo.png" alt="سراقة" class="brand-logo">
       <span class="brand-title">عطور سراقة — الإدارة والتحليلات</span>
-      <span class="brand-badge">لوحة الكاشير</span>
+      <span class="brand-badge">لوحة االتحكم</span>
     </div>
 
     <div class="actions-side">
       <a href="index.html" class="btn-exit">خروج للمتجر ➔</a>
-      <button class="menu-trigger-btn" id="menuBtn" title="خيارات إضافية">☰</button>
-    </div>
+      <button class="menu-trigger-btn" id="menuBtn" title="القائمة الشاملة">☰</button>
 
-    <!-- القائمة المنسدلة عند الضغط على الـ ☰ -->
-    <div class="dropdown-menu" id="dropdownMenu">
-      <div class="dropdown-item" id="openStatusModalBtn">
-        <span>حالة المتجر (فتح / إغلاق)</span>
-        <span id="storeStatusBadge" style="color: var(--success); font-size:10px;">يعمل</span>
-      </div>
-      <div class="dropdown-item" onclick="switchTab('offersTab')">
-        <span>🔥 إدارة العروض الحصرية</span>
-      </div>
-      <div class="dropdown-item" onclick="switchTab('analyticsTab')">
-        <span>📊 تقرير التحليلات الشامل</span>
-      </div>
-      <div class="dropdown-item" id="syncDefaultsBtn" style="color: var(--gold);">
-        <span>📥 مزامنة عطور الموقع لـ Firebase</span>
+      <!-- القائمة المنسدلة للثلاث شرط -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-item" id="openThemeModalBtn" style="color: var(--gold);">
+          <span>🎨 مظهر وحالة المتجر</span>
+          <span id="menuStatusBadge" style="font-size:10px; color:var(--success);">يعمل</span>
+        </div>
+        <div class="dropdown-item" onclick="openSection('inventorySec')">
+          <span>🏺 إدارة العطور والمخزون</span>
+        </div>
+        <div class="dropdown-item" onclick="openSection('ordersSec')">
+          <span>📋 إدارة الطلبات المباشرة</span>
+        </div>
+        <div class="dropdown-item" onclick="openSection('offersSec')">
+          <span>🔥 إدارة العروض الترويجية</span>
+        </div>
+        <div class="dropdown-item" onclick="openSection('analyticsSec')">
+          <span>📊 تقرير التحليلات الشامل</span>
+        </div>
+        <div class="dropdown-item" id="syncDefaultsBtn" style="color: #64b5f6;">
+          <span>📥 مزامنة عطور الموقع لـ Firebase</span>
+        </div>
       </div>
     </div>
   </header>
@@ -389,46 +406,9 @@
       </div>
     </section>
 
-    <!-- التبويبات الرئيسية (ستايل عجيبه) -->
-    <nav class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('ordersTab')">📋 إدارة الطلبات المباشرة</button>
-      <button class="tab-btn" onclick="switchTab('inventoryTab')">🏺 إدارة العطور والمخزون (الوفرة)</button>
-      <button class="tab-btn" onclick="switchTab('offersTab')">🔥 إدارة العروض الترويجية</button>
-      <button class="tab-btn" onclick="switchTab('analyticsTab')">📊 التحليلات والأكثر طلباً</button>
-    </nav>
-
-    <!-- 1. تبويب الطلبات المباشرة -->
-    <section id="ordersTab" class="tab-content active">
-      <div class="panel">
-        <div class="panel-title">
-          <span>سجل الطلبات الواردة من الموقع</span>
-          <span style="font-size:11px; color:var(--text-muted);">يتم التحديث لحظياً من فايربيز</span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>العميل</th>
-                <th>الهاتف</th>
-                <th>المحافظة</th>
-                <th>المنتجات المطلوبة</th>
-                <th>طريقة الدفع</th>
-                <th>الإجمالي</th>
-                <th>الحالة</th>
-                <th>إجراء</th>
-              </tr>
-            </thead>
-            <tbody id="ordersTableBody">
-              <tr><td colspan="8" style="text-align:center; color:var(--text-muted);">جاري جلب الطلبات...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. تبويب المخزون والوفرة -->
-    <section id="inventoryTab" class="tab-content">
-      <!-- نموذج إضافة عطر جديد مع السعر قبل/بعد والمخزون -->
+    <!-- 1. القسم الافتراضي النشط دائماً: إدارة العطور والمخزون -->
+    <section id="inventorySec" class="section-view active">
+      <!-- نموذج إضافة عطر جديد -->
       <div class="panel">
         <div class="panel-title">✨ إضافة عطر جديد وتحديد مخزونه</div>
         <form id="addPerfumeForm">
@@ -470,21 +450,51 @@
         </form>
       </div>
 
-      <!-- قائمة العطور مع زر إنقاص الكمية لمبيعات المحل المباشرة -->
+      <!-- قائمة العطور مع إنقاص المخزون للمحل -->
       <div class="panel">
         <div class="panel-title">
           <span>الوفرة والمخزون الحالي (يمكنك إنقاص المخزون إذا بيعت زجاجة في المحل)</span>
         </div>
-        <div class="perfumes-stock-grid" id="perfumesStockList">
-          <!-- الكروت تتولد بالجافاسكريبت -->
+        <div class="perfumes-stock-grid" id="perfumesStockList"></div>
+      </div>
+    </section>
+
+    <!-- 2. قسم إدارة الطلبات -->
+    <section id="ordersSec" class="section-view">
+      <div class="panel">
+        <div class="panel-title">
+          <span>سجل الطلبات الواردة من الموقع</span>
+          <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>العميل</th>
+                <th>الهاتف</th>
+                <th>المحافظة</th>
+                <th>المنتجات المطلوبة</th>
+                <th>طريقة الدفع</th>
+                <th>الإجمالي</th>
+                <th>الحالة</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="8" style="text-align:center; color:var(--text-muted);">جاري جلب الطلبات...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <!-- 3. تبويب إدارة العروض -->
-    <section id="offersTab" class="tab-content">
+    <!-- 3. قسم العروض الترويجية -->
+    <section id="offersSec" class="section-view">
       <div class="panel">
-        <div class="panel-title">🔥 نشر عرض ترويجي يظهر أعلى المتجر</div>
+        <div class="panel-title">
+          <span>🔥 نشر عرض ترويجي يظهر أعلى المتجر</span>
+          <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
+        </div>
         <form id="offerForm">
           <div class="form-grid">
             <div class="form-group" style="grid-column: 1 / -1;">
@@ -504,10 +514,13 @@
       </div>
     </section>
 
-    <!-- 4. تبويب التحليلات -->
-    <section id="analyticsTab" class="tab-content">
+    <!-- 4. قسم التحليلات والأكثر طلباً -->
+    <section id="analyticsSec" class="section-view">
       <div class="panel">
-        <div class="panel-title">📊 تحليل العطور الأكثر طلباً وسرعة في البيع</div>
+        <div class="panel-title">
+          <span>📊 تحليل العطور الأكثر طلباً وسرعة في البيع</span>
+          <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -518,9 +531,7 @@
                 <th>المخزون المتبقي</th>
               </tr>
             </thead>
-            <tbody id="topSellingTableBody">
-              <!-- يتولد تلقائياً من داتا الطلبات -->
-            </tbody>
+            <tbody id="topSellingTableBody"></tbody>
           </table>
         </div>
       </div>
@@ -528,32 +539,39 @@
 
   </main>
 
-  <!-- مودال إغلاق المتجر (وضع الصيانة) -->
-  <div class="modal-overlay" id="statusModal">
-    <div class="modal-box">
-      <h3 style="color:var(--gold); margin-bottom:10px;">إغلاق أو فتح المتجر</h3>
-      <p style="font-size:11px; color:var(--text-muted); line-height:1.6;">
-        عند تفعيل الإغلاق، سيتم حجب المنتجات وظهور شاشة فاخرة للعملاء بها ذكر الصلاة على النبي وإشعار الصيانة.
-      </p>
-
-      <div class="toggle-switch-lg">
-        <label style="font-size:13px; font-weight:800; color:#fff;">إغلاق المتجر مؤقتاً:</label>
-        <input type="checkbox" id="closeStoreCheckbox">
+  <!-- نافذة مظهر وحالة المتجر (الفتح/الإغلاق + 22 ثيم متداخل) -->
+  <div class="modal-overlay" id="themeModal">
+    <div class="theme-modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:18px;">
+        <h3 style="color:var(--gold); font-size:16px;">🎨 مظهر وحالة المتجر للعملاء</h3>
+        <button type="button" style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer;" onclick="document.getElementById('themeModal').classList.remove('open')">&times;</button>
       </div>
 
-      <button type="button" class="btn-submit" id="saveStoreStatusBtn" style="width:100%;">حفظ الحالة الآن</button>
-      <button type="button" class="btn-exit" style="width:100%; margin-top:8px; background:transparent; border:1px solid var(--line); color:var(--text-muted);" onclick="document.getElementById('statusModal').classList.remove('open')">إلغاء</button>
+      <!-- حالة فتح/إغلاق المتجر -->
+      <div class="store-toggle-box" id="storeToggleContainer">
+        <div>
+          <strong id="storeStatusLabel" style="font-size:13px; color:#fff;">حالة المتجر: يعمل ويستقبل الزوار</strong>
+          <p style="font-size:10.5px; color:var(--text-muted); margin-top:3px;">عند التفعيل، يُغلق المتجر وتظهر شاشة الصلاة على النبي والصيانة فوراً.</p>
+        </div>
+        <input type="checkbox" id="closeStoreCheckbox" class="switch-ui">
+      </div>
+
+      <!-- اختيار الثيم والألوان المتداخلة (22 ثيماً فاخراً) -->
+      <label style="font-size:12px; color:var(--gold); font-weight:800; display:block; margin-bottom:8px;">اختر هوية وألوان المتجر (تتغير عند العملاء لحظياً):</label>
+      <div class="themes-palette-grid" id="themesContainer"></div>
+
+      <button type="button" class="btn-submit" id="saveThemeAndStatusBtn" style="width:100%; margin-top:10px;">حفظ وتطبيق المظهر والحالة الآن 🚀</button>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
-  <!-- فايربيز وسكربت لوحة التحكم -->
+  <!-- فايربيز والمنطق البرمجي -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, onSnapshot, doc, updateDoc, 
-      setDoc, getDoc, addDoc, deleteDoc, increment 
+      setDoc, getDoc, addDoc
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -572,10 +590,36 @@
     const perfumesCol = collection(db, "perfumes");
     const settingsDoc = doc(db, "settings", "storeConfig");
 
+    // قائمة الـ 22 ثيماً ولوناً متداخلاً
+    const STORE_THEMES = [
+      { id: "emerald", name: "الزمردي الملكي (الأصلي)", gradient: "linear-gradient(135deg, #071914, #d4af37)" },
+      { id: "obsidian", name: "الأسود الفاخر والذهب", gradient: "linear-gradient(135deg, #0a0a0a, #dfb743)" },
+      { id: "royal-navy", name: "الكحلي الأندلسي والشمبانيا", gradient: "linear-gradient(135deg, #060d1a, #e5c158)" },
+      { id: "velvet-burgundy", name: "البرغندي المخملي وعود", gradient: "linear-gradient(135deg, #1f080f, #e6be65)" },
+      { id: "imperial-purple", name: "البنفسجي الإمبراطوري", gradient: "linear-gradient(135deg, #150921, #f3cc68)" },
+      { id: "sapphire-mist", name: "الياقوت الأزرق المتدرج", gradient: "linear-gradient(135deg, #07121b, #64b5f6)" },
+      { id: "forest-bronze", name: "الأخضر الزيتوني والبرونز", gradient: "linear-gradient(135deg, #11160d, #cd7f32)" },
+      { id: "charcoal-copper", name: "الفحم الدخاني والنحاس", gradient: "linear-gradient(135deg, #141416, #d97443)" },
+      { id: "deep-maroon", name: "العنابي الداكن والذهب", gradient: "linear-gradient(135deg, #1f0a0d, #ffd700)" },
+      { id: "ocean-teal", name: "الفيروزي المحيطي العميق", gradient: "linear-gradient(135deg, #051617, #38ef7d)" },
+      { id: "royal-twilight", name: "تدرج الغسق (كحلي بنفسجي)", gradient: "linear-gradient(135deg, #180e30, #081224)" },
+      { id: "black-marble", name: "الرخام الأسود والذهب الساطع", gradient: "linear-gradient(135deg, #050505, #ffdf00)" },
+      { id: "chocolate-amber", name: "الشوكولاتة الداكنة والعنبر", gradient: "linear-gradient(135deg, #180e09, #ffbf00)" },
+      { id: "midnight-silver", name: "النيلي الليلي والفضة", gradient: "linear-gradient(135deg, #080c14, #e0e6ed)" },
+      { id: "dark-mint", name: "النعناعي الداكن الملكي", gradient: "linear-gradient(135deg, #081714, #70e0a5)" },
+      { id: "crimson-sunset", name: "تدرج الشفق القرمزي", gradient: "linear-gradient(135deg, #2b0808, #ff6b6b)" },
+      { id: "royal-cyan", name: "الزمرد الأزرق والذهب البراق", gradient: "linear-gradient(135deg, #061517, #e4b952)" },
+      { id: "platinum-slate", name: "البلاتينيوم الحجري والذهب", gradient: "linear-gradient(135deg, #14171a, #e5c575)" },
+      { id: "smoky-oud", name: "خشب العود المدخن والبرونز", gradient: "linear-gradient(135deg, #16100c, #d49b6a)" },
+      { id: "plum-velvet", name: "المخمل البرقوقي المتدرج", gradient: "linear-gradient(135deg, #230e22, #f7b731)" },
+      { id: "pure-gold-black", name: "ذهب سراقة الخالص والأسود", gradient: "linear-gradient(135deg, #080703, #f5b041)" },
+      { id: "cosmic-aurora", name: "الشفق الكوني (أخضر وبنفسجي)", gradient: "linear-gradient(135deg, #091a24, #1b0c26)" }
+    ];
+
+    let selectedThemeId = "emerald";
     let allOrders = [];
     let allPerfumes = [];
 
-    // إظهار التوست
     function toast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg;
@@ -583,23 +627,90 @@
       setTimeout(() => t.classList.remove("show"), 3000);
     }
 
-    // التنقل بين التبويبات
-    window.switchTab = function(tabId) {
-      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-      document.querySelectorAll(".nav-tabs .tab-btn").forEach(btn => btn.classList.remove("active"));
-      document.getElementById(tabId)?.classList.add("active");
-      
-      const activeBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.getAttribute("onclick")?.includes(tabId));
-      if (activeBtn) activeBtn.classList.add("active");
+    // التنقل بين الأقسام من القائمة وإخفاء باقي الواجهة
+    window.openSection = function(secId) {
+      document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
+      document.getElementById(secId)?.classList.add("active");
       document.getElementById("dropdownMenu").classList.remove("show");
     };
 
-    // زر القائمة المنسدلة
+    // زر القائمة ☰
     document.getElementById("menuBtn").addEventListener("click", () => {
       document.getElementById("dropdownMenu").classList.toggle("show");
     });
 
-    // 1. الاستماع الحي لطلبات الشراء وحساب الأرباح والتحليلات
+    // توليد الـ 22 لون وثيم داخل المودال
+    const themesContainer = document.getElementById("themesContainer");
+    STORE_THEMES.forEach(th => {
+      const chip = document.createElement("div");
+      chip.className = `theme-chip ${th.id === selectedThemeId ? 'selected' : ''}`;
+      chip.dataset.theme = th.id;
+      chip.innerHTML = `
+        <div class="theme-preview-dot" style="background: ${th.gradient}"></div>
+        <span class="theme-name-text">${th.name}</span>
+      `;
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".theme-chip").forEach(c => c.classList.remove("selected"));
+        chip.classList.add("selected");
+        selectedThemeId = th.id;
+      });
+      themesContainer.appendChild(chip);
+    });
+
+    // فتح مودال مظهر وحالة المتجر
+    document.getElementById("openThemeModalBtn").addEventListener("click", async () => {
+      document.getElementById("dropdownMenu").classList.remove("show");
+      const snap = await getDoc(settingsDoc);
+      if (snap.exists()) {
+        const d = snap.data();
+        document.getElementById("closeStoreCheckbox").checked = !!d.isClosed;
+        selectedThemeId = d.theme || "emerald";
+        
+        document.querySelectorAll(".theme-chip").forEach(c => {
+          c.classList.toggle("selected", c.dataset.theme === selectedThemeId);
+        });
+        updateStoreToggleUI(!!d.isClosed);
+      }
+      document.getElementById("themeModal").classList.add("open");
+    });
+
+    function updateStoreToggleUI(isClosed) {
+      const box = document.getElementById("storeToggleContainer");
+      const lbl = document.getElementById("storeStatusLabel");
+      const badge = document.getElementById("menuStatusBadge");
+      
+      if (isClosed) {
+        box.classList.remove("active-open");
+        lbl.textContent = "حالة المتجر: مغلق مؤقتاً (وضع الصيانة)";
+        lbl.style.color = "var(--danger)";
+        badge.textContent = "مغلق";
+        badge.style.color = "var(--danger)";
+      } else {
+        box.classList.add("active-open");
+        lbl.textContent = "حالة المتجر: يعمل ويستقبل الزوار";
+        lbl.style.color = "var(--success)";
+        badge.textContent = "يعمل";
+        badge.style.color = "var(--success)";
+      }
+    }
+
+    document.getElementById("closeStoreCheckbox").addEventListener("change", (e) => {
+      updateStoreToggleUI(e.target.checked);
+    });
+
+    // حفظ الثيم وحالة الإغلاق في Firebase
+    document.getElementById("saveThemeAndStatusBtn").addEventListener("click", async () => {
+      const isClosed = document.getElementById("closeStoreCheckbox").checked;
+      await setDoc(settingsDoc, { 
+        isClosed: isClosed, 
+        theme: selectedThemeId 
+      }, { merge: true });
+
+      document.getElementById("themeModal").classList.remove("open");
+      toast("تم تطبيق المظهر وحالة المتجر لجميع الزوار لحظياً! 🎨");
+    });
+
+    // 1. مراقبة الطلبات والأرباح
     onSnapshot(ordersCol, (snapshot) => {
       allOrders = [];
       let totalRevenue = 0;
@@ -638,7 +749,7 @@
             <td style="font-size:11px;">${itemsText}</td>
             <td>${o.paymentMethod === "cod" ? "عند الاستلام" : "إلكتروني"}</td>
             <td><strong style="color:var(--gold);">${(o.pricing?.total || 0).toLocaleString("ar-EG")} ج</strong></td>
-            <td><span class="status-badge ${isDone ? 'status-done' : 'status-new'}">${isDone ? 'تم التسليم' : 'جديد بالانتظار'}</span></td>
+            <td><span style="color:${isDone ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${isDone ? 'تم التسليم' : 'جديد'}</span></td>
             <td>
               ${!isDone ? `<button class="stock-btn" style="width:auto; padding:3px 8px; font-size:10px;" onclick="markDelivered('${o.id}')">✓ تأكيد التسليم</button>` : '—'}
             </td>
@@ -649,10 +760,10 @@
 
     window.markDelivered = async function(id) {
       await updateDoc(doc(db, "orders", id), { status: "delivered" });
-      toast("تم تحويل حالة الطلب إلى مكتمل! ✓");
+      toast("تم تحويل الطلب إلى مكتمل! ✓");
     };
 
-    // 2. الاستماع للوفرة والمخزون والعطور
+    // 2. مراقبة العطور والمخزون
     onSnapshot(perfumesCol, (snapshot) => {
       allPerfumes = [];
       snapshot.forEach(docSnap => {
@@ -667,7 +778,7 @@
     function renderStockGrid() {
       const grid = document.getElementById("perfumesStockList");
       if (allPerfumes.length === 0) {
-        grid.innerHTML = `<div style="color:var(--text-muted); font-size:12px;">لا توجد عطور، اضغط على زر مزامنة العطور الافتراضية من القائمة.</div>`;
+        grid.innerHTML = `<div style="color:var(--text-muted); font-size:12px;">لا توجد عطور، يمكنك مزامنة العطور الافتراضية من القائمة ☰.</div>`;
         return;
       }
 
@@ -690,8 +801,6 @@
                 </span>
               </div>
             </div>
-
-            <!-- أزرار زيادة وإنقاص المخزون المباشر للبيع بالمحل -->
             <div class="stock-control-bar">
               <span style="font-size:11px; color:var(--text-muted);">تعديل وفرة المحل:</span>
               <div class="stock-counter">
@@ -705,7 +814,6 @@
       }).join("");
     }
 
-    // تعديل المخزون
     window.updateStock = async function(id, delta) {
       const p = allPerfumes.find(x => x.id === id);
       if (!p) return;
@@ -715,7 +823,7 @@
       toast(delta < 0 ? "تم خصم زجاجة من المخزون (بيع محل)" : "تمت إضافة زجاجة للمخزون");
     };
 
-    // إضافة عطر جديد
+    // إضافة عطر
     document.getElementById("addPerfumeForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("pName").value.trim();
@@ -741,12 +849,12 @@
       e.target.reset();
     });
 
-    // 3. التحليلات وحساب الأكثر طلباً
+    // 3. التحليلات
     function renderAnalytics() {
       const salesMap = {};
       allOrders.forEach(o => {
         (o.items || []).forEach(item => {
-          const key = item.name.split(" (")[0]; // استخراج الاسم الأساسي
+          const key = item.name.split(" (")[0];
           if (!salesMap[key]) salesMap[key] = { count: 0, revenue: 0 };
           salesMap[key].count += item.quantity;
           salesMap[key].revenue += (item.price * item.quantity);
@@ -755,6 +863,7 @@
 
       const sorted = Object.keys(salesMap).sort((a,b) => salesMap[b].count - salesMap[a].count);
       const tbody = document.getElementById("topSellingTableBody");
+      if (!tbody) return;
 
       if (sorted.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">لا توجد مبيعات تحليلية بعد.</td></tr>`;
@@ -774,45 +883,27 @@
       }).join("");
     }
 
-    // 4. حالة المتجر (إغلاق / فتح)
-    const statusModal = document.getElementById("statusModal");
-    const closeStoreCheckbox = document.getElementById("closeStoreCheckbox");
-
-    document.getElementById("openStatusModalBtn").addEventListener("click", async () => {
-      document.getElementById("dropdownMenu").classList.remove("show");
-      const snap = await getDoc(settingsDoc);
-      if (snap.exists()) {
-        closeStoreCheckbox.checked = !!snap.data().isClosed;
-      }
-      statusModal.classList.add("open");
-    });
-
-    document.getElementById("saveStoreStatusBtn").addEventListener("click", async () => {
-      const isClosed = closeStoreCheckbox.checked;
-      await setDoc(settingsDoc, { isClosed }, { merge: true });
-      document.getElementById("storeStatusBadge").textContent = isClosed ? "مغلق" : "يعمل";
-      document.getElementById("storeStatusBadge").style.color = isClosed ? "var(--danger)" : "var(--success)";
-      statusModal.classList.remove("open");
-      toast(isClosed ? "تم قفل المتجر وتفعيل شاشة الصيانة والصلاة على النبي" : "تم فتح المتجر للزوار!");
-    });
-
-    // 5. إدارة العروض الترويجية
+    // 4. إدارة العروض
     document.getElementById("offerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const bannerText = document.getElementById("offerBannerText").value.trim();
       const status = document.getElementById("offerStatus").value;
       await setDoc(settingsDoc, { activeOffer: bannerText, offerActive: status === "active" }, { merge: true });
-      toast("تم تحديث شريط العروض بالمتجر بنجاح! 🔥");
+      toast("تم تحديث العرض بالمتجر بنجاح! 🔥");
     });
 
-    // مزامنة عطور الموقع الافتراضية بنقرة واحدة
+    // 5. مزامنة العطور الافتراضية
     document.getElementById("syncDefaultsBtn").addEventListener("click", async () => {
       if (!confirm("هل تريد رفع تشكيلة سراقة الافتراضية كاملة إلى Firebase الآن؟")) return;
       const defs = [
         { name: "سراقة نوار", category: "men", price: 1290, oldPrice: 1590, stock: 30, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85" },
         { name: "سراقة إيلان", category: "unisex", price: 1450, oldPrice: 1750, stock: 25, image: "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=900&q=85" },
         { name: "سراقة عود", category: "men", price: 1690, oldPrice: 1990, stock: 20, image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85" },
-        { name: "سراقة فيلفيت", category: "women", price: 1390, oldPrice: 1650, stock: 35, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=85" }
+        { name: "سراقة فيلفيت", category: "women", price: 1390, oldPrice: 1650, stock: 35, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=85" },
+        { name: "سراقة أورا", category: "unisex", price: 1190, oldPrice: 1400, stock: 25, image: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=900&q=85" },
+        { name: "سراقة رويال", category: "men", price: 1850, oldPrice: 2200, stock: 15, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=85" },
+        { name: "سراقة بلوم", category: "women", price: 1250, oldPrice: 1450, stock: 20, image: "https://images.unsplash.com/photo-1563170351-be82bc888aa4?auto=format&fit=crop&w=900&q=85" },
+        { name: "سراقة إنتنس", category: "unisex", price: 1590, oldPrice: 1850, stock: 25, image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=900&q=85" }
       ];
       for (const d of defs) {
         await addDoc(perfumesCol, {
@@ -821,7 +912,7 @@
           createdAt: new Date()
         });
       }
-      toast("تمت المزامنة بنجاح!");
+      toast("تمت مزامنة العطور الافتراضية بنجاح!");
       document.getElementById("dropdownMenu").classList.remove("show");
     });
   </script>
