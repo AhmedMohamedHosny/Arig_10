@@ -3599,3 +3599,68 @@ body {
   0% { transform: scale(0.95); opacity: 0.8; }
   100% { transform: scale(1.15, 1.35); opacity: 0; }
 }
+/* صندوق اختيار الصورة والمعاينة */
+    .file-uploader-box {
+      background: rgba(7, 25, 20, 0.7);
+      border: 2px dashed rgba(212, 175, 55, 0.4);
+      border-radius: 6px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .file-uploader-box:hover {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    /* تنبيهات المخزون */
+    .stock-badge-pill {
+      font-size: 9.5px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .badge-ok { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+    .badge-low { background: rgba(243,156,18,0.18); color: #f39c12; border: 1px solid #f39c12; animation: blink 2s infinite; }
+    .badge-out { background: rgba(231,76,60,0.18); color: #e74c3c; border: 1px solid #e74c3c; }
+
+    @keyframes blink { 50% { opacity: 0.5; } }
+
+    /* أزرار الجدول والتعديل */
+    .btn-action-wa {
+      background: #25d366;
+      color: #fff;
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .btn-action-copy {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .btn-card-edit {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      color: var(--text-light);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn-card-edit:hover { border-color: var(--gold); color: var(--gold); }
