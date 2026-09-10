@@ -661,8 +661,48 @@ function renderBestSellers() {
 }
 
 /* =========================================================
-   CART
+   CART (يدعم العطور العادية والعروض الترويجية)
    ========================================================= */
+
+function getCartItemDetails(item) {
+  if (item.isOffer || String(item.id).startsWith("offer_")) {
+    return {
+      id: item.id,
+      name: item.name || "عرض خاص",
+      price: Number(item.price || 0),
+      image: item.image || "image/S1.png",
+      size: item.size || "باقة حصرية",
+      categoryLabel: "عرض ترويجي 🔥"
+    };
+  }
+
+  const prod = getProduct(item.id);
+  if (!prod) return null;
+
+  const size = Number(item.size || 50);
+  const price = getPriceForSize(prod.price, size);
+  return {
+    id: prod.id,
+    name: productName(prod),
+    price: price,
+    image: prod.image,
+    size: `${size} مل`,
+    categoryLabel: productCategoryLabel(prod)
+  };
+}
+
+function getCartCount() {
+  return cart.reduce((total, item) => {
+    return getCartItemDetails(item) ? total + Number(item.quantity || 1) : total;
+  }, 0);
+}
+
+function getCartTotal() {
+  return cart.reduce((total, item) => {
+    const details = getCartItemDetails(item);
+    return details ? total + (details.price * item.quantity) : total;
+  }, 0);
+}
 
 function addToCart(id, quantity = 1, size = 50) {
   const product = getProduct(id);
@@ -685,14 +725,14 @@ function addToCart(id, quantity = 1, size = 50) {
   showToast("تمت الإضافة للسلة 🛍️", `${productName(product)} (${size} مل)`);
 }
 
-function removeFromCart(id, size = 50) {
-  cart = cart.filter(item => !(String(item.id) === String(id) && Number(item.size || 50) === Number(size)));
+function removeFromCart(id, size) {
+  cart = cart.filter(item => !(String(item.id) === String(id) && String(item.size || '') === String(size || '')));
   saveCart();
   updateCartUI();
 }
 
-function changeQuantity(id, change, size = 50) {
-  const item = cart.find(item => String(item.id) === String(id) && Number(item.size || 50) === Number(size));
+function changeQuantity(id, change, size) {
+  const item = cart.find(item => String(item.id) === String(id) && String(item.size || '') === String(size || ''));
   if (!item) return;
 
   item.quantity += change;
@@ -706,12 +746,11 @@ function changeQuantity(id, change, size = 50) {
 }
 
 function updateCartUI() {
-  // تنظيف السلة تلقائياً من أي منتجات قديمة محذوفة
-  cart = cart.filter(item => getProduct(item.id) && item.quantity > 0);
+  // تنظيف السلة مع الاحتفاظ بالعطور والعروض معاً
+  cart = cart.filter(item => getCartItemDetails(item) && item.quantity > 0);
   saveCart();
 
   if (cartCount) cartCount.textContent = getCartCount();
-
   if (!cartItems) return;
 
   if (cart.length === 0) {
@@ -730,39 +769,23 @@ function updateCartUI() {
   if (cartFooter) cartFooter.style.display = "block";
 
   cartItems.innerHTML = cart.map(item => {
-    const product = getProduct(item.id);
-    if (!product) return "";
-
-    const itemSize = item.size || 50;
-    const itemPrice = getPriceForSize(product.price, itemSize);
+    const details = getCartItemDetails(item);
+    if (!details) return "";
 
     return `
       <div class="cart-item">
-        <img
-          class="cart-item-image"
-          src="${product.image}"
-          alt="${escapeHtml(productName(product))}"
-          loading="lazy"
-        >
-
+        <img class="cart-item-image" src="${details.image}" alt="${escapeHtml(details.name)}" loading="lazy">
         <div class="cart-item-info">
-          <span class="cart-item-category">${escapeHtml(productCategoryLabel(product))} · <strong style="color:var(--gold);">${itemSize} مل</strong></span>
-          <h3 class="cart-item-name">${escapeHtml(productName(product))}</h3>
-          <span class="cart-item-price">${formatPrice(itemPrice)}</span>
-
+          <span class="cart-item-category">${escapeHtml(details.categoryLabel)} · <strong style="color:var(--gold);">${details.size}</strong></span>
+          <h3 class="cart-item-name">${escapeHtml(details.name)}</h3>
+          <span class="cart-item-price">${formatPrice(details.price)}</span>
           <div class="cart-item-controls">
-            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${product.id}" data-size="${itemSize}">−</button>
+            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${details.id}" data-size="${item.size || ''}">−</button>
             <span class="cart-qty">${item.quantity}</span>
-            <button class="cart-qty-btn" data-cart-action="increase" data-id="${product.id}" data-size="${itemSize}">+</button>
+            <button class="cart-qty-btn" data-cart-action="increase" data-id="${details.id}" data-size="${item.size || ''}">+</button>
           </div>
         </div>
-
-        <button
-          class="remove-item"
-          data-cart-action="remove"
-          data-id="${product.id}"
-          data-size="${itemSize}"
-        >&times;</button>
+        <button class="remove-item" data-cart-action="remove" data-id="${details.id}" data-size="${item.size || ''}">&times;</button>
       </div>
     `;
   }).join("");
@@ -1308,15 +1331,13 @@ checkoutForm?.addEventListener("submit", async (e) => {
     submitBtn.textContent = "جاري تأكيد الطلب...";
   }
 
-  const orderItems = cart.map(item => {
-    const prod = getProduct(item.id);
-    const itemSize = item.size || 50;
-    const itemPrice = prod ? getPriceForSize(prod.price, itemSize) : 0;
+const orderItems = cart.map(item => {
+    const details = getCartItemDetails(item);
     return {
       id: item.id,
-      name: prod ? `${prod.nameAr || prod.name} (${itemSize} مل)` : "منتج",
-      price: itemPrice,
-      size: itemSize,
+      name: details ? `${details.name} (${details.size})` : "منتج",
+      price: details ? details.price : 0,
+      size: details ? details.size : 50,
       quantity: item.quantity
     };
   });
@@ -1591,7 +1612,7 @@ onSnapshot(doc(db, "settings", "storeConfig"), (docSnap) => {
   }
 });
 /* =========================================================
-   عروض سراقة الـ 3D التفاعلية (مع عروض افتراضية جاهزة)
+   عروض سراقة الـ 3D التفاعلية مع عداد تنازلي حي للوقت
    ========================================================= */
 const offersSection = document.getElementById("offersShowcaseSection");
 const offersTrack = document.getElementById("offersTrack");
@@ -1600,31 +1621,10 @@ const offerPrevBtn = document.getElementById("offerPrevBtn");
 const offerNextBtn = document.getElementById("offerNextBtn");
 const offersWrapper = document.getElementById("offersCarouselWrapper");
 
-// عروض ملكية افتراضية تظهر فوراً لو فايربيز لسه مفيهاش عروض
-const DEFAULT_OFFERS = [
-  {
-    id: "def_offer_1",
-    title: "باقة النخبة الملكية — عطرين + عينة مجانية",
-    tag: "خصم 30% لفترة محدودة 🔥",
-    price: 2450,
-    oldPrice: 3500,
-    desc: "اختر أي عطرين 100 مل من تشكيلة سراقة الفاخرة، مع شحن مجاني لكافة المحافظات وعينة 10 مل هدية.",
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85"
-  },
-  {
-    id: "def_offer_2",
-    title: "عرض الفخامة المزدوج — سراقة عود & سراقة رويال",
-    tag: "الأكثر طلباً 💎",
-    price: 2890,
-    oldPrice: 3800,
-    desc: "التوليفة الشرقية الأكثر ثباتاً وفوحاناً. ثبات ملكي يدوم أكثر من 48 ساعة بتغليف فاخر مناسب للإهداء.",
-    image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85"
-  }
-];
-
 let currentOfferIdx = 0;
 let offersList = [];
 let offerAutoSlideTimer = null;
+let countdownInterval = null;
 
 onSnapshot(offersCol, (snapshot) => {
   const firebaseOffers = [];
@@ -1635,8 +1635,14 @@ onSnapshot(offersCol, (snapshot) => {
     }
   });
 
-  // إذا وجد عروض من لوحة التحكم يعرضها، وإلا يعرض العروض الافتراضية
-  offersList = firebaseOffers.length > 0 ? firebaseOffers : DEFAULT_OFFERS;
+  offersList = firebaseOffers;
+
+  if (offersList.length === 0) {
+    if (offersSection) offersSection.style.display = "none";
+    clearInterval(offerAutoSlideTimer);
+    clearInterval(countdownInterval);
+    return;
+  }
 
   if (offersSection) {
     offersSection.style.setProperty("display", "block", "important");
@@ -1644,33 +1650,58 @@ onSnapshot(offersCol, (snapshot) => {
 
   renderOffersCarousel();
   startOfferAutoSlide();
+  startLiveCountdowns();
 });
 
 function renderOffersCarousel() {
   if (!offersTrack) return;
 
-  offersTrack.innerHTML = offersList.map(o => `
-    <div class="offer-3d-card">
-      <div class="offer-image-side">
-        <span class="offer-ribbon-tag">${escapeHtml(o.tag || "عرض خاص 🔥")}</span>
-        <img src="${o.image || 'image/S1.png'}" alt="${escapeHtml(o.title)}">
-      </div>
-      <div class="offer-info-side">
-        <h3 class="offer-title-text">${escapeHtml(o.title)}</h3>
-        <p class="offer-desc-text">${escapeHtml(o.desc || "باقة ملكية بتوليفة استثنائية وثبات يدوم طويلاً.")}</p>
-        
-        <div class="offer-pricing-bar">
-          <span class="offer-new-price">${Number(o.price || 0).toLocaleString("ar-EG")} جنيه</span>
-          ${o.oldPrice ? `<span class="offer-old-price">${Number(o.oldPrice).toLocaleString("ar-EG")} ج</span>` : ''}
-        </div>
+  offersTrack.innerHTML = offersList.map(o => {
+    const isExpired = o.expiryDate && new Date(o.expiryDate) <= new Date();
 
-        <button type="button" class="offer-claim-btn" onclick="claimSpecialOffer('${o.id}')">
-          <span>اطلب العرض الآن</span>
-          <span>⚡</span>
-        </button>
+    return `
+      <div class="offer-3d-card">
+        <div class="offer-image-side">
+          <span class="offer-ribbon-tag">${escapeHtml(o.tag || "عرض خاص 🔥")}</span>
+          <img src="${o.image || 'image/S1.png'}" alt="${escapeHtml(o.title)}">
+        </div>
+        <div class="offer-info-side">
+          <h3 class="offer-title-text">${escapeHtml(o.title)}</h3>
+          <p class="offer-desc-text">${escapeHtml(o.desc || "باقة ملكية بتوليفة استثنائية وثبات يدوم طويلاً.")}</p>
+          
+          <!-- عداد الوقت التنازلي -->
+          ${o.expiryDate ? `
+            <div class="offer-timer-box" id="timerBox_${o.id}">
+              <span class="offer-timer-label">⏳ ينتهي العرض خلال:</span>
+              <div class="offer-timer-digits" id="timerDigits_${o.id}">
+                <span class="timer-segment" id="days_${o.id}">00ي</span>
+                <span class="timer-colon">:</span>
+                <span class="timer-segment" id="hours_${o.id}">00س</span>
+                <span class="timer-colon">:</span>
+                <span class="timer-segment" id="mins_${o.id}">00د</span>
+                <span class="timer-colon">:</span>
+                <span class="timer-segment" id="secs_${o.id}">00ث</span>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="offer-pricing-bar">
+            <span class="offer-new-price">${Number(o.price || 0).toLocaleString("ar-EG")} جنيه</span>
+            ${o.oldPrice ? `<span class="offer-old-price">${Number(o.oldPrice).toLocaleString("ar-EG")} ج</span>` : ''}
+          </div>
+
+          ${isExpired ? `
+            <div class="offer-expired-badge">⚠️ عذراً، انتهت صلاحية هذا العرض</div>
+          ` : `
+            <button type="button" class="offer-claim-btn" onclick="claimSpecialOffer('${o.id}')">
+              <span>اطلب العرض الآن</span>
+              <span>⚡</span>
+            </button>
+          `}
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 
   if (offersDots) {
     offersDots.innerHTML = offersList.map((_, i) => `
@@ -1681,12 +1712,50 @@ function renderOffersCarousel() {
   goToOffer(0);
 }
 
+// تحديث العدادات التنازلية كل ثانية
+function startLiveCountdowns() {
+  clearInterval(countdownInterval);
+  
+  function updateTimers() {
+    const now = new Date().getTime();
+
+    offersList.forEach(o => {
+      if (!o.expiryDate) return;
+
+      const target = new Date(o.expiryDate).getTime();
+      const diff = target - now;
+
+      const dEl = document.getElementById(`days_${o.id}`);
+      const hEl = document.getElementById(`hours_${o.id}`);
+      const mEl = document.getElementById(`mins_${o.id}`);
+      const sEl = document.getElementById(`secs_${o.id}`);
+
+      if (diff <= 0) {
+        const box = document.getElementById(`timerBox_${o.id}`);
+        if (box) box.innerHTML = `<span class="offer-expired-badge">انتهى وقت العرض</span>`;
+      } else if (dEl && hEl && mEl && sEl) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        dEl.textContent = `${days}ي`;
+        hEl.textContent = `${String(hours).padStart(2, '0')}س`;
+        mEl.textContent = `${String(mins).padStart(2, '0')}د`;
+        sEl.textContent = `${String(secs).padStart(2, '0')}ث`;
+      }
+    });
+  }
+
+  updateTimers();
+  countdownInterval = setInterval(updateTimers, 1000);
+}
+
 window.goToOffer = function(index) {
   if (offersList.length === 0) return;
   currentOfferIdx = (index + offersList.length) % offersList.length;
   
   if (offersTrack) {
-    // حركة انسيابية في اتجاه اليمين
     offersTrack.style.transform = `translateX(${currentOfferIdx * 100}%)`;
   }
 
@@ -1701,7 +1770,7 @@ function startOfferAutoSlide() {
 
   offerAutoSlideTimer = setInterval(() => {
     goToOffer(currentOfferIdx + 1);
-  }, 3000); // يتحرك تلقائياً كل 3 ثوانٍ
+  }, 3000);
 }
 
 offersWrapper?.addEventListener("mouseenter", () => clearInterval(offerAutoSlideTimer));
@@ -1722,16 +1791,25 @@ window.claimSpecialOffer = function(offerId) {
   const offer = offersList.find(o => String(o.id) === String(offerId));
   if (!offer) return;
 
-  const existing = cart.find(i => String(i.id) === `offer_${offer.id}`);
+  if (offer.expiryDate && new Date(offer.expiryDate) < new Date()) {
+    alert("عذراً، هذا العرض انتهى وقته المحدد!");
+    return;
+  }
+
+  const cartItemId = `offer_${offer.id}`;
+  const existing = cart.find(i => String(i.id) === cartItemId);
+
   if (existing) {
     existing.quantity++;
   } else {
     cart.push({
-      id: `offer_${offer.id}`,
+      id: cartItemId,
+      isOffer: true,
+      name: `🔥 ${offer.title}`,
+      price: Number(offer.price),
+      image: offer.image || "image/S1.png",
       quantity: 1,
-      size: 100,
-      customName: `🔥 ${offer.title}`,
-      customPrice: Number(offer.price)
+      size: "باقة خاصة"
     });
   }
 
