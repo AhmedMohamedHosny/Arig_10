@@ -285,6 +285,7 @@ html[dir="rtl"] .cart-count {
 /* HERO */
 
 /* HERO FIX FOR VIDEO */
+/* HERO VIDEO FIX */
 .hero-container {
   max-width: 1400px;
   margin: 20px auto;
@@ -300,7 +301,7 @@ html[dir="rtl"] .cart-count {
   align-items: center;
   color: #fff;
   overflow: hidden;
-  background: #0d2c24; /* لون خلفية احتياطي عند تحميل الفيديو */
+  background: transparent !important; /* لضمان عدم تغطية الفيديو بلون سادة */
 }
 
 .hero-video-bg {
@@ -310,22 +311,26 @@ html[dir="rtl"] .cart-count {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35); /* طبقة تعتيم خفيفة لإبراز الكلام */
-  z-index: 2;
+  background: rgba(0, 0, 0, 0.25); /* طبقة تعتيم شفافة وجذابة */
+  z-index: 1;
 }
 
 .hero-content {
   width: min(600px, 90%);
   margin-right: 6%;
   position: relative;
-  z-index: 3;
+  z-index: 2;
+}
+
+html[dir="rtl"] .hero {
+  background: transparent !important;
 }
 
 .hero h1 {
