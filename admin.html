@@ -513,30 +513,86 @@
       </div>
     </section>
 
-    <!-- 3. قسم العروض الترويجية -->
+<!-- 3. قسم العروض الترويجية الـ 3D -->
     <section id="offersSec" class="section-view">
+      
+      <!-- إضافة عرض جديد -->
       <div class="panel">
         <div class="panel-title">
-          <span>🔥 نشر عرض ترويجي يظهر أعلى المتجر</span>
+          <span>🔥 إنشاء ونشر عرض ترويجي 3D بالمتجر</span>
           <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة لإدارة العطور</button>
         </div>
-        <form id="offerForm">
+
+        <form id="createOfferForm">
           <div class="form-grid">
-            <div class="form-group" style="grid-column: 1 / -1;">
-              <label>نص العرض الترويجي للعملاء *</label>
-              <input type="text" id="offerBannerText" placeholder="مثال: خصم 20% على جميع العطور عند طلب زجاجتين + شحن مجاني اليوم!" required>
-            </div>
             <div class="form-group">
-              <label>حالة العرض</label>
-              <select id="offerStatus">
-                <option value="active">مفعل ويظهر للزوار</option>
-                <option value="inactive">معطل مؤقتاً</option>
-              </select>
+              <label>عنوان العرض الرئيسي *</label>
+              <input type="text" id="offerTitle" placeholder="مثال: باقة الملوك — قطعتين + عينة مجانية" required>
+            </div>
+
+            <div class="form-group">
+              <label>وسم العرض (الـ Ribbon الأحمر) *</label>
+              <input type="text" id="offerTag" placeholder="مثال: وفر 35% 🔥" required>
+            </div>
+
+            <div class="form-group">
+              <label>سعر العرض بعد الخصم (EGP) *</label>
+              <input type="number" id="offerPrice" placeholder="1950" required>
+            </div>
+
+            <div class="form-group">
+              <label>السعر الأصلي قبل الخصم (مشطوب)</label>
+              <input type="number" id="offerOldPrice" placeholder="2600">
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>تفاصيل ووصف العرض</label>
+              <input type="text" id="offerDesc" placeholder="عطرين بحجم 100 مل من اختيارك + شحن مجاني لكافة المحافظات">
+            </div>
+
+            <!-- رفع صورة العرض من الجهاز -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>صورة العرض الترويجي *</label>
+              <div class="file-uploader-box" onclick="document.getElementById('offerFileInput').click()">
+                <input type="file" id="offerFileInput" accept="image/*" style="display:none;">
+                <div id="offerUploadText">
+                  <span style="font-size:20px; color:var(--gold);">📸</span>
+                  <p style="font-size:12px; margin:4px 0;">اضغط لاختيار صورة العرض</p>
+                </div>
+                <div id="offerPreviewBox" style="display:none; align-items:center; gap:10px; justify-content:center;">
+                  <img id="offerPreviewImg" src="" style="width:70px; height:70px; object-fit:cover; border-radius:6px; border:1px solid var(--gold);">
+                  <span id="offerPreviewName" style="font-size:11px; color:var(--gold);"></span>
+                </div>
+              </div>
             </div>
           </div>
-          <button type="submit" class="btn-submit">تحديث العرض بالمتجر فوراً</button>
+
+          <button type="submit" class="btn-submit" id="saveOfferBtn">نشر العرض في المتجر الآن 🚀</button>
         </form>
       </div>
+
+      <!-- جدول العروض النشطة وحذفها -->
+      <div class="panel">
+        <div class="panel-title">العروض المعروضة حالياً بالمتجر</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>عنوان العرض</th>
+                <th>السعر بعد الخصم</th>
+                <th>قبل الخصم</th>
+                <th>الوسم</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="offersTableBody">
+              <!-- تتولد بالجافاسكريبت -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </section>
 
     <!-- 4. قسم التحليلات والأكثر طلباً -->
