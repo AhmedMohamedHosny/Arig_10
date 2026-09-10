@@ -298,7 +298,19 @@ let currentSort = "featured";
 let selectedProduct = null;
 let currentPage = 1;
 const PRODUCTS_PER_PAGE = 8;
+let selectedSize = 50; // الحجم الافتراضي 50 مل
 
+// نسب تسعير الأحجام بناءً على السعر الأساسي للـ 50 مل
+const SIZE_MULTIPLIERS = {
+  10: 0.30,  // عينة تجربة 10 مل
+  30: 0.65,  // 30 مل
+  50: 1.00,  // 50 مل (السعر الأصلي)
+  100: 1.70  // 100 مل توفير
+};
+
+function getPriceForSize(basePrice, size = 50) {
+  return Math.round((basePrice * (SIZE_MULTIPLIERS[size] || 1)) / 10) * 10;
+}
 let modalQty = 1;
 let toastTimeout;
 let currentLang = loadLang();
@@ -398,7 +410,9 @@ function getCartCount() {
 function getCartTotal() {
   return cart.reduce((total, item) => {
     const product = getProduct(item.id);
-    return product ? total + product.price * item.quantity : total;
+    if (!product) return total;
+    const itemPrice = getPriceForSize(product.price, item.size || 50);
+    return total + itemPrice * item.quantity;
   }, 0);
 }
 
@@ -460,6 +474,7 @@ function applyLanguage() {
   renderProducts();
   renderBestSellers();
   updateCartUI();
+ updateWishlistCountUI();
 
   if (selectedProduct) {
     openQuickView(selectedProduct.id);
@@ -538,9 +553,11 @@ function productCard(product) {
 function getFilteredProducts() {
   let filtered = [...products];
 
-  if (currentCategory !== "all") {
+if (currentCategory !== "all") {
     if (currentCategory === "bestseller") {
       filtered = filtered.filter(product => product.bestseller);
+    } else if (currentCategory === "wishlist") {
+      filtered = filtered.filter(product => wishlist.map(String).includes(String(product.id)));
     } else {
       filtered = filtered.filter(product => product.category === currentCategory);
     }
@@ -645,7 +662,7 @@ function renderBestSellers() {
    CART
    ========================================================= */
 
-function addToCart(id, quantity = 1) {
+function addToCart(id, quantity = 1, size = 50) {
   const product = getProduct(id);
 
   if (!product) {
@@ -653,20 +670,42 @@ function addToCart(id, quantity = 1) {
     return;
   }
 
-  const existing = cart.find(item => item.id === product.id);
+  // تمييز المنتج في السلة بحسب الحجم المختار
+  const existing = cart.find(item => String(item.id) === String(product.id) && Number(item.size || 50) === Number(size));
 
   if (existing) {
     existing.quantity += quantity;
   } else {
     cart.push({
       id: product.id,
-      quantity
+      quantity,
+      size: Number(size)
     });
   }
 
   saveCart();
   updateCartUI();
-  showToast(t("addedTitle"), t("addedText")(productName(product)));
+  showToast(t("addedTitle"), `${productName(product)} (${size} مل)`);
+}
+
+function removeFromCart(id, size = 50) {
+  cart = cart.filter(item => !(String(item.id) === String(id) && Number(item.size || 50) === Number(size)));
+  saveCart();
+  updateCartUI();
+}
+
+function changeQuantity(id, change, size = 50) {
+  const item = cart.find(item => String(item.id) === String(id) && Number(item.size || 50) === Number(size));
+  if (!item) return;
+
+  item.quantity += change;
+  if (item.quantity <= 0) {
+    removeFromCart(id, size);
+    return;
+  }
+
+  saveCart();
+  updateCartUI();
 }
 
 function removeFromCart(id) {
@@ -715,6 +754,9 @@ function updateCartUI() {
 
     if (!product) return "";
 
+const itemSize = item.size || 50;
+    const itemPrice = getPriceForSize(product.price, itemSize);
+
     return `
       <div class="cart-item">
         <img
@@ -725,14 +767,14 @@ function updateCartUI() {
         >
 
         <div class="cart-item-info">
-          <span class="cart-item-category">${escapeHtml(productCategoryLabel(product))}</span>
+          <span class="cart-item-category">${escapeHtml(productCategoryLabel(product))} · <strong style="color:var(--gold);">${itemSize} مل</strong></span>
           <h3 class="cart-item-name">${escapeHtml(productName(product))}</h3>
-          <span class="cart-item-price">${formatPrice(product.price)}</span>
+          <span class="cart-item-price">${formatPrice(itemPrice)}</span>
 
           <div class="cart-item-controls">
-            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${product.id}">−</button>
+            <button class="cart-qty-btn" data-cart-action="decrease" data-id="${product.id}" data-size="${itemSize}">−</button>
             <span class="cart-qty">${item.quantity}</span>
-            <button class="cart-qty-btn" data-cart-action="increase" data-id="${product.id}">+</button>
+            <button class="cart-qty-btn" data-cart-action="increase" data-id="${product.id}" data-size="${itemSize}">+</button>
           </div>
         </div>
 
@@ -740,6 +782,7 @@ function updateCartUI() {
           class="remove-item"
           data-cart-action="remove"
           data-id="${product.id}"
+          data-size="${itemSize}"
         >&times;</button>
       </div>
     `;
@@ -767,11 +810,11 @@ function closeCart() {
 
 function openQuickView(id) {
   const product = getProduct(id);
-
   if (!product) return;
 
   selectedProduct = product;
   modalQty = 1;
+  selectedSize = 50; // ضبط الحجم الافتراضي على 50 مل
 
   modalImage.src = product.image;
   modalImage.alt = productName(product);
@@ -779,8 +822,15 @@ function openQuickView(id) {
   modalName.textContent = productName(product);
   modalRating.textContent = `${stars(product.rating)} · ${product.reviews} ${t("reviews")}`;
   modalDescription.textContent = productDescription(product);
-  modalPrice.textContent = formatPrice(product.price);
   modalQuantityEl.textContent = modalQty;
+
+  // إعادة ضبط أزرار الأحجام وتعيين 50 مل كافتراضي
+  document.querySelectorAll("#modalSizes .size-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.size === "50");
+  });
+
+  // تحديث السعر بناءً على حجم 50 مل
+  modalPrice.textContent = formatPrice(getPriceForSize(product.price, selectedSize));
 
   modalNotes.innerHTML = productNotes(product)
     .map(note => `<span class="note">${escapeHtml(note)}</span>`)
@@ -789,6 +839,19 @@ function openQuickView(id) {
   modalBackdrop.classList.add("active");
   document.body.classList.add("no-scroll");
 }
+
+// الاستماع للضغط على أزرار الأحجام وتغيير السعر لحظياً
+document.getElementById("modalSizes")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".size-btn");
+  if (!btn || !selectedProduct) return;
+
+  document.querySelectorAll("#modalSizes .size-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  selectedSize = Number(btn.dataset.size);
+  // تحديث السعر المعروض
+  modalPrice.textContent = formatPrice(getPriceForSize(selectedProduct.price, selectedSize));
+});
 
 function closeQuickView() {
   modalBackdrop.classList.remove("active");
@@ -800,11 +863,17 @@ function closeQuickView() {
    WISHLIST
    ========================================================= */
 
-function toggleWishlist(id) {
-  id = Number(id);
+function updateWishlistCountUI() {
+  const badge = document.getElementById("wishlistCount");
+  if (badge) badge.textContent = wishlist.length;
+}
 
-  if (wishlist.includes(id)) {
-    wishlist = wishlist.filter(item => item !== id);
+function toggleWishlist(id) {
+  const strId = String(id);
+  const exists = wishlist.some(item => String(item) === strId);
+
+  if (exists) {
+    wishlist = wishlist.filter(item => String(item) !== strId);
     showToast(t("wishlistRemovedTitle"), t("wishlistRemovedText"));
   } else {
     wishlist.push(id);
@@ -812,9 +881,23 @@ function toggleWishlist(id) {
   }
 
   saveWishlist();
+  updateWishlistCountUI();
   renderProducts();
   renderBestSellers();
 }
+
+// زر فتح المفضلة من الهيدر
+document.getElementById("wishlistNavBtn")?.addEventListener("click", () => {
+  currentCategory = "wishlist";
+  currentPage = 1;
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.category === "wishlist");
+  });
+
+  renderProducts();
+  document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
+});
 
 /* =========================================================
    TOAST
@@ -860,21 +943,23 @@ const id = actionElement.dataset.id;
     }
   }
 
-  const cartAction = event.target.closest("[data-cart-action]");
+const cartAction = event.target.closest("[data-cart-action]");
 
   if (cartAction) {
     const action = cartAction.dataset.cartAction;
-const id = cartAction.dataset.id;
+    const id = cartAction.dataset.id;
+    const size = Number(cartAction.dataset.size || 50);
+
     if (action === "increase") {
-      changeQuantity(id, 1);
+      changeQuantity(id, 1, size);
     }
 
     if (action === "decrease") {
-      changeQuantity(id, -1);
+      changeQuantity(id, -1, size);
     }
 
     if (action === "remove") {
-      removeFromCart(id);
+      removeFromCart(id, size);
       showToast(t("removedTitle"), t("removedText"));
     }
   }
@@ -982,7 +1067,7 @@ document.getElementById("modalPlus").addEventListener("click", () => {
 document.getElementById("modalAdd").addEventListener("click", () => {
   if (!selectedProduct) return;
 
-  addToCart(selectedProduct.id, modalQty);
+  addToCart(selectedProduct.id, modalQty, selectedSize);
   closeQuickView();
   openCart();
 });
@@ -1289,12 +1374,15 @@ checkoutForm.addEventListener("submit", async (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = "جاري تسجيل الطلب...";
 
-  const orderItems = cart.map(item => {
+const orderItems = cart.map(item => {
     const prod = getProduct(item.id);
+    const itemSize = item.size || 50;
+    const itemPrice = prod ? getPriceForSize(prod.price, itemSize) : 0;
     return {
       id: item.id,
-      name: prod ? (prod.nameAr || prod.name) : "منتج",
-      price: prod ? prod.price : 0,
+      name: prod ? `${prod.nameAr || prod.name} (${itemSize} مل)` : "منتج",
+      price: itemPrice,
+      size: itemSize,
       quantity: item.quantity
     };
   });
