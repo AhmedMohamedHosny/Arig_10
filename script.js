@@ -256,6 +256,9 @@ let currentCategory = "all";
 let currentSearch = "";
 let currentSort = "featured";
 let selectedProduct = null;
+let currentPage = 1;
+const PRODUCTS_PER_PAGE = 8;
+
 let modalQty = 1;
 let toastTimeout;
 let currentLang = loadLang();
@@ -267,7 +270,7 @@ let currentLang = loadLang();
 const productsGrid = document.getElementById("productsGrid");
 const bestProductsGrid = document.getElementById("bestProductsGrid");
 const noProducts = document.getElementById("noProducts");
-
+const paginationEl = document.getElementById("pagination");
 const cartDrawer = document.getElementById("cartDrawer");
 const cartItems = document.getElementById("cartItems");
 const cartFooter = document.getElementById("cartFooter");
@@ -540,14 +543,54 @@ function getFilteredProducts() {
 
 function renderProducts() {
   const filtered = getFilteredProducts();
+  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
 
-  productsGrid.innerHTML = filtered.map(productCard).join("");
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = 1;
+  }
+
+  // تقسيم المنتجات بحد أقصى 8 لكل صفحة
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const paginated = filtered.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+
+  productsGrid.innerHTML = paginated.map(productCard).join("");
 
   if (filtered.length === 0) {
     noProducts.classList.add("visible");
+    if (paginationEl) paginationEl.innerHTML = "";
   } else {
     noProducts.classList.remove("visible");
+    renderPagination(totalPages);
   }
+}
+
+function renderPagination(totalPages) {
+  if (!paginationEl) return;
+  
+  // إخفاء الترقيم إذا كانت الصفحات 1 فقط
+  if (totalPages <= 1) {
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  let buttonsHtml = "";
+  for (let i = 1; i <= totalPages; i++) {
+    buttonsHtml += `
+      <button class="page-num ${i === currentPage ? "active" : ""}" data-page="${i}">
+        ${i}
+      </button>
+    `;
+  }
+
+  paginationEl.innerHTML = buttonsHtml;
+
+  paginationEl.querySelectorAll(".page-num").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentPage = Number(btn.dataset.page);
+      renderProducts();
+      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
+    });
+  });
 }
 
 function renderBestSellers() {
@@ -818,8 +861,8 @@ document.getElementById("categoryTabs").addEventListener("click", event => {
   });
 
   button.classList.add("active");
-  currentCategory = button.dataset.category;
-
+currentCategory = button.dataset.category;
+  currentPage = 1;
   renderProducts();
 });
 
@@ -828,7 +871,8 @@ document.getElementById("categoryTabs").addEventListener("click", event => {
    ========================================================= */
 
 document.getElementById("sortSelect").addEventListener("change", event => {
-  currentSort = event.target.value;
+currentSort = event.target.value;
+  currentPage = 1;
   renderProducts();
 });
 
@@ -848,13 +892,15 @@ document.getElementById("searchBtn").addEventListener("click", () => {
 });
 
 searchInput.addEventListener("input", event => {
-  currentSearch = event.target.value;
+currentSearch = event.target.value;
+  currentPage = 1;
   renderProducts();
 });
 
 document.getElementById("clearSearch").addEventListener("click", () => {
   searchInput.value = "";
-  currentSearch = "";
+currentSearch = "";
+  currentPage = 1;
   renderProducts();
   searchInput.focus();
 });
@@ -972,8 +1018,8 @@ document.querySelectorAll(".collection-card").forEach(card => {
   card.addEventListener("click", () => {
     const collection = card.dataset.collection;
 
-    currentCategory = collection;
-
+currentCategory = collection;
+    currentPage = 1;
     document.querySelectorAll(".filter-btn").forEach(btn => {
       btn.classList.toggle(
         "active",
