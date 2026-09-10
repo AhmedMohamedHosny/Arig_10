@@ -14,6 +14,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const perfumesCol = collection(db, "perfumes"); 
 const ordersCol = collection(db, "orders");
+const offersCol = collection(db, "offers");
 /* =========================================================
    SURAQA — Vanilla JavaScript E-Commerce (AR/EN)
    ========================================================= */
@@ -404,7 +405,9 @@ function getCartQuantity(id) {
 }
 
 function getCartCount() {
-  return cart.reduce((total, item) => total + item.quantity, 0);
+  return cart.reduce((total, item) => {
+    return getProduct(item.id) ? total + Number(item.quantity || 1) : total;
+  }, 0);
 }
 
 function getCartTotal() {
@@ -703,6 +706,10 @@ function changeQuantity(id, change, size = 50) {
 }
 
 function updateCartUI() {
+  // تنظيف السلة تلقائياً من أي منتجات قديمة محذوفة
+  cart = cart.filter(item => getProduct(item.id) && item.quantity > 0);
+  saveCart();
+
   if (cartCount) cartCount.textContent = getCartCount();
 
   if (!cartItems) return;
@@ -1583,3 +1590,153 @@ onSnapshot(doc(db, "settings", "storeConfig"), (docSnap) => {
     }
   }
 });
+/* =========================================================
+   عروض سراقة الـ 3D التفاعلية (مع عروض افتراضية جاهزة)
+   ========================================================= */
+const offersSection = document.getElementById("offersShowcaseSection");
+const offersTrack = document.getElementById("offersTrack");
+const offersDots = document.getElementById("offersDots");
+const offerPrevBtn = document.getElementById("offerPrevBtn");
+const offerNextBtn = document.getElementById("offerNextBtn");
+const offersWrapper = document.getElementById("offersCarouselWrapper");
+
+// عروض ملكية افتراضية تظهر فوراً لو فايربيز لسه مفيهاش عروض
+const DEFAULT_OFFERS = [
+  {
+    id: "def_offer_1",
+    title: "باقة النخبة الملكية — عطرين + عينة مجانية",
+    tag: "خصم 30% لفترة محدودة 🔥",
+    price: 2450,
+    oldPrice: 3500,
+    desc: "اختر أي عطرين 100 مل من تشكيلة سراقة الفاخرة، مع شحن مجاني لكافة المحافظات وعينة 10 مل هدية.",
+    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=85"
+  },
+  {
+    id: "def_offer_2",
+    title: "عرض الفخامة المزدوج — سراقة عود & سراقة رويال",
+    tag: "الأكثر طلباً 💎",
+    price: 2890,
+    oldPrice: 3800,
+    desc: "التوليفة الشرقية الأكثر ثباتاً وفوحاناً. ثبات ملكي يدوم أكثر من 48 ساعة بتغليف فاخر مناسب للإهداء.",
+    image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=900&q=85"
+  }
+];
+
+let currentOfferIdx = 0;
+let offersList = [];
+let offerAutoSlideTimer = null;
+
+onSnapshot(offersCol, (snapshot) => {
+  const firebaseOffers = [];
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if (data.active !== false) {
+      firebaseOffers.push({ id: docSnap.id, ...data });
+    }
+  });
+
+  // إذا وجد عروض من لوحة التحكم يعرضها، وإلا يعرض العروض الافتراضية
+  offersList = firebaseOffers.length > 0 ? firebaseOffers : DEFAULT_OFFERS;
+
+  if (offersSection) {
+    offersSection.style.setProperty("display", "block", "important");
+  }
+
+  renderOffersCarousel();
+  startOfferAutoSlide();
+});
+
+function renderOffersCarousel() {
+  if (!offersTrack) return;
+
+  offersTrack.innerHTML = offersList.map(o => `
+    <div class="offer-3d-card">
+      <div class="offer-image-side">
+        <span class="offer-ribbon-tag">${escapeHtml(o.tag || "عرض خاص 🔥")}</span>
+        <img src="${o.image || 'image/S1.png'}" alt="${escapeHtml(o.title)}">
+      </div>
+      <div class="offer-info-side">
+        <h3 class="offer-title-text">${escapeHtml(o.title)}</h3>
+        <p class="offer-desc-text">${escapeHtml(o.desc || "باقة ملكية بتوليفة استثنائية وثبات يدوم طويلاً.")}</p>
+        
+        <div class="offer-pricing-bar">
+          <span class="offer-new-price">${Number(o.price || 0).toLocaleString("ar-EG")} جنيه</span>
+          ${o.oldPrice ? `<span class="offer-old-price">${Number(o.oldPrice).toLocaleString("ar-EG")} ج</span>` : ''}
+        </div>
+
+        <button type="button" class="offer-claim-btn" onclick="claimSpecialOffer('${o.id}')">
+          <span>اطلب العرض الآن</span>
+          <span>⚡</span>
+        </button>
+      </div>
+    </div>
+  `).join("");
+
+  if (offersDots) {
+    offersDots.innerHTML = offersList.map((_, i) => `
+      <span class="offer-dot ${i === 0 ? 'active' : ''}" onclick="goToOffer(${i})"></span>
+    `).join("");
+  }
+
+  goToOffer(0);
+}
+
+window.goToOffer = function(index) {
+  if (offersList.length === 0) return;
+  currentOfferIdx = (index + offersList.length) % offersList.length;
+  
+  if (offersTrack) {
+    // حركة انسيابية في اتجاه اليمين
+    offersTrack.style.transform = `translateX(${currentOfferIdx * 100}%)`;
+  }
+
+  document.querySelectorAll(".offer-dot").forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === currentOfferIdx);
+  });
+};
+
+function startOfferAutoSlide() {
+  clearInterval(offerAutoSlideTimer);
+  if (offersList.length <= 1) return;
+
+  offerAutoSlideTimer = setInterval(() => {
+    goToOffer(currentOfferIdx + 1);
+  }, 3000); // يتحرك تلقائياً كل 3 ثوانٍ
+}
+
+offersWrapper?.addEventListener("mouseenter", () => clearInterval(offerAutoSlideTimer));
+offersWrapper?.addEventListener("mouseleave", () => startOfferAutoSlide());
+
+offerPrevBtn?.addEventListener("click", () => {
+  goToOffer(currentOfferIdx - 1);
+  startOfferAutoSlide();
+});
+
+offerNextBtn?.addEventListener("click", () => {
+  goToOffer(currentOfferIdx + 1);
+  startOfferAutoSlide();
+});
+
+// حجز العرض وإضافته للسلة فوراً
+window.claimSpecialOffer = function(offerId) {
+  const offer = offersList.find(o => String(o.id) === String(offerId));
+  if (!offer) return;
+
+  const existing = cart.find(i => String(i.id) === `offer_${offer.id}`);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({
+      id: `offer_${offer.id}`,
+      quantity: 1,
+      size: 100,
+      customName: `🔥 ${offer.title}`,
+      customPrice: Number(offer.price)
+    });
+  }
+
+  saveCart();
+  updateCartUI();
+  showToast("تم حجز العرض! 🔥", `${offer.title} أُضيف إلى سلتك.`);
+  openCart();
+};
