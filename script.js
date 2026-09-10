@@ -500,7 +500,17 @@ function productCard(product) {
       <div class="product-image-wrap">
         ${badge ? `<span class="product-badge">${escapeHtml(badge)}</span>` : ""}
 
-        <!-- زر أيقونة العين لفتح الصفحة الكاملة -->
+        <!-- 1. زر المفضلة -->
+        <button
+          type="button"
+          class="wishlist-btn ${isFavorite ? "active" : ""}"
+          data-action="wishlist"
+          data-id="${product.id}"
+          aria-label="${isFavorite ? escapeHtml(t("removeFromWishlist")) : escapeHtml(t("addToWishlist"))}"
+          aria-pressed="${isFavorite}"
+        >${isFavorite ? "♥" : "♡"}</button>
+
+        <!-- 2. زر العين تحت المفضلة مباشرة -->
         <button
           type="button"
           class="card-eye-btn"
@@ -514,16 +524,6 @@ function productCard(product) {
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
         </button>
-
-        <!-- زر المفضلة -->
-        <button
-          type="button"
-          class="wishlist-btn ${isFavorite ? "active" : ""}"
-          data-action="wishlist"
-          data-id="${product.id}"
-          aria-label="${isFavorite ? escapeHtml(t("removeFromWishlist")) : escapeHtml(t("addToWishlist"))}"
-          aria-pressed="${isFavorite}"
-        >${isFavorite ? "♥" : "♡"}</button>
 
         <img
           class="product-image"
