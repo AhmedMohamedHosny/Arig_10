@@ -502,12 +502,47 @@
         </div>
 
 <!-- تفاصيل الحساب للدفع الإلكتروني مع زر النسخ -->
+<!-- تفاصيل الدفع الإلكتروني ورفع إيصال التحويل (تصميم أريج) -->
         <div id="transferDetails" class="transfer-info" style="display: none;">
-          <div class="transfer-header">
-            <span id="transferText"></span>
-            <div class="copy-box">
+          <h4 id="transferHeading" class="transfer-title">تحويل الإجمالي لحسابنا</h4>
+          
+          <div class="transfer-row">
+            <span class="transfer-label">اسم المستلم:</span>
+            <strong class="transfer-val" id="recipientName">أحمد محمد (سراقة للعطور)</strong>
+          </div>
+
+          <div class="transfer-row">
+            <span class="transfer-label">رقم المحفظة / الحساب:</span>
+            <div class="copy-box-mini">
               <strong id="transferNumber">01016118242</strong>
-              <button type="button" id="copyNumberBtn" class="copy-btn">📋 نسخ الرقم</button>
+              <button type="button" id="copyNumberBtn" class="copy-btn-mini">نسخ</button>
+            </div>
+          </div>
+
+          <div class="transfer-row highlight">
+            <span class="transfer-label">المبلغ المطلوب تحويله:</span>
+            <strong class="transfer-val gold" id="transferAmountVal">0 جنيه</strong>
+          </div>
+
+          <!-- صندوق رفع صورة الإيصال -->
+          <div class="upload-section">
+            <label class="upload-title">صورة إيصال التحويل (Screenshot) *</label>
+            <div class="upload-dropzone" id="uploadDropzone">
+              <input type="file" id="receiptFile" accept="image/*" style="display: none;">
+              <div class="upload-prompt" id="uploadPrompt">
+                <svg viewBox="0 0 24 24" class="upload-icon" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 16.5v1.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5M16 10l-4-4m0 0l-4 4m4-4v12" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p><strong>اضغط هنا لرفع الصورة</strong> أو اسحبها إلى هذا المربع</p>
+                <span>PNG, JPG حتى 5 ميجابايت</span>
+              </div>
+              <div class="upload-preview" id="uploadPreview" style="display: none;">
+                <img id="previewImg" src="" alt="إيصال التحويل">
+                <div class="preview-info">
+                  <span id="previewName">receipt.jpg</span>
+                  <button type="button" id="removeReceiptBtn" class="remove-receipt-btn">&times; حذف وتغيير الصورة</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
