@@ -398,45 +398,112 @@
     </div>
   </aside>
 
-  <!-- QUICK VIEW MODAL -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="product-modal" role="dialog" aria-modal="true" aria-label="تفاصيل المنتج">
-      <button class="modal-close" id="modalClose" aria-label="إغلاق" data-ar-aria="إغلاق" data-en-aria="Close">&times;</button>
-      <div class="modal-image-wrap">
-        <img id="modalImage" src="" alt="">
+<!-- =========================================================
+       صفحة العطر الكاملة (Full Product Page View)
+       ========================================================= -->
+  <div class="product-full-page" id="productFullPage" style="display: none;">
+    
+    <!-- شريط علوي للرجوع إلى المتجر -->
+    <div class="pfp-top-nav">
+      <button type="button" class="pfp-back-btn" id="closeProductPage">
+        <span>➔</span>
+        <span>العودة للمتجر</span>
+      </button>
+      <div class="pfp-brand-mini">
+        <img src="image/logo.png" alt="سراقة" style="height: 28px;">
+        <span>SURAKA</span>
       </div>
+    </div>
 
-      <div class="modal-info">
-        <span class="modal-category" id="modalCategory"></span>
-        <h2 id="modalName"></h2>
-        <div class="modal-rating" id="modalRating"></div>
-        <p class="modal-description" id="modalDescription"></p>
-
-<div class="notes" id="modalNotes"></div>
-
-        <!-- اختيار الحجم -->
-        <div class="size-selector-wrap">
-          <label class="size-title">اختر حجم العبوة:</label>
-          <div class="size-options" id="modalSizes">
-            <button type="button" class="size-btn" data-size="10">10 مل <span>(عينة)</span></button>
-            <button type="button" class="size-btn" data-size="30">30 مل</button>
-            <button type="button" class="size-btn active" data-size="50">50 مل</button>
-            <button type="button" class="size-btn" data-size="100">100 مل</button>
+    <div class="pfp-container">
+      <!-- قسم تفاصيل العطر الرئيسي (Hero) -->
+      <div class="pfp-hero-grid">
+        
+        <!-- صورة العطر الكبيرة -->
+        <div class="pfp-image-column">
+          <div class="pfp-image-wrap">
+            <img id="pfpImage" src="" alt="">
           </div>
         </div>
 
-        <div class="modal-purchase">
+        <!-- معلومات وخيارات العطر -->
+        <div class="pfp-details-column">
+          <span class="pfp-category-badge" id="pfpCategory">رجالي</span>
+          <h1 class="pfp-title" id="pfpName">اسم العطر</h1>
           
-          <strong id="modalPrice"></strong>
-          <div class="quantity-control">
-            <button id="modalMinus">−</button>
-            <span id="modalQuantity">1</span>
-            <button id="modalPlus">+</button>
+          <div class="pfp-rating-box">
+            <span id="pfpRating">★ 5.0</span>
+            <span class="pfp-reviews-count" id="pfpReviews">(120 تقييم)</span>
+          </div>
+
+          <p class="pfp-description" id="pfpDesc">وصف العطر ونوتاته العطرية الفاخرة...</p>
+
+          <div class="pfp-notes-tags" id="pfpNotes">
+            <!-- النوتات العطرية -->
+          </div>
+
+          <!-- اختيار حجم العبوة -->
+          <div class="pfp-sizes-wrap">
+            <label class="pfp-label">اختر حجم العبوة:</label>
+            <div class="pfp-sizes-list" id="pfpSizes">
+              <button type="button" class="pfp-size-btn" data-size="10">10 مل <span>(عينة)</span></button>
+              <button type="button" class="pfp-size-btn" data-size="30">30 مل</button>
+              <button type="button" class="pfp-size-btn active" data-size="50">50 مل</button>
+              <button type="button" class="pfp-size-btn" data-size="100">100 مل</button>
+            </div>
+          </div>
+
+          <!-- السعر والكمية وزر الإضافة للسلة -->
+          <div class="pfp-purchase-card">
+            <div class="pfp-price-row">
+              <div class="pfp-price-wrap">
+                <span class="pfp-label">الإجمالي:</span>
+                <strong class="pfp-price-val" id="pfpPrice">0 جنيه</strong>
+              </div>
+
+              <!-- عداد الكمية -->
+              <div class="pfp-qty-picker">
+                <button type="button" class="pfp-qty-btn" id="pfpQtyMinus">−</button>
+                <span class="pfp-qty-num" id="pfpQtyVal">1</span>
+                <button type="button" class="pfp-qty-btn" id="pfpQtyPlus">+</button>
+              </div>
+            </div>
+
+            <!-- زر أضف للسلة (يحدث العداد فوق فقط بدون فتح السلة) -->
+            <button type="button" class="pfp-add-btn" id="pfpAddBtn">
+              <span>🛒</span>
+              <span>أضف إلى السلة</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- قسم عطور أخرى من نفس الصنف -->
+      <section class="pfp-related-section">
+        <div class="pfp-section-head">
+          <span class="pfp-sec-eyebrow">مختارات مماثلة</span>
+          <h2 class="pfp-sec-title">عطور أخرى قد تنال إعجابك</h2>
+        </div>
+        <div class="pfp-related-grid" id="pfpRelatedGrid">
+          <!-- العطور المماثلة بالجافاسكريبت -->
+        </div>
+      </section>
+
+      <!-- فوتر سراقة أسفل الصفحة بالكامل -->
+      <footer class="pfp-footer">
+        <div class="pfp-footer-inner">
+          <div class="pfp-footer-brand">
+            <span class="pfp-footer-tag">جوهر الأناقة</span>
+            <span class="pfp-footer-logo">S U R A Q A</span>
+          </div>
+          <div class="pfp-footer-credit">
+            <span>© 2026 سراقة. جميع الحقوق محفوظة.</span>
+            <a href="https://wa.me/201101579399" target="_blank" rel="noopener">صُنع بعناية بواسطة أحمد محمد</a>
           </div>
         </div>
+      </footer>
 
-        <button class="btn btn-dark modal-add" id="modalAdd" data-ar="أضف إلى السلة" data-en="Add to Cart">أضف إلى السلة</button>
-      </div>
     </div>
   </div>
 <!-- CHECKOUT MODAL -->
