@@ -3389,8 +3389,8 @@ body {
   position: fixed;
   inset: 0;
   z-index: 9999999;
-  background: linear-gradient(rgba(5, 20, 16, 0.78), rgba(5, 20, 16, 0.88)), 
-              url("image/W.jpg") center/cover no-repeat;
+  background: linear-gradient(rgba(7, 25, 20, 0.75), rgba(7, 25, 20, 0.88)), 
+              url("image/W.jpg") center/cover no-repeat !important;
   display: flex;
   align-items: center;
   justify-content: center;
