@@ -1512,7 +1512,8 @@ function checkAdminAuth() {
   }
 }
 
-document.querySelector(".logo")?.addEventListener("click", (e) => {
+// فتح لوحة التحكم عند الضغط 5 مرات على لوجو المتجر أو لوجو شاشة الإغلاق
+function handleSecretLogoClicks(e) {
   logoClicks++;
   clearTimeout(clickTimer);
   if (logoClicks === 5) {
@@ -1522,7 +1523,14 @@ document.querySelector(".logo")?.addEventListener("click", (e) => {
   } else {
     clickTimer = setTimeout(() => { logoClicks = 0; }, 2000);
   }
-});
+}
+
+// 1. لوجو الهيدر في الموقع العادي
+document.querySelector(".logo")?.addEventListener("click", handleSecretLogoClicks);
+
+// 2. لوجو شاشة الصلاة على النبي أثناء إغلاق المتجر
+document.querySelector(".closed-logo")?.addEventListener("click", handleSecretLogoClicks);
+document.querySelector(".logo-aura-wrap")?.addEventListener("click", handleSecretLogoClicks);
 
 document.addEventListener("keydown", (e) => {
   if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === "a") {
