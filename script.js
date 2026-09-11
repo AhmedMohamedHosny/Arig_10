@@ -809,11 +809,29 @@ let currentPfpSize = 50;
 let currentPfpQty = 1;
 function updatePfpPriceDisplay() {
   if (!currentPfpProduct || !pfpPrice) return;
-  // إذا كان المشرف محدد سعر مخصص لهذا الحجم يأخذه، وإلا يحسب النسبة
   const unitPrice = (currentPfpProduct.sizes && currentPfpProduct.sizes[currentPfpSize]) 
     ? Number(currentPfpProduct.sizes[currentPfpSize]) 
     : getPriceForSize(currentPfpProduct.price, currentPfpSize);
+  
   pfpPrice.textContent = formatPrice(unitPrice * currentPfpQty);
+
+  // التحقق من مخزون الحجم المختار تحديداً
+  const stocks = currentPfpProduct.stocks || {};
+  const sizeStock = stocks[currentPfpSize] !== undefined ? Number(stocks[currentPfpSize]) : 20;
+
+  if (pfpAddBtn) {
+    if (sizeStock <= 0) {
+      pfpAddBtn.disabled = true;
+      pfpAddBtn.style.opacity = "0.5";
+      pfpAddBtn.style.cursor = "not-allowed";
+      pfpAddBtn.innerHTML = `<span>❌</span><span>نفدت كمية (${currentPfpSize} مل)</span>`;
+    } else {
+      pfpAddBtn.disabled = false;
+      pfpAddBtn.style.opacity = "1";
+      pfpAddBtn.style.cursor = "pointer";
+      pfpAddBtn.innerHTML = `<span>🛒</span><span>أضف إلى السلة (متبقي ${sizeStock} فقط)</span>`;
+    }
+  }
 }
 
 function openProductFullPage(id) {
@@ -1349,12 +1367,16 @@ const orderItems = cart.map(item => {
   try {
     await addDoc(ordersCol, orderData);
 
-    for (const item of cart) {
+for (const item of cart) {
       try {
-        const perfumeDocRef = doc(db, "perfumes", String(item.id));
-        await updateDoc(perfumeDocRef, {
-          stock: increment(-Number(item.quantity || 1))
-        });
+        if (!String(item.id).startsWith("offer_")) {
+          const perfumeDocRef = doc(db, "perfumes", String(item.id));
+          const sizeNum = Number(item.size || 50);
+          await updateDoc(perfumeDocRef, {
+            [`stocks.${sizeNum}`]: increment(-Number(item.quantity || 1)),
+            stock: increment(-Number(item.quantity || 1))
+          });
+        }
       } catch (stockErr) {
         console.warn("Stock update skipped for item:", item.id);
       }
