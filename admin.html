@@ -433,12 +433,42 @@
               <label>السعر قبل الخصم (اختياري - يظهر مشطوباً)</label>
               <input type="number" id="pOldPrice" placeholder="1600">
             </div>
-            <div class="form-group">
+<div class="form-group">
               <label>الكمية المتوفرة بالمخزون (عدد الزجاجات) *</label>
               <input type="number" id="pStock" placeholder="50" min="0" value="25" required>
             </div>
-<!-- حقل تتبع التعديل السريع -->
+
+            <!-- حقل تتبع التعديل السريع -->
             <input type="hidden" id="pEditId" value="">
+
+            <!-- قسم أسعار الأحجام الأربعة المخصصة للمشرف -->
+            <div class="form-group" style="grid-column: 1 / -1; background: rgba(18,56,46,0.6); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin: 4px 0;">
+              <label style="color: var(--gold); font-size: 13px; font-weight: 800; margin-bottom: 8px; display: block;">
+                💎 تحديد سعر كل عبوة وحجم (EGP) *
+              </label>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
+                <div class="form-group">
+                  <label for="pSize10">10 مل (عينة):</label>
+                  <input type="number" id="pSize10" placeholder="مثال: 390" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label for="pSize30">30 مل:</label>
+                  <input type="number" id="pSize30" placeholder="مثال: 850" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label for="pSize50">50 مل (الأساسي):</label>
+                  <input type="number" id="pSize50" placeholder="مثال: 1290" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label for="pSize100">100 مل (توفير):</label>
+                  <input type="number" id="pSize100" placeholder="مثال: 2190" min="0" required>
+                </div>
+              </div>
+              <span style="font-size: 10px; color: var(--text-muted); margin-top: 6px; display: block;">
+                💡 عند كتابة السعر الأساسي فوق، ستُملأ هذه الخانات تلقائياً بنسب تقديرية، ويمكنك تغيير وتخصيص سعر أي عبوة بحرية تامة!
+              </span>
+            </div>
 
             <!-- صندوق اختيار الصورة المباشر من جهازك مع المعاينة -->
             <div class="form-group" style="grid-column: 1 / -1;">
@@ -827,7 +857,23 @@
       toast(delta < 0 ? "تم خصم زجاجة من المخزون" : "تمت إضافة زجاجة للمخزون");
     };
 
-    // تعبئة نموذج التعديل السريع
+// التعبئة التلقائية الذكية لأسعار الأحجام عند كتابة السعر الأساسي
+    document.getElementById("pPrice")?.addEventListener("input", (e) => {
+      const base = Number(e.target.value);
+      if (base > 0) {
+        const s10 = document.getElementById("pSize10");
+        const s30 = document.getElementById("pSize30");
+        const s50 = document.getElementById("pSize50");
+        const s100 = document.getElementById("pSize100");
+
+        if (s50) s50.value = base;
+        if (s10) s10.value = Math.round((base * 0.3) / 10) * 10;
+        if (s30) s30.value = Math.round((base * 0.65) / 10) * 10;
+        if (s100) s100.value = Math.round((base * 1.7) / 10) * 10;
+      }
+    });
+
+    // تعبئة نموذج التعديل السريع (بما فيها أسعار كل حجم)
     window.startEditPerfume = function(id) {
       const p = allPerfumes.find(x => x.id === id);
       if (!p) return;
@@ -839,6 +885,13 @@
       document.getElementById("pOldPrice").value = p.oldPrice || "";
       document.getElementById("pStock").value = p.stock !== undefined ? p.stock : 25;
       document.getElementById("pDesc").value = p.desc || "";
+
+      // تعبئة أسعار الأحجام الخاصة بالعطر المحفوظة سحابياً
+      const base = Number(p.price || 0);
+      document.getElementById("pSize10").value = p.sizes?.[10] ?? Math.round((base * 0.3) / 10) * 10;
+      document.getElementById("pSize30").value = p.sizes?.[30] ?? Math.round((base * 0.65) / 10) * 10;
+      document.getElementById("pSize50").value = p.sizes?.[50] ?? base;
+      document.getElementById("pSize100").value = p.sizes?.[100] ?? Math.round((base * 1.7) / 10) * 10;
 
       if (p.image) {
         currentBase64Image = p.image;
@@ -854,7 +907,7 @@
 
       const submitBtn = document.getElementById("submitPerfumeBtn");
       const cancelBtn = document.getElementById("cancelEditBtn");
-      if (submitBtn) submitBtn.textContent = "حفظ وتحديث العطر 💾";
+      if (submitBtn) submitBtn.textContent = "تحديث أسعار وبيانات العطر 💾";
       if (cancelBtn) cancelBtn.style.display = "inline-block";
       window.scrollTo({ top: 120, behavior: "smooth" });
     };
@@ -862,6 +915,10 @@
     document.getElementById("cancelEditBtn")?.addEventListener("click", () => {
       document.getElementById("addPerfumeForm")?.reset();
       document.getElementById("pEditId").value = "";
+      document.getElementById("pSize10").value = "";
+      document.getElementById("pSize30").value = "";
+      document.getElementById("pSize50").value = "";
+      document.getElementById("pSize100").value = "";
       currentBase64Image = "";
       const prompt = document.getElementById("uploadPromptText");
       const container = document.getElementById("imagePreviewContainer");
@@ -873,24 +930,29 @@
       if (cancelBtn) cancelBtn.style.display = "none";
     });
 
-    // إضافة أو تحديث عطر
+    // إضافة أو تحديث عطر بالأسعار المخصصة لكل حجم
     document.getElementById("addPerfumeForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const editId = document.getElementById("pEditId").value;
-      const price = Number(document.getElementById("pPrice").value);
+      const basePrice = Number(document.getElementById("pPrice").value);
+
+      const size10 = Number(document.getElementById("pSize10").value) || Math.round((basePrice * 0.3) / 10) * 10;
+      const size30 = Number(document.getElementById("pSize30").value) || Math.round((basePrice * 0.65) / 10) * 10;
+      const size50 = Number(document.getElementById("pSize50").value) || basePrice;
+      const size100 = Number(document.getElementById("pSize100").value) || Math.round((basePrice * 1.7) / 10) * 10;
 
       const perfumeData = {
         name: document.getElementById("pName").value.trim(),
         category: document.getElementById("pCategory").value,
-        price: price,
+        price: basePrice,
         oldPrice: document.getElementById("pOldPrice").value ? Number(document.getElementById("pOldPrice").value) : null,
         stock: Number(document.getElementById("pStock").value),
         desc: document.getElementById("pDesc").value.trim(),
         sizes: {
-          10: Math.round((price * 0.3) / 10) * 10,
-          30: Math.round((price * 0.65) / 10) * 10,
-          50: price,
-          100: Math.round((price * 1.7) / 10) * 10
+          10: size10,
+          30: size30,
+          50: size50,
+          100: size100
         }
       };
 
@@ -900,12 +962,12 @@
 
       if (editId) {
         await updateDoc(doc(db, "perfumes", editId), perfumeData);
-        toast("تم تحديث بيانات العطر بنجاح! ✓");
+        toast("تم تحديث بيانات وأسعار العطر بنجاح! ✓");
       } else {
         if (!perfumeData.image) perfumeData.image = "image/S1.png";
         perfumeData.createdAt = new Date();
         await addDoc(perfumesCol, perfumeData);
-        toast("تم إضافة العطر ونشره بالمتجر! 💎");
+        toast("تم إضافة العطر بالأسعار المحددة للأحجام! 💎");
       }
 
       document.getElementById("cancelEditBtn")?.click();
