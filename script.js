@@ -807,10 +807,12 @@ const pfpRelatedGrid = document.getElementById("pfpRelatedGrid");
 let currentPfpProduct = null;
 let currentPfpSize = 50;
 let currentPfpQty = 1;
-
 function updatePfpPriceDisplay() {
   if (!currentPfpProduct || !pfpPrice) return;
-  const unitPrice = getPriceForSize(currentPfpProduct.price, currentPfpSize);
+  // إذا كان المشرف محدد سعر مخصص لهذا الحجم يأخذه، وإلا يحسب النسبة
+  const unitPrice = (currentPfpProduct.sizes && currentPfpProduct.sizes[currentPfpSize]) 
+    ? Number(currentPfpProduct.sizes[currentPfpSize]) 
+    : getPriceForSize(currentPfpProduct.price, currentPfpSize);
   pfpPrice.textContent = formatPrice(unitPrice * currentPfpQty);
 }
 
@@ -1451,6 +1453,7 @@ onSnapshot(perfumesCol, (snapshot) => {
       categoryLabel: data.category === 'men' ? 'For Him' : data.category === 'women' ? 'For Her' : 'Unisex',
       categoryLabelAr: data.category === 'men' ? 'رجالي' : data.category === 'women' ? 'نسائي' : 'للجنسين',
       price: Number(data.price),
+     sizes: data.sizes || null, // قراءة أسعار الأحجام المحددة من المشرف
       rating: 5.0,
       reviews: 1,
       description: data.desc || "",
