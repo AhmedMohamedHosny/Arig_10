@@ -1397,7 +1397,7 @@ for (const item of cart) {
       .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
       .join("\n");
 
-    const waMessage = `*طلب جديد من متجر سراقة — SURAKA* 💎
+    const waMessage = `*طلب جديد من متجر سراقة — SURAQA* 💎
 --------------------------------
 👤 *اسم العميل:* ${name}
 📱 *الهاتف الأساسي:* ${phone}
