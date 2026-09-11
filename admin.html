@@ -346,6 +346,41 @@ input, select, textarea {
       display: none;
     }
     .toast.show { display: block; }
+    /* استايل زر التعديل وزر الحذف ✕ بكروت العطور */
+    .btn-card-edit {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      color: var(--text-light);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+    .btn-card-edit:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-card-delete {
+      background: rgba(231, 76, 60, 0.15);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+    .btn-card-delete:hover {
+      background: var(--danger);
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+    }
     /* =========================================================
        تنسيقات شاشات الموبايل (Mobile Responsive)
        ========================================================= */
@@ -1236,14 +1271,16 @@ input, select, textarea {
       toast("تم تحويل حالة الطلب إلى مكتمل! ✓");
     };
 
-// 4. تصدير تقرير الإكسيل الاحترافي متعدد التبويبات (مطابق لمنظومة عجيبه)
+// 4. تصدير تقرير الإكسيل الاحترافي متعدد التبويبات (مطابق لمنظومة عجيبه وبدون تلف)
     function cleanXml(val) {
-      return String(val ?? "")
+      if (val === null || val === undefined) return "";
+      return String(val)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
+        .replace(/'/g, "&apos;")
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ""); // تنظيف أي رموز خفية تسبب تلف الملف
     }
 
     document.getElementById("exportExcelBtn")?.addEventListener("click", () => {
@@ -1252,7 +1289,6 @@ input, select, textarea {
         return;
       }
 
-      // حسابات الملخص المالي
       const totalOrdersCount = allOrders.length;
       const deliveredOrders = allOrders.filter(o => o.status === "delivered");
       const deliveredCount = deliveredOrders.length;
@@ -1262,7 +1298,6 @@ input, select, textarea {
       const totalShippingFee = deliveredOrders.reduce((sum, o) => sum + Number(o.pricing?.shippingFee || 0), 0);
       const netProductsRevenue = totalRevenueDelivered - totalShippingFee;
 
-      // تجميع الأصناف والمبيعات لكل عطر
       const salesAggregate = {};
       allOrders.forEach(o => {
         (o.items || []).forEach(item => {
@@ -1285,7 +1320,6 @@ input, select, textarea {
         });
       });
 
-      // توليد ملف Excel XML مع دعم كامل للترميز UTF-8
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -1296,9 +1330,8 @@ input, select, textarea {
  <Styles>
   <Style ss:ID="Default" ss:Name="Normal">
    <Alignment ss:Vertical="Center" ss:ReadingOrder="RightToLeft"/>
-   <Font ss:FontName="Segoe UI" x:CharSet="1" ss:Size="11" ss:Color="#111111"/>
+   <Font ss:FontName="Arial" ss:Size="11" ss:Color="#111111"/>
   </Style>
-  <!-- رأس الجدول الأساسي (أخضر زمردي) -->
   <Style ss:ID="HeaderEmerald">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1307,10 +1340,9 @@ input, select, textarea {
     <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
    </Borders>
-   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Font ss:FontName="Arial" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
    <Interior ss:Color="#0A221C" ss:Pattern="Solid"/>
   </Style>
-  <!-- رأس جدول التجميع (برتقالي ذهبي) -->
   <Style ss:ID="HeaderGold">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1319,10 +1351,9 @@ input, select, textarea {
     <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
    </Borders>
-   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Font ss:FontName="Arial" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
    <Interior ss:Color="#D35400" ss:Pattern="Solid"/>
   </Style>
-  <!-- نصوص عامة -->
   <Style ss:ID="CellCenter">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1332,7 +1363,6 @@ input, select, textarea {
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
    </Borders>
   </Style>
-  <!-- خلايا الأرقام الصحيحة -->
   <Style ss:ID="CellNumber">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1343,7 +1373,6 @@ input, select, textarea {
    </Borders>
    <NumberFormat ss:Format="0"/>
   </Style>
-  <!-- نصوص الهواتف لمنع تحويلها لصيغة علمية -->
   <Style ss:ID="CellText">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1354,7 +1383,6 @@ input, select, textarea {
    </Borders>
    <NumberFormat ss:Format="@"/>
   </Style>
-  <!-- مبالغ نقدية -->
   <Style ss:ID="CellMoney">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1365,7 +1393,6 @@ input, select, textarea {
    </Borders>
    <NumberFormat ss:Format="#,##0"/>
   </Style>
-  <!-- حالة التسليم -->
   <Style ss:ID="CellDelivered">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1374,11 +1401,11 @@ input, select, textarea {
     <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
    </Borders>
-   <Font ss:FontName="Segoe UI" ss:Color="#27AE60" ss:Bold="1"/>
+   <Font ss:FontName="Arial" ss:Color="#27AE60" ss:Bold="1"/>
   </Style>
  </Styles>`;
 
-      // ورقة 1: الملخص المالي
+      // ورقة 1
       xml += `
  <Worksheet ss:Name="الملخص المالي">
   <Table ss:DefaultRowHeight="24">
@@ -1422,7 +1449,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ورقة 2: ملخص الطلبات
+      // ورقة 2
       xml += `
  <Worksheet ss:Name="ملخص الطلبات">
   <Table ss:DefaultRowHeight="22">
@@ -1453,12 +1480,12 @@ input, select, textarea {
 
       allOrders.forEach((o, index) => {
         const orderNum = `SRQ-${String(1001 + index)}`;
-        let dateStr = "2026-09-11", timeStr = "12:00 م";
+        let dateStr = "2026-09-11", timeStr = "12:00";
         if (o.createdAt) {
           const d = o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
           if (!isNaN(d)) {
             dateStr = d.toISOString().slice(0, 10);
-            timeStr = d.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+            timeStr = d.getHours() + ":" + String(d.getMinutes()).padStart(2, '0');
           }
         }
         const fullAddress = `${cleanXml(o.customer?.governorate || "")} - ${cleanXml(o.customer?.address || "")}`;
@@ -1467,8 +1494,8 @@ input, select, textarea {
         xml += `
    <Row>
     <Cell ss:StyleID="CellText"><Data ss:Type="String">${orderNum}</Data></Cell>
-    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${dateStr}</Data></Cell>
-    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${timeStr}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(dateStr)}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(timeStr)}</Data></Cell>
     <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(o.customer?.name || "عميل سراقة")}</Data></Cell>
     <Cell ss:StyleID="CellText"><Data ss:Type="String">${cleanXml(o.customer?.phone || "")}</Data></Cell>
     <Cell ss:StyleID="CellCenter"><Data ss:Type="String">توصيل</Data></Cell>
@@ -1487,7 +1514,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ورقة 3: تفاصيل الأصناف
+      // ورقة 3
       xml += `
  <Worksheet ss:Name="تفاصيل الأصناف">
   <Table ss:DefaultRowHeight="22">
@@ -1538,7 +1565,7 @@ input, select, textarea {
           xml += `
    <Row>
     <Cell ss:StyleID="CellText"><Data ss:Type="String">${orderNum}</Data></Cell>
-    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${dateStr}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(dateStr)}</Data></Cell>
     <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(o.customer?.name || "")}</Data></Cell>
     <Cell ss:StyleID="CellText"><Data ss:Type="String">${cleanXml(o.customer?.phone || "")}</Data></Cell>
     <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${fullAddress}</Data></Cell>
@@ -1561,7 +1588,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ورقة 4: تجميع الأصناف المباعة
+      // ورقة 4
       xml += `
  <Worksheet ss:Name="تجميع الأصناف المباعة">
   <Table ss:DefaultRowHeight="22">
@@ -1598,8 +1625,8 @@ input, select, textarea {
  </Worksheet>
 </Workbook>`;
 
-      // تنزيل الملف مع تضمين علامة UTF-8 BOM
-      const blob = new Blob(["\uFEFF", xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+      // تنزيل ملف XML الصافي (بدون BOM لمنع التلف)
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `تقرير_مبيعات_سراقة_${new Date().toISOString().slice(0, 10)}.xls`;
