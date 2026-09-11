@@ -1499,7 +1499,7 @@ onSnapshot(perfumesCol, (snapshot) => {
 });
 
 // الدخول للوحة التحكم
-const ADMIN_PASS = "1234";
+const ADMIN_PASS = "01016118242";
 let logoClicks = 0;
 let clickTimer;
 
