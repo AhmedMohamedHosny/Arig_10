@@ -996,25 +996,372 @@
       toast("تم تحويل حالة الطلب إلى مكتمل! ✓");
     };
 
-    // 4. تصدير تقرير الإكسيل
+// 4. تصدير تقرير الإكسيل الاحترافي متعدد التبويبات (على طريقة عجيبه)
+    function cleanXml(val) {
+      return String(val ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
     document.getElementById("exportExcelBtn")?.addEventListener("click", () => {
       if (allOrders.length === 0) {
         alert("لا توجد طلبات مسجلة بعد لتصديرها!");
         return;
       }
 
-      let csvContent = "\uFEFFاسم العميل,رقم الهاتف,الهاتف البديل,المحافظة,العنوان,المنتجات,الإجمالي (ج),طريقة الدفع,الحالة\n";
+      // حسابات الملخص المالي
+      const totalOrdersCount = allOrders.length;
+      const deliveredOrders = allOrders.filter(o => o.status === "delivered");
+      const deliveredCount = deliveredOrders.length;
+      const pendingCount = totalOrdersCount - deliveredCount;
+      
+      const totalRevenueDelivered = deliveredOrders.reduce((sum, o) => sum + Number(o.pricing?.total || 0), 0);
+      const totalShippingFee = deliveredOrders.reduce((sum, o) => sum + Number(o.pricing?.shippingFee || 0), 0);
+      const netProductsRevenue = totalRevenueDelivered - totalShippingFee;
+
+      // تجميع الأصناف والمبيعات لكل عطر
+      const salesAggregate = {};
       allOrders.forEach(o => {
-        const items = (o.items || []).map(i => `${i.name} × ${i.quantity}`).join(" | ");
-        csvContent += `"${o.customer?.name || ''}","${o.customer?.phone || ''}","${o.customer?.secondaryPhone || ''}","${o.customer?.governorate || ''}","${o.customer?.address || ''}","${items}","${o.pricing?.total || 0}","${o.paymentMethod || ''}","${o.status || ''}"\n`;
+        (o.items || []).forEach(item => {
+          const rawName = item.name || "عطر غير محدد";
+          const size = item.size ? String(item.size) : "50 مل";
+          const key = `${rawName}__${size}`;
+          
+          if (!salesAggregate[key]) {
+            salesAggregate[key] = {
+              name: rawName,
+              size: size,
+              ordersCount: 0,
+              totalQty: 0,
+              totalSales: 0
+            };
+          }
+          salesAggregate[key].ordersCount += 1;
+          salesAggregate[key].totalQty += Number(item.quantity || 1);
+          salesAggregate[key].totalSales += (Number(item.price || 0) * Number(item.quantity || 1));
+        });
       });
 
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      // توليد ملف Excel XML التفاعلي متعدد الأوراق بالستايل الملكي
+      let xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Center" ss:ReadingOrder="RightToLeft"/>
+   <Font ss:FontName="Segoe UI" x:CharSet="1" ss:Size="11" ss:Color="#111111"/>
+  </Style>
+  <!-- ستايل رأس الجدول الأساسي (أخضر زمردي ملكي) -->
+  <Style ss:ID="HeaderEmerald">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D4AF37"/>
+   </Borders>
+   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#0A221C" ss:Pattern="Solid"/>
+  </Style>
+  <!-- ستايل رأس التجميع (برتقالي ذهبي مثل عجيبه) -->
+  <Style ss:ID="HeaderGold">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#B8860B"/>
+   </Borders>
+   <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#D35400" ss:Pattern="Solid"/>
+  </Style>
+  <!-- نصوص عادية في المنتصف وبوردر خفيف -->
+  <Style ss:ID="CellCenter">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+   </Borders>
+  </Style>
+  <!-- خلايا النصوص وأرقام الهواتف لحمايتها من التحويل لصيغة 1.1E+09 -->
+  <Style ss:ID="CellText">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+   </Borders>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <!-- خلايا العملات والأرقام -->
+  <Style ss:ID="CellMoney">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+   </Borders>
+   <NumberFormat ss:Format="#,##0"/>
+  </Style>
+  <!-- خلية تم التسليم الخضراء -->
+  <Style ss:ID="CellDelivered">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+   </Borders>
+   <Font ss:FontName="Segoe UI" ss:Color="#27AE60" ss:Bold="1"/>
+  </Style>
+ </Styles>`;
+
+      // ==========================================
+      // ورقة 1: الملخص المالي (زي صورة 2)
+      // ==========================================
+      xml += `
+ <Worksheet ss:Name="الملخص المالي">
+  <Table ss:DefaultRowHeight="24">
+   <Column ss:Width="200"/>
+   <Column ss:Width="160"/>
+   <Row ss:Height="26">
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">البيان</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">القيمة</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">الفترة المعروضة</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">كل الطلبات المسجلة</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">عدد الطلبات الكلي</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${totalOrdersCount}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">عدد الطلبات المُسلّمة</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${deliveredCount}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">عدد الطلبات قيد الانتظار</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${pendingCount}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">إجمالي المبيعات (المُسلّمة)</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${totalRevenueDelivered}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">إجمالي رسوم التوصيل</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${totalShippingFee}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">صافي دخل المتجر</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${netProductsRevenue}</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <DisplayRightToLeft/>
+  </WorksheetOptions>
+ </Worksheet>`;
+
+      // ==========================================
+      // ورقة 2: ملخص الطلبات (زي صورة 3)
+      // ==========================================
+      xml += `
+ <Worksheet ss:Name="ملخص الطلبات">
+  <Table ss:DefaultRowHeight="22">
+   <Column ss:Width="95"/>
+   <Column ss:Width="95"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="140"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="95"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="100"/>
+   <Row ss:Height="26">
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">رقم الطلب</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">التاريخ</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الوقت</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">اسم العميل</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الهاتف</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">نوع الطلب</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">العنوان</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الحالة</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">المجموع الفرعي</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">رسوم التوصيل</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الإجمالي</Data></Cell>
+   </Row>`;
+
+      allOrders.forEach((o, index) => {
+        const orderNum = `SRQ-${String(1001 + index)}`;
+        let dateStr = "2026-09-11", timeStr = "12:00 م";
+        if (o.createdAt) {
+          const d = o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
+          if (!isNaN(d)) {
+            dateStr = d.toISOString().slice(0, 10);
+            timeStr = d.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+          }
+        }
+        const fullAddress = `${cleanXml(o.customer?.governorate || "")} - ${cleanXml(o.customer?.address || "")}`;
+        const isDone = o.status === "delivered";
+
+        xml += `
+   <Row>
+    <Cell ss:StyleID="CellText"><Data ss:Type="String">${orderNum}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${dateStr}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${timeStr}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(o.customer?.name || "عميل سراقة")}</Data></Cell>
+    <Cell ss:StyleID="CellText"><Data ss:Type="String">${cleanXml(o.customer?.phone || "")}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">توصيل</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${fullAddress}</Data></Cell>
+    <Cell ss:StyleID="${isDone ? 'CellDelivered' : 'CellCenter'}"><Data ss:Type="String">${isDone ? '✓ تم التسليم' : 'قيد الانتظار'}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${Number(o.pricing?.subtotal || 0)}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${Number(o.pricing?.shippingFee || 0)}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${Number(o.pricing?.total || 0)}</Data></Cell>
+   </Row>`;
+      });
+
+      xml += `
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <DisplayRightToLeft/>
+  </WorksheetOptions>
+ </Worksheet>`;
+
+      // ==========================================
+      // ورقة 3: تفاصيل الأصناف (زي صورة 4)
+      // ==========================================
+      xml += `
+ <Worksheet ss:Name="تفاصيل الأصناف">
+  <Table ss:DefaultRowHeight="22">
+   <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="130"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="160"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="65"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="85"/>
+   <Column ss:Width="85"/>
+   <Column ss:Width="85"/>
+   <Row ss:Height="26">
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">رقم الطلب</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">التاريخ</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">اسم العميل</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الهاتف</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">العنوان</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الحالة</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الصنف</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الحجم</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">الكمية</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">سعر الوحدة</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">إجمالي الصنف</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">رسوم التوصيل</Data></Cell>
+    <Cell ss:StyleID="HeaderEmerald"><Data ss:Type="String">إجمالي الطلب</Data></Cell>
+   </Row>`;
+
+      allOrders.forEach((o, index) => {
+        const orderNum = `SRQ-${String(1001 + index)}`;
+        let dateStr = "2026-09-11";
+        if (o.createdAt) {
+          const d = o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
+          if (!isNaN(d)) dateStr = d.toISOString().slice(0, 10);
+        }
+        const fullAddress = `${cleanXml(o.customer?.governorate || "")} - ${cleanXml(o.customer?.address || "")}`;
+        const isDone = o.status === "delivered";
+
+        (o.items || []).forEach(item => {
+          const unitPrice = Number(item.price || 0);
+          const qty = Number(item.quantity || 1);
+          const itemTotal = unitPrice * qty;
+
+          xml += `
+   <Row>
+    <Cell ss:StyleID="CellText"><Data ss:Type="String">${orderNum}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${dateStr}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(o.customer?.name || "")}</Data></Cell>
+    <Cell ss:StyleID="CellText"><Data ss:Type="String">${cleanXml(o.customer?.phone || "")}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${fullAddress}</Data></Cell>
+    <Cell ss:StyleID="${isDone ? 'CellDelivered' : 'CellCenter'}"><Data ss:Type="String">${isDone ? '✓ تم التسليم' : 'قيد الانتظار'}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(item.name || "عطر سراقة")}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(item.size || "50 مل")}</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${qty}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${unitPrice}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${itemTotal}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${Number(o.pricing?.shippingFee || 0)}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${Number(o.pricing?.total || 0)}</Data></Cell>
+   </Row>`;
+        });
+      });
+
+      xml += `
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <DisplayRightToLeft/>
+  </WorksheetOptions>
+ </Worksheet>`;
+
+      // ==========================================
+      // ورقة 4: تجميع الأصناف المباعة (زي صورة 5 باللون الذهبي/البرتقالي)
+      // ==========================================
+      xml += `
+ <Worksheet ss:Name="تجميع الأصناف المباعة">
+  <Table ss:DefaultRowHeight="22">
+   <Column ss:Width="220"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="140"/>
+   <Column ss:Width="150"/>
+   <Row ss:Height="26">
+    <Cell ss:StyleID="HeaderGold"><Data ss:Type="String">اسم الصنف</Data></Cell>
+    <Cell ss:StyleID="HeaderGold"><Data ss:Type="String">الحجم</Data></Cell>
+    <Cell ss:StyleID="HeaderGold"><Data ss:Type="String">عدد مرات الطلب</Data></Cell>
+    <Cell ss:StyleID="HeaderGold"><Data ss:Type="String">إجمالي الكمية المباعة</Data></Cell>
+    <Cell ss:StyleID="HeaderGold"><Data ss:Type="String">إجمالي المبيعات (ج.م)</Data></Cell>
+   </Row>`;
+
+      const sortedAgg = Object.values(salesAggregate).sort((a, b) => b.totalSales - a.totalSales);
+      sortedAgg.forEach(p => {
+        xml += `
+   <Row>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(p.name)}</Data></Cell>
+    <Cell ss:StyleID="CellCenter"><Data ss:Type="String">${cleanXml(p.size)}</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${p.ordersCount}</Data></Cell>
+    <Cell ss:StyleID="CellNumber"><Data ss:Type="Number">${p.totalQty}</Data></Cell>
+    <Cell ss:StyleID="CellMoney"><Data ss:Type="Number">${p.totalSales}</Data></Cell>
+   </Row>`;
+      });
+
+      xml += `
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <DisplayRightToLeft/>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>`;
+
+      // تنزيل الملف بصيغة Excel XML الرسمية
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `مبيعات_سراقة_${new Date().toISOString().slice(0,10)}.csv`;
+      link.download = `تقرير_مبيعات_سراقة_${new Date().toISOString().slice(0, 10)}.xls`;
       link.click();
-      toast("تم تنزيل شيت الإكسيل بنجاح! 📊");
+      toast("تم تصدير مصنف إكسيل سراقة المتقدم بنجاح! 📊");
     });
 
     // 5. نافذة مظهر وحالة المتجر والـ 22 ثيماً
