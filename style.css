@@ -3460,14 +3460,15 @@ body {
   position: relative;
   z-index: 10;
   width: min(580px, 94vw);
-  background: rgba(10, 34, 28, 0.75);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: linear-gradient(rgba(7, 25, 20, 0.82), rgba(7, 25, 20, 0.90)), 
+              url("image/close.png") center/cover no-repeat !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 18px;
   padding: 44px 28px;
   text-align: center;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85), inset 0 0 35px rgba(212, 175, 55, 0.08);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), inset 0 0 35px rgba(212, 175, 55, 0.12);
 }
 
 /* حركة اللوجو المتوهج بالهالة الملكية */
