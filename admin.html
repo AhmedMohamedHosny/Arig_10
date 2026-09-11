@@ -433,41 +433,81 @@
               <label>السعر قبل الخصم (اختياري - يظهر مشطوباً)</label>
               <input type="number" id="pOldPrice" placeholder="1600">
             </div>
-<div class="form-group">
-              <label>الكمية المتوفرة بالمخزون (عدد الزجاجات) *</label>
-              <input type="number" id="pStock" placeholder="50" min="0" value="25" required>
-            </div>
-
-            <!-- حقل تتبع التعديل السريع -->
+<!-- حقل تتبع التعديل السريع -->
             <input type="hidden" id="pEditId" value="">
 
-            <!-- قسم أسعار الأحجام الأربعة المخصصة للمشرف -->
-            <div class="form-group" style="grid-column: 1 / -1; background: rgba(18,56,46,0.6); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin: 4px 0;">
-              <label style="color: var(--gold); font-size: 13px; font-weight: 800; margin-bottom: 8px; display: block;">
-                💎 تحديد سعر كل عبوة وحجم (EGP) *
-              </label>
-              
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
-                <div class="form-group">
-                  <label for="pSize10">10 مل (عينة):</label>
-                  <input type="number" id="pSize10" placeholder="مثال: 390" min="0" required>
-                </div>
-                <div class="form-group">
-                  <label for="pSize30">30 مل:</label>
-                  <input type="number" id="pSize30" placeholder="مثال: 850" min="0" required>
-                </div>
-                <div class="form-group">
-                  <label for="pSize50">50 مل (الأساسي):</label>
-                  <input type="number" id="pSize50" placeholder="مثال: 1290" min="0" required>
-                </div>
-                <div class="form-group">
-                  <label for="pSize100">100 مل (توفير):</label>
-                  <input type="number" id="pSize100" placeholder="مثال: 2190" min="0" required>
-                </div>
+            <!-- بوكس تحديد السعر والعدد المتاح من الزجاجات لكل حجم -->
+            <div class="form-group" style="grid-column: 1 / -1; background: rgba(18,56,46,0.65); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin: 6px 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 8px;">
+                <label style="color: var(--gold); font-size: 13px; font-weight: 800; margin: 0;">
+                  💎 تسعير وتحديد عدد الزجاجات (المخزون) لكل حجم
+                </label>
+                <span id="totalStockPreview" style="font-size: 11px; color: var(--success); font-weight: 800;">إجمالي المخزون: 0 زجاجة</span>
               </div>
-              <span style="font-size: 10px; color: var(--text-muted); margin-top: 6px; display: block;">
-                💡 عند كتابة السعر الأساسي فوق، ستُملأ هذه الخانات تلقائياً بنسب تقديرية، ويمكنك تغيير وتخصيص سعر أي عبوة بحرية تامة!
-              </span>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+                
+                <!-- 10 مل -->
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
+                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">🧪 عبوة 10 مل (عينة)</strong>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px;">السعر (ج):</label>
+                      <input type="number" id="pSize10" placeholder="390" min="0" required>
+                    </div>
+                    <div>
+                      <label style="font-size: 10px;">كم زجاجة؟</label>
+                      <input type="number" id="pStock10" class="stock-input-calc" placeholder="20" min="0" value="20" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 30 مل -->
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
+                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">🧴 عبوة 30 مل</strong>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px;">السعر (ج):</label>
+                      <input type="number" id="pSize30" placeholder="850" min="0" required>
+                    </div>
+                    <div>
+                      <label style="font-size: 10px;">كم زجاجة؟</label>
+                      <input type="number" id="pStock30" class="stock-input-calc" placeholder="15" min="0" value="15" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 50 مل -->
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
+                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">✨ عبوة 50 مل (الأساسي)</strong>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px;">السعر (ج):</label>
+                      <input type="number" id="pSize50" placeholder="1290" min="0" required>
+                    </div>
+                    <div>
+                      <label style="font-size: 10px;">كم زجاجة؟</label>
+                      <input type="number" id="pStock50" class="stock-input-calc" placeholder="15" min="0" value="15" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 100 مل -->
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
+                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">👑 عبوة 100 مل (توفير)</strong>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px;">السعر (ج):</label>
+                      <input type="number" id="pSize100" placeholder="2190" min="0" required>
+                    </div>
+                    <div>
+                      <label style="font-size: 10px;">كم زجاجة؟</label>
+                      <input type="number" id="pStock100" class="stock-input-calc" placeholder="5" min="0" value="5" required>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
 
             <!-- صندوق اختيار الصورة المباشر من جهازك مع المعاينة -->
@@ -803,6 +843,38 @@
       renderAnalytics();
     });
 
+// حساب وعرض إجمالي الزجاجات فورياً
+    function calcTotalStockPreview() {
+      const s10 = Number(document.getElementById("pStock10")?.value || 0);
+      const s30 = Number(document.getElementById("pStock30")?.value || 0);
+      const s50 = Number(document.getElementById("pStock50")?.value || 0);
+      const s100 = Number(document.getElementById("pStock100")?.value || 0);
+      const total = s10 + s30 + s50 + s100;
+      const preview = document.getElementById("totalStockPreview");
+      if (preview) preview.textContent = `إجمالي المخزون: ${total} زجاجة`;
+    }
+
+    document.querySelectorAll(".stock-input-calc").forEach(inp => {
+      inp.addEventListener("input", calcTotalStockPreview);
+    });
+
+    // ملء الأسعار تلقائياً بنسب تقديرية عند كتابة السعر الأساسي
+    document.getElementById("pPrice")?.addEventListener("input", (e) => {
+      const base = Number(e.target.value);
+      if (base > 0) {
+        const s10 = document.getElementById("pSize10");
+        const s30 = document.getElementById("pSize30");
+        const s50 = document.getElementById("pSize50");
+        const s100 = document.getElementById("pSize100");
+
+        if (s50 && !s50.value) s50.value = base;
+        if (s10 && !s10.value) s10.value = Math.round((base * 0.3) / 10) * 10;
+        if (s30 && !s30.value) s30.value = Math.round((base * 0.65) / 10) * 10;
+        if (s100 && !s100.value) s100.value = Math.round((base * 1.7) / 10) * 10;
+      }
+    });
+
+    // عرض كروت المخزون مع التحكم المباشر في وفرة كل حجم
     function renderStockGrid() {
       const grid = document.getElementById("perfumesStockList");
       if (!grid) return;
@@ -813,67 +885,69 @@
       }
 
       grid.innerHTML = allPerfumes.map(p => {
-        const stock = p.stock !== undefined ? p.stock : 20;
-        let badgeHtml = '<span class="stock-badge-pill badge-ok">متوفر بالمخزون</span>';
-        if (stock <= 0) badgeHtml = '<span class="stock-badge-pill badge-out">نفد المخزون ❌</span>';
-        else if (stock <= 5) badgeHtml = '<span class="stock-badge-pill badge-low">قارب على النفاد ⚠️</span>';
-
-        const hasOld = p.oldPrice && Number(p.oldPrice) > Number(p.price);
+        const stocks = p.stocks || {
+          10: Math.round((p.stock || 20) * 0.3),
+          30: Math.round((p.stock || 20) * 0.2),
+          50: Math.round((p.stock || 20) * 0.35),
+          100: Math.round((p.stock || 20) * 0.15)
+        };
+        const total = (stocks[10] || 0) + (stocks[30] || 0) + (stocks[50] || 0) + (stocks[100] || 0);
 
         return `
-          <div class="stock-card" style="${stock <= 0 ? 'opacity:0.85; border-color:var(--danger);' : ''}">
+          <div class="stock-card">
             <div class="stock-card-top">
               <img src="${p.image || 'image/S1.png'}" class="stock-card-img" alt="${p.name}">
               <div class="stock-card-info">
                 <div class="stock-card-name">${p.name}</div>
-                <div class="stock-card-price">
-                  ${hasOld ? `<span style="text-decoration:line-through; color:var(--danger); font-size:10px; margin-left:4px;">${p.oldPrice} ج</span>` : ''}
-                  ${p.price} جنيه
-                </div>
-                <div>${badgeHtml} (${stock} زجاجة)</div>
+                <div class="stock-card-price">${p.price} جنيه</div>
+                <span style="font-size:11px; color:${total > 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:800;">
+                  ${total > 0 ? `المجموع: ${total} زجاجة` : 'نفد بالكامل ❌'}
+                </span>
               </div>
               <div>
                 <button type="button" class="btn-card-edit" onclick="startEditPerfume('${p.id}')">✏️ تعديل</button>
               </div>
             </div>
-            <div class="stock-control-bar">
-              <span style="font-size:11px; color:var(--text-muted);">تعديل وفرة المحل:</span>
-              <div class="stock-counter">
-                <button class="stock-btn" onclick="updateStock('${p.id}', -1)" title="بيع واحدة في المحل">−</button>
-                <span class="stock-num">${stock}</span>
-                <button class="stock-btn" onclick="updateStock('${p.id}', 1)" title="إضافة للمخزون">+</button>
-              </div>
+
+            <!-- أزرار إنقاص وزيادة كل حجم على حدة لمبيعات المحل المباشرة -->
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.05); display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              ${[10, 30, 50, 100].map(sz => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(7,25,20,0.6); padding:4px 6px; border-radius:4px; border:1px solid rgba(212,175,55,0.15);">
+                  <span style="font-size:10px; color:var(--text-muted);">${sz}مل:</span>
+                  <div style="display:flex; align-items:center; gap:4px;">
+                    <button class="stock-btn" style="width:20px; height:20px; font-size:12px;" onclick="updateSizeStock('${p.id}', ${sz}, -1)" title="بيع واحدة في المحل">−</button>
+                    <strong style="font-size:11px; color:${(stocks[sz] || 0) > 0 ? 'var(--gold)' : 'var(--danger)'}; min-width:16px; text-align:center;">${stocks[sz] || 0}</strong>
+                    <button class="stock-btn" style="width:20px; height:20px; font-size:12px;" onclick="updateSizeStock('${p.id}', ${sz}, 1)" title="إضافة">+</button>
+                  </div>
+                </div>
+              `).join("")}
             </div>
           </div>
         `;
       }).join("");
     }
 
-    window.updateStock = async function(id, delta) {
+    // تعديل مخزون حجم معين مباشرة
+    window.updateSizeStock = async function(id, size, delta) {
       const p = allPerfumes.find(x => x.id === id);
       if (!p) return;
-      const newStock = Math.max(0, (p.stock || 0) + delta);
-      await updateDoc(doc(db, "perfumes", id), { stock: newStock });
-      toast(delta < 0 ? "تم خصم زجاجة من المخزون" : "تمت إضافة زجاجة للمخزون");
+
+      const currentStocks = p.stocks || { 10: 10, 30: 10, 50: 15, 100: 5 };
+      const currentVal = Number(currentStocks[size] || 0);
+      const newVal = Math.max(0, currentVal + delta);
+      currentStocks[size] = newVal;
+
+      const totalStock = Object.values(currentStocks).reduce((a, b) => a + Number(b), 0);
+
+      await updateDoc(doc(db, "perfumes", id), {
+        stocks: currentStocks,
+        stock: totalStock
+      });
+
+      toast(delta < 0 ? `تم خصم زجاجة ${size} مل (بيع بالمحل)` : `تمت إضافة زجاجة ${size} مل للمخزون`);
     };
 
-// التعبئة التلقائية الذكية لأسعار الأحجام عند كتابة السعر الأساسي
-    document.getElementById("pPrice")?.addEventListener("input", (e) => {
-      const base = Number(e.target.value);
-      if (base > 0) {
-        const s10 = document.getElementById("pSize10");
-        const s30 = document.getElementById("pSize30");
-        const s50 = document.getElementById("pSize50");
-        const s100 = document.getElementById("pSize100");
-
-        if (s50) s50.value = base;
-        if (s10) s10.value = Math.round((base * 0.3) / 10) * 10;
-        if (s30) s30.value = Math.round((base * 0.65) / 10) * 10;
-        if (s100) s100.value = Math.round((base * 1.7) / 10) * 10;
-      }
-    });
-
-    // تعبئة نموذج التعديل السريع (بما فيها أسعار كل حجم)
+    // تعبئة نموذج التعديل السريع (أسعار ومخزون كل حجم)
     window.startEditPerfume = function(id) {
       const p = allPerfumes.find(x => x.id === id);
       if (!p) return;
@@ -883,15 +957,21 @@
       document.getElementById("pCategory").value = p.category || "men";
       document.getElementById("pPrice").value = p.price || "";
       document.getElementById("pOldPrice").value = p.oldPrice || "";
-      document.getElementById("pStock").value = p.stock !== undefined ? p.stock : 25;
       document.getElementById("pDesc").value = p.desc || "";
 
-      // تعبئة أسعار الأحجام الخاصة بالعطر المحفوظة سحابياً
       const base = Number(p.price || 0);
       document.getElementById("pSize10").value = p.sizes?.[10] ?? Math.round((base * 0.3) / 10) * 10;
       document.getElementById("pSize30").value = p.sizes?.[30] ?? Math.round((base * 0.65) / 10) * 10;
       document.getElementById("pSize50").value = p.sizes?.[50] ?? base;
       document.getElementById("pSize100").value = p.sizes?.[100] ?? Math.round((base * 1.7) / 10) * 10;
+
+      const stocks = p.stocks || { 10: 20, 30: 15, 50: 15, 100: 5 };
+      document.getElementById("pStock10").value = stocks[10] ?? 20;
+      document.getElementById("pStock30").value = stocks[30] ?? 15;
+      document.getElementById("pStock50").value = stocks[50] ?? 15;
+      document.getElementById("pStock100").value = stocks[100] ?? 5;
+
+      calcTotalStockPreview();
 
       if (p.image) {
         currentBase64Image = p.image;
@@ -907,7 +987,7 @@
 
       const submitBtn = document.getElementById("submitPerfumeBtn");
       const cancelBtn = document.getElementById("cancelEditBtn");
-      if (submitBtn) submitBtn.textContent = "تحديث أسعار وبيانات العطر 💾";
+      if (submitBtn) submitBtn.textContent = "تحديث بيانات وأحجام العطر 💾";
       if (cancelBtn) cancelBtn.style.display = "inline-block";
       window.scrollTo({ top: 120, behavior: "smooth" });
     };
@@ -915,10 +995,6 @@
     document.getElementById("cancelEditBtn")?.addEventListener("click", () => {
       document.getElementById("addPerfumeForm")?.reset();
       document.getElementById("pEditId").value = "";
-      document.getElementById("pSize10").value = "";
-      document.getElementById("pSize30").value = "";
-      document.getElementById("pSize50").value = "";
-      document.getElementById("pSize100").value = "";
       currentBase64Image = "";
       const prompt = document.getElementById("uploadPromptText");
       const container = document.getElementById("imagePreviewContainer");
@@ -928,9 +1004,10 @@
       const cancelBtn = document.getElementById("cancelEditBtn");
       if (submitBtn) submitBtn.textContent = "حفظ العطر ونشره بالمتجر";
       if (cancelBtn) cancelBtn.style.display = "none";
+      calcTotalStockPreview();
     });
 
-    // إضافة أو تحديث عطر بالأسعار المخصصة لكل حجم
+    // حفظ العطر الجديد أو التعديل
     document.getElementById("addPerfumeForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const editId = document.getElementById("pEditId").value;
@@ -941,19 +1018,31 @@
       const size50 = Number(document.getElementById("pSize50").value) || basePrice;
       const size100 = Number(document.getElementById("pSize100").value) || Math.round((basePrice * 1.7) / 10) * 10;
 
+      const stock10 = Number(document.getElementById("pStock10").value) || 0;
+      const stock30 = Number(document.getElementById("pStock30").value) || 0;
+      const stock50 = Number(document.getElementById("pStock50").value) || 0;
+      const stock100 = Number(document.getElementById("pStock100").value) || 0;
+      const totalStock = stock10 + stock30 + stock50 + stock100;
+
       const perfumeData = {
         name: document.getElementById("pName").value.trim(),
         category: document.getElementById("pCategory").value,
         price: basePrice,
         oldPrice: document.getElementById("pOldPrice").value ? Number(document.getElementById("pOldPrice").value) : null,
-        stock: Number(document.getElementById("pStock").value),
-        desc: document.getElementById("pDesc").value.trim(),
+        stock: totalStock,
+        stocks: {
+          10: stock10,
+          30: stock30,
+          50: stock50,
+          100: stock100
+        },
         sizes: {
           10: size10,
           30: size30,
           50: size50,
           100: size100
-        }
+        },
+        desc: document.getElementById("pDesc").value.trim()
       };
 
       if (currentBase64Image) {
@@ -962,12 +1051,12 @@
 
       if (editId) {
         await updateDoc(doc(db, "perfumes", editId), perfumeData);
-        toast("تم تحديث بيانات وأسعار العطر بنجاح! ✓");
+        toast("تم تحديث أسعار ومخزون الأحجام بنجاح! ✓");
       } else {
         if (!perfumeData.image) perfumeData.image = "image/S1.png";
         perfumeData.createdAt = new Date();
         await addDoc(perfumesCol, perfumeData);
-        toast("تم إضافة العطر بالأسعار المحددة للأحجام! 💎");
+        toast("تم إضافة العطر ونشره بالمتجر! 💎");
       }
 
       document.getElementById("cancelEditBtn")?.click();
@@ -995,7 +1084,21 @@
       renderOrdersTable();
       renderAnalytics();
     });
+// التعبئة التلقائية الذكية لأسعار الأحجام عند كتابة السعر الأساسي
+    document.getElementById("pPrice")?.addEventListener("input", (e) => {
+      const base = Number(e.target.value);
+      if (base > 0) {
+        const s10 = document.getElementById("pSize10");
+        const s30 = document.getElementById("pSize30");
+        const s50 = document.getElementById("pSize50");
+        const s100 = document.getElementById("pSize100");
 
+        if (s50) s50.value = base;
+        if (s10) s10.value = Math.round((base * 0.3) / 10) * 10;
+        if (s30) s30.value = Math.round((base * 0.65) / 10) * 10;
+        if (s100) s100.value = Math.round((base * 1.7) / 10) * 10;
+      }
+    });
     function renderOrdersTable() {
       const tbody = document.getElementById("ordersTableBody");
       if (!tbody) return;
