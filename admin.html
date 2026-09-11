@@ -202,7 +202,10 @@
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     label { font-size: 11px; color: var(--text-muted); font-weight: 700; }
-    input, select {
+input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       background: var(--emerald-dark);
       border: 1px solid var(--line);
       color: #fff;
@@ -343,6 +346,61 @@
       display: none;
     }
     .toast.show { display: block; }
+    /* =========================================================
+       تنسيقات شاشات الموبايل (Mobile Responsive)
+       ========================================================= */
+    @media (max-width: 600px) {
+      .top-bar {
+        padding: 8px 12px;
+      }
+      .brand-side {
+        gap: 6px;
+      }
+      .brand-logo {
+        height: 28px;
+      }
+      .brand-title {
+        font-size: 12.5px;
+        line-height: 1.2;
+      }
+      .brand-badge {
+        display: none !important; /* إخفاء الشارة لتوفير مساحة */
+      }
+      .actions-side {
+        gap: 6px;
+      }
+      .btn-exit {
+        padding: 6px 10px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .menu-trigger-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+      }
+      .container {
+        width: 96%;
+        margin-top: 12px;
+      }
+      .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .kpi-card {
+        padding: 10px;
+      }
+      .kpi-value {
+        font-size: 17px;
+      }
+      .panel {
+        padding: 14px 10px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -436,73 +494,73 @@
 <!-- حقل تتبع التعديل السريع -->
             <input type="hidden" id="pEditId" value="">
 
-            <!-- بوكس تحديد السعر والعدد المتاح من الزجاجات لكل حجم -->
-            <div class="form-group" style="grid-column: 1 / -1; background: rgba(18,56,46,0.65); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin: 6px 0;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 8px;">
-                <label style="color: var(--gold); font-size: 13px; font-weight: 800; margin: 0;">
-                  💎 تسعير وتحديد عدد الزجاجات (المخزون) لكل حجم
+<!-- بوكس تحديد السعر والعدد المتاح من الزجاجات لكل حجم -->
+            <div class="form-group" style="grid-column: 1 / -1; background: rgba(18,56,46,0.65); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 6px 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                <label style="color: var(--gold); font-size: 12px; font-weight: 800; margin: 0;">
+                  💎 تسعير وتحديد عدد الزجاجات لكل حجم
                 </label>
                 <span id="totalStockPreview" style="font-size: 11px; color: var(--success); font-weight: 800;">إجمالي المخزون: 0 زجاجة</span>
               </div>
 
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
                 
                 <!-- 10 مل -->
-                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
-                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">🧪 عبوة 10 مل (عينة)</strong>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                      <label style="font-size: 10px;">السعر (ج):</label>
-                      <input type="number" id="pSize10" placeholder="390" min="0" required>
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
+                  <strong style="color: var(--gold); font-size: 11px; display: block; margin-bottom: 6px;">🧪 10 مل (عينة)</strong>
+                  <div style="display: flex; gap: 6px;">
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">السعر:</label>
+                      <input type="number" id="pSize10" placeholder="390" min="0" required style="padding: 6px; font-size: 11px;">
                     </div>
-                    <div>
-                      <label style="font-size: 10px;">كم زجاجة؟</label>
-                      <input type="number" id="pStock10" class="stock-input-calc" placeholder="20" min="0" value="20" required>
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">العدد:</label>
+                      <input type="number" id="pStock10" class="stock-input-calc" placeholder="20" min="0" value="20" required style="padding: 6px; font-size: 11px;">
                     </div>
                   </div>
                 </div>
 
                 <!-- 30 مل -->
-                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
-                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">🧴 عبوة 30 مل</strong>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                      <label style="font-size: 10px;">السعر (ج):</label>
-                      <input type="number" id="pSize30" placeholder="850" min="0" required>
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
+                  <strong style="color: var(--gold); font-size: 11px; display: block; margin-bottom: 6px;">🧴 30 مل</strong>
+                  <div style="display: flex; gap: 6px;">
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">السعر:</label>
+                      <input type="number" id="pSize30" placeholder="850" min="0" required style="padding: 6px; font-size: 11px;">
                     </div>
-                    <div>
-                      <label style="font-size: 10px;">كم زجاجة؟</label>
-                      <input type="number" id="pStock30" class="stock-input-calc" placeholder="15" min="0" value="15" required>
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">العدد:</label>
+                      <input type="number" id="pStock30" class="stock-input-calc" placeholder="15" min="0" value="15" required style="padding: 6px; font-size: 11px;">
                     </div>
                   </div>
                 </div>
 
                 <!-- 50 مل -->
-                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
-                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">✨ عبوة 50 مل (الأساسي)</strong>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                      <label style="font-size: 10px;">السعر (ج):</label>
-                      <input type="number" id="pSize50" placeholder="1290" min="0" required>
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
+                  <strong style="color: var(--gold); font-size: 11px; display: block; margin-bottom: 6px;">✨ 50 مل (أساسي)</strong>
+                  <div style="display: flex; gap: 6px;">
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">السعر:</label>
+                      <input type="number" id="pSize50" placeholder="1290" min="0" required style="padding: 6px; font-size: 11px;">
                     </div>
-                    <div>
-                      <label style="font-size: 10px;">كم زجاجة؟</label>
-                      <input type="number" id="pStock50" class="stock-input-calc" placeholder="15" min="0" value="15" required>
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">العدد:</label>
+                      <input type="number" id="pStock50" class="stock-input-calc" placeholder="15" min="0" value="15" required style="padding: 6px; font-size: 11px;">
                     </div>
                   </div>
                 </div>
 
                 <!-- 100 مل -->
-                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 10px;">
-                  <strong style="color: var(--gold); font-size: 12px; display: block; margin-bottom: 6px;">👑 عبوة 100 مل (توفير)</strong>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                      <label style="font-size: 10px;">السعر (ج):</label>
-                      <input type="number" id="pSize100" placeholder="2190" min="0" required>
+                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
+                  <strong style="color: var(--gold); font-size: 11px; display: block; margin-bottom: 6px;">👑 100 مل</strong>
+                  <div style="display: flex; gap: 6px;">
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">السعر:</label>
+                      <input type="number" id="pSize100" placeholder="2190" min="0" required style="padding: 6px; font-size: 11px;">
                     </div>
-                    <div>
-                      <label style="font-size: 10px;">كم زجاجة؟</label>
-                      <input type="number" id="pStock100" class="stock-input-calc" placeholder="5" min="0" value="5" required>
+                    <div style="flex: 1; min-width: 0;">
+                      <label style="font-size: 9px; display: block;">العدد:</label>
+                      <input type="number" id="pStock100" class="stock-input-calc" placeholder="5" min="0" value="5" required style="padding: 6px; font-size: 11px;">
                     </div>
                   </div>
                 </div>
