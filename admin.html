@@ -962,8 +962,9 @@ input, select, textarea {
                   ${total > 0 ? `المجموع: ${total} زجاجة` : 'نفد بالكامل ❌'}
                 </span>
               </div>
-              <div>
-                <button type="button" class="btn-card-edit" onclick="startEditPerfume('${p.id}')">✏️ تعديل</button>
+<div style="display: flex; align-items: center; gap: 6px;">
+                <button type="button" class="btn-card-edit" onclick="startEditPerfume('${p.id}')" title="تعديل العطر">✏️ تعديل</button>
+                <button type="button" class="btn-card-delete" onclick="deletePerfume('${p.id}')" title="حذف العطر نهائياً من الموقع">✕</button>
               </div>
             </div>
 
@@ -1004,7 +1005,23 @@ input, select, textarea {
 
       toast(delta < 0 ? `تم خصم زجاجة ${size} مل (بيع بالمحل)` : `تمت إضافة زجاجة ${size} مل للمخزون`);
     };
+// حذف العطر نهائياً من فايربيز والمتجر
+    window.deletePerfume = async function(id) {
+      const p = allPerfumes.find(x => x.id === id);
+      const perfumeName = p ? p.name : "هذا العطر";
 
+      if (!confirm(`هل أنت متأكد من حذف "${perfumeName}" نهائياً من الموقع وقاعدة البيانات؟`)) {
+        return;
+      }
+
+      try {
+        await deleteDoc(doc(db, "perfumes", id));
+        toast(`تم حذف "${perfumeName}" بنجاح! 🗑️`);
+      } catch (err) {
+        console.error("Error deleting perfume:", err);
+        toast("حدث خطأ أثناء محاولة حذف العطر!");
+      }
+    };
     // تعبئة نموذج التعديل السريع (أسعار ومخزون كل حجم)
     window.startEditPerfume = function(id) {
       const p = allPerfumes.find(x => x.id === id);
@@ -1219,7 +1236,7 @@ input, select, textarea {
       toast("تم تحويل حالة الطلب إلى مكتمل! ✓");
     };
 
-// 4. تصدير تقرير الإكسيل الاحترافي متعدد التبويبات (على طريقة عجيبه)
+// 4. تصدير تقرير الإكسيل الاحترافي متعدد التبويبات (مطابق لمنظومة عجيبه)
     function cleanXml(val) {
       return String(val ?? "")
         .replace(/&/g, "&amp;")
@@ -1268,8 +1285,8 @@ input, select, textarea {
         });
       });
 
-      // توليد ملف Excel XML التفاعلي متعدد الأوراق بالستايل الملكي
-      let xml = `<?xml version="1.0"?>
+      // توليد ملف Excel XML مع دعم كامل للترميز UTF-8
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
  xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -1281,7 +1298,7 @@ input, select, textarea {
    <Alignment ss:Vertical="Center" ss:ReadingOrder="RightToLeft"/>
    <Font ss:FontName="Segoe UI" x:CharSet="1" ss:Size="11" ss:Color="#111111"/>
   </Style>
-  <!-- ستايل رأس الجدول الأساسي (أخضر زمردي ملكي) -->
+  <!-- رأس الجدول الأساسي (أخضر زمردي) -->
   <Style ss:ID="HeaderEmerald">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1293,7 +1310,7 @@ input, select, textarea {
    <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
    <Interior ss:Color="#0A221C" ss:Pattern="Solid"/>
   </Style>
-  <!-- ستايل رأس التجميع (برتقالي ذهبي مثل عجيبه) -->
+  <!-- رأس جدول التجميع (برتقالي ذهبي) -->
   <Style ss:ID="HeaderGold">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1305,7 +1322,7 @@ input, select, textarea {
    <Font ss:FontName="Segoe UI" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
    <Interior ss:Color="#D35400" ss:Pattern="Solid"/>
   </Style>
-  <!-- نصوص عادية في المنتصف وبوردر خفيف -->
+  <!-- نصوص عامة -->
   <Style ss:ID="CellCenter">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1315,7 +1332,18 @@ input, select, textarea {
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
    </Borders>
   </Style>
-  <!-- خلايا النصوص وأرقام الهواتف لحمايتها من التحويل لصيغة 1.1E+09 -->
+  <!-- خلايا الأرقام الصحيحة -->
+  <Style ss:ID="CellNumber">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#E2E8F0"/>
+   </Borders>
+   <NumberFormat ss:Format="0"/>
+  </Style>
+  <!-- نصوص الهواتف لمنع تحويلها لصيغة علمية -->
   <Style ss:ID="CellText">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1326,7 +1354,7 @@ input, select, textarea {
    </Borders>
    <NumberFormat ss:Format="@"/>
   </Style>
-  <!-- خلايا العملات والأرقام -->
+  <!-- مبالغ نقدية -->
   <Style ss:ID="CellMoney">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1337,7 +1365,7 @@ input, select, textarea {
    </Borders>
    <NumberFormat ss:Format="#,##0"/>
   </Style>
-  <!-- خلية تم التسليم الخضراء -->
+  <!-- حالة التسليم -->
   <Style ss:ID="CellDelivered">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
    <Borders>
@@ -1350,9 +1378,7 @@ input, select, textarea {
   </Style>
  </Styles>`;
 
-      // ==========================================
-      // ورقة 1: الملخص المالي (زي صورة 2)
-      // ==========================================
+      // ورقة 1: الملخص المالي
       xml += `
  <Worksheet ss:Name="الملخص المالي">
   <Table ss:DefaultRowHeight="24">
@@ -1396,9 +1422,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ==========================================
-      // ورقة 2: ملخص الطلبات (زي صورة 3)
-      // ==========================================
+      // ورقة 2: ملخص الطلبات
       xml += `
  <Worksheet ss:Name="ملخص الطلبات">
   <Table ss:DefaultRowHeight="22">
@@ -1463,9 +1487,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ==========================================
-      // ورقة 3: تفاصيل الأصناف (زي صورة 4)
-      // ==========================================
+      // ورقة 3: تفاصيل الأصناف
       xml += `
  <Worksheet ss:Name="تفاصيل الأصناف">
   <Table ss:DefaultRowHeight="22">
@@ -1539,9 +1561,7 @@ input, select, textarea {
   </WorksheetOptions>
  </Worksheet>`;
 
-      // ==========================================
-      // ورقة 4: تجميع الأصناف المباعة (زي صورة 5 باللون الذهبي/البرتقالي)
-      // ==========================================
+      // ورقة 4: تجميع الأصناف المباعة
       xml += `
  <Worksheet ss:Name="تجميع الأصناف المباعة">
   <Table ss:DefaultRowHeight="22">
@@ -1578,8 +1598,8 @@ input, select, textarea {
  </Worksheet>
 </Workbook>`;
 
-      // تنزيل الملف بصيغة Excel XML الرسمية
-      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      // تنزيل الملف مع تضمين علامة UTF-8 BOM
+      const blob = new Blob(["\uFEFF", xml], { type: "application/vnd.ms-excel;charset=utf-8" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `تقرير_مبيعات_سراقة_${new Date().toISOString().slice(0, 10)}.xls`;
