@@ -399,25 +399,6 @@ function getProduct(id) {
   return products.find(product => String(product.id) === String(id));
 }
 
-function getCartQuantity(id) {
-  const item = cart.find(item => item.id === Number(id));
-  return item ? item.quantity : 0;
-}
-
-function getCartCount() {
-  return cart.reduce((total, item) => {
-    return getProduct(item.id) ? total + Number(item.quantity || 1) : total;
-  }, 0);
-}
-
-function getCartTotal() {
-  return cart.reduce((total, item) => {
-    const product = getProduct(item.id);
-    if (!product) return total;
-    const itemPrice = getPriceForSize(product.price, item.size || 50);
-    return total + itemPrice * item.quantity;
-  }, 0);
-}
 
 function stars(rating) {
   return `★ ${rating.toFixed(1)}`;
