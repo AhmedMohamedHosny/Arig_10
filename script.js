@@ -1264,6 +1264,20 @@ function updateCheckoutSummary() {
     }
   }
   if (summaryTotal) summaryTotal.textContent = `${total.toLocaleString("ar-EG")} جنيه`;
+
+  // التحكم في ظهور تنبيه فودافون كاش للشحن
+  const alertBox = document.getElementById("shippingDepositAlert");
+  const depositVal = document.getElementById("depositShippingVal");
+
+  if (alertBox) {
+    // يظهر فقط إذا اختار العميل المحافظة وكان هناك رسوم شحن (ليست مجانية)
+    if (custGovSelect?.value && shipping > 0) {
+      alertBox.style.display = "block";
+      if (depositVal) depositVal.textContent = `${shipping} جنيه`;
+    } else {
+      alertBox.style.display = "none";
+    }
+  }
 }
 
 custGovSelect?.addEventListener("change", updateCheckoutSummary);
@@ -1406,9 +1420,13 @@ for (const item of cart) {
       receiptMessageText = "📸 سأقوم بإرفاق صورة إيصال التحويل (Screenshot) هنا في الشات الآن لتأكيد الشحن.";
     }
 
-    const itemsSummary = orderItems
+const itemsSummary = orderItems
       .map(item => `• ${item.name} × ${item.quantity} (${(item.price * item.quantity).toLocaleString("ar-EG")} ج)`)
       .join("\n");
+
+    const shippingNoteWa = shippingFee > 0 
+      ? `🚚 *مصاريف الشحن (مطلوب تحويلها فودافون كاش):* ${shippingFee} جنيه\n💵 *المبلغ المتبقي عند الاستلام:* ${subtotal.toLocaleString("ar-EG")} جنيه`
+      : `🚚 *مصاريف الشحن:* مجاني 🔥\n💵 *المبلغ المطلوب عند الاستلام:* ${total.toLocaleString("ar-EG")} جنيه`;
 
     const waMessage = `*طلب جديد من متجر سراقة — SURAQA* 💎
 --------------------------------
@@ -1423,8 +1441,8 @@ for (const item of cart) {
 ${itemsSummary}
 --------------------------------
 💰 *قيمة المنتجات:* ${subtotal.toLocaleString("ar-EG")} جنيه
-🚚 *مصاريف الشحن:* ${shippingFee === 0 ? "مجاني" : `${shippingFee} جنيه`}
-💵 *الإجمالي النهائي:* ${total.toLocaleString("ar-EG")} جنيه
+${shippingNoteWa}
+
 💳 *طريقة الدفع:* ${paymentMethodsNames[paymentMethod]}
 🧾 *إيصال التحويل:* 
 ${receiptMessageText}
@@ -1998,3 +2016,9 @@ function setupRatingInteraction(prod) {
     };
   });
 }
+document.getElementById("copyDepositVodafoneBtn")?.addEventListener("click", () => {
+  const num = document.getElementById("depositVodafoneNum")?.textContent || "01016118242";
+  navigator.clipboard.writeText(num).then(() => {
+    showToast("تم النسخ بنجاح 📋", `تم نسخ رقم فودافون كاش: ${num}`);
+  });
+});
