@@ -540,20 +540,7 @@ input, select, textarea {
 
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
                 
-                <!-- 10 مل -->
-                <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
-                  <strong style="color: var(--gold); font-size: 11px; display: block; margin-bottom: 6px;">🧪 10 مل (عينة)</strong>
-                  <div style="display: flex; gap: 6px;">
-                    <div style="flex: 1; min-width: 0;">
-                      <label style="font-size: 9px; display: block;">السعر:</label>
-                      <input type="number" id="pSize10" placeholder="390" min="0" required style="padding: 6px; font-size: 11px;">
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                      <label style="font-size: 9px; display: block;">العدد:</label>
-                      <input type="number" id="pStock10" class="stock-input-calc" placeholder="20" min="0" value="20" required style="padding: 6px; font-size: 11px;">
-                    </div>
-                  </div>
-                </div>
+
 
                 <!-- 30 مل -->
                 <div style="background: rgba(7,25,20,0.8); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-width: 0;">
@@ -937,12 +924,11 @@ input, select, textarea {
     });
 
 // حساب وعرض إجمالي الزجاجات فورياً
-    function calcTotalStockPreview() {
-      const s10 = Number(document.getElementById("pStock10")?.value || 0);
+function calcTotalStockPreview() {
       const s30 = Number(document.getElementById("pStock30")?.value || 0);
       const s50 = Number(document.getElementById("pStock50")?.value || 0);
       const s100 = Number(document.getElementById("pStock100")?.value || 0);
-      const total = s10 + s30 + s50 + s100;
+      const total = s30 + s50 + s100;
       const preview = document.getElementById("totalStockPreview");
       if (preview) preview.textContent = `إجمالي المخزون: ${total} زجاجة`;
     }
@@ -1005,7 +991,7 @@ input, select, textarea {
 
             <!-- أزرار إنقاص وزيادة كل حجم على حدة لمبيعات المحل المباشرة -->
             <div style="background: rgba(0,0,0,0.3); padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.05); display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              ${[10, 30, 50, 100].map(sz => `
+              ${[30, 50, 100].map(sz => `
                 <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(7,25,20,0.6); padding:4px 6px; border-radius:4px; border:1px solid rgba(212,175,55,0.15);">
                   <span style="font-size:10px; color:var(--text-muted);">${sz}مل:</span>
                   <div style="display:flex; align-items:center; gap:4px;">
@@ -1141,13 +1127,11 @@ input, select, textarea {
         oldPrice: document.getElementById("pOldPrice").value ? Number(document.getElementById("pOldPrice").value) : null,
         stock: totalStock,
         stocks: {
-          10: stock10,
           30: stock30,
           50: stock50,
           100: stock100
         },
         sizes: {
-          10: size10,
           30: size30,
           50: size50,
           100: size100
