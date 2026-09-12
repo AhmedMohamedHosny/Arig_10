@@ -627,7 +627,28 @@
             </label>
           </div>
         </div>
+<!-- تنبيه تحويل مصاريف الشحن لفودافون كاش مسبقاً (يظهر فقط إذا كان هناك شحن) -->
+        <div id="shippingDepositAlert" class="shipping-deposit-card" style="display: none;">
+          <div class="deposit-header">
+            <span class="deposit-icon">✨</span>
+            <strong>تنويه لعملائنا الكرام</strong>
+          </div>
+          <p class="deposit-body">
+            حرصًا على تأكيد الطلبات وتوفير أفضل خدمة للجميع،<br>
+            <strong>يتم سداد قيمة الشحن (<span id="depositShippingVal">0 جنيه</span>) مقدمًا</strong> عبر فودافون كاش،<br>
+            وقيمة المنتجات تُدفع بالكامل عند الاستلام.
+          </p>
 
+          <div class="deposit-wallet-box">
+            <span class="wallet-label">رقم فودافون كاش للتحويل:</span>
+            <div class="wallet-action">
+              <strong id="depositVodafoneNum">01016118242</strong>
+              <button type="button" id="copyDepositVodafoneBtn" class="copy-deposit-btn">📋 نسخ الرقم</button>
+            </div>
+          </div>
+
+          <span class="deposit-footer">شكرًا لثقتكم بـ سُراقَـة ✨</span>
+        </div>
 <!-- تفاصيل الحساب للدفع الإلكتروني مع زر النسخ -->
 <!-- تفاصيل الدفع الإلكتروني ورفع إيصال التحويل (تصميم أريج) -->
         <div id="transferDetails" class="transfer-info" style="display: none;">
