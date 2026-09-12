@@ -848,8 +848,17 @@ function openProductFullPage(id) {
   if (pfpImage) { pfpImage.src = prod.image || "image/S1.png"; pfpImage.alt = productName(prod); }
   if (pfpCategory) pfpCategory.textContent = productCategoryLabel(prod);
   if (pfpName) pfpName.textContent = productName(prod);
-  if (pfpRating) pfpRating.textContent = `★ ${Number(prod.rating || 5).toFixed(1)}`;
-  if (pfpReviews) pfpReviews.textContent = `(${prod.reviews || 1} ${t("reviews")})`;
+const avgRating = Number(prod.rating || 5.0).toFixed(1);
+  const totalRev = Number(prod.reviews || 1);
+  if (pfpRating) pfpRating.textContent = `★ ${avgRating}`;
+  if (pfpReviews) pfpReviews.textContent = `(${totalRev} تقييم)`;
+
+  // تشغيل عداد "يشاهد الآن" الحي المتغير
+  initLiveViewersSimulation();
+
+  // تهيئة نجوم تقييم العميل
+  setupRatingInteraction(prod);
+ 
   if (pfpDesc) pfpDesc.textContent = productDescription(prod) || "";
   if (pfpQtyVal) pfpQtyVal.textContent = "1";
 
@@ -1832,3 +1841,91 @@ window.claimSpecialOffer = function(offerId) {
   showToast("تم حجز العرض! 🔥", `${offer.title} أُضيف إلى سلتك.`);
   openCart();
 };
+/* =========================================================
+   محاكي الزوار الحيين (Live Viewers) & تقييم النجوم التناسبي
+   ========================================================= */
+
+let liveViewersInterval = null;
+
+function initLiveViewersSimulation() {
+  clearInterval(liveViewersInterval);
+  const label = document.getElementById("liveViewersCount");
+  if (!label) return;
+
+  function updateViewers() {
+    // رقم عشوائي واقعي بين 7 إلى 23 زائر
+    const count = Math.floor(Math.random() * (23 - 7 + 1)) + 7;
+    label.textContent = `يشاهد هذا العطر الآن ${count} شخصاً 👁️`;
+  }
+
+  updateViewers();
+  // يتغير العدد كل 6 إلى 10 ثوانٍ بشكل طبيعي
+  liveViewersInterval = setInterval(updateViewers, 7500);
+}
+
+// دالة التقييم التناسبي
+function setupRatingInteraction(prod) {
+  const starsContainer = document.getElementById("starRatingWidget");
+  const statusMsg = document.getElementById("rateStatusMsg");
+  if (!starsContainer) return;
+
+  const storageKey = `rated_perfume_${prod.id}`;
+  const alreadyRated = localStorage.getItem(storageKey);
+
+  if (statusMsg) {
+    statusMsg.textContent = alreadyRated ? "✓ قيّمت هذا العطر مسبقاً" : "";
+  }
+
+  starsContainer.querySelectorAll(".star-btn").forEach(star => {
+    star.classList.remove("rated");
+    if (alreadyRated && Number(star.dataset.star) <= Number(alreadyRated)) {
+      star.classList.add("rated");
+    }
+
+    star.onclick = async () => {
+      if (localStorage.getItem(storageKey)) {
+        alert("شكراً لك! لقد قمت بتقييم هذا العطر بالفعل.");
+        return;
+      }
+
+      const userScore = Number(star.dataset.star);
+      localStorage.setItem(storageKey, userScore);
+
+      // تلوين النجوم
+      starsContainer.querySelectorAll(".star-btn").forEach(s => {
+        s.classList.toggle("rated", Number(s.dataset.star) <= userScore);
+      });
+
+      if (statusMsg) statusMsg.textContent = "جاري حفظ التقييم...";
+
+      // الحساب التناسبي الصحيح: (المجموع السابق + تقييم الزائر) ÷ العدد الكلي الجديد
+      const oldAvg = Number(prod.rating || 5.0);
+      const oldReviews = Number(prod.reviews || 1);
+
+      const newReviews = oldReviews + 1;
+      const newAvg = Number((((oldAvg * oldReviews) + userScore) / newReviews).toFixed(1));
+
+      // تحديث محلي فوري
+      prod.rating = newAvg;
+      prod.reviews = newReviews;
+
+      const pfpRatingEl = document.getElementById("pfpRating");
+      const pfpRevEl = document.getElementById("pfpReviews");
+      if (pfpRatingEl) pfpRatingEl.textContent = `★ ${newAvg.toFixed(1)}`;
+      if (pfpRevEl) pfpRevEl.textContent = `(${newReviews} تقييم)`;
+
+      if (statusMsg) statusMsg.textContent = "✓ شكراً لتقييمك!";
+
+      // تحديث قاعدة بيانات Firebase في السحابة
+      try {
+        const docRef = doc(db, "perfumes", String(prod.id));
+        await updateDoc(docRef, {
+          rating: newAvg,
+          reviews: newReviews
+        });
+      } catch (err) {
+        console.warn("Local product updated. Cloud sync optional:", err);
+      }
+    };
+  });
+}
