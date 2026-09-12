@@ -457,11 +457,33 @@
         <!-- معلومات وخيارات العطر -->
         <div class="pfp-details-column">
           <span class="pfp-category-badge" id="pfpCategory">رجالي</span>
-          <h1 class="pfp-title" id="pfpName">اسم العطر</h1>
+<h1 class="pfp-title" id="pfpName">اسم العطر</h1>
           
-          <div class="pfp-rating-box">
-            <span id="pfpRating">★ 5.0</span>
-            <span class="pfp-reviews-count" id="pfpReviews">(120 تقييم)</span>
+          <!-- شريط يشاهد الآن الحي (Live Visitors Pulse) -->
+          <div class="live-viewers-tag">
+            <span class="live-dot-pulse"></span>
+            <span id="liveViewersCount">يشاهد هذا العطر الآن 14 شخصاً</span>
+          </div>
+
+          <!-- صندوق التقييمات الإجمالي + نجوم تقييم الزائر -->
+          <div class="pfp-rating-interactive-box">
+            <div class="pfp-rating-summary">
+              <span class="pfp-rating-stars-val" id="pfpRating">★ 5.0</span>
+              <span class="pfp-reviews-count" id="pfpReviews">(120 تقييم)</span>
+            </div>
+
+            <!-- النجوم التفاعلية ليقيم الزائر بنفسه -->
+            <div class="user-rate-action">
+              <span class="rate-prompt-txt">قيّم هذا العطر:</span>
+              <div class="interactive-stars" id="starRatingWidget">
+                <span class="star-btn" data-star="5">★</span>
+                <span class="star-btn" data-star="4">★</span>
+                <span class="star-btn" data-star="3">★</span>
+                <span class="star-btn" data-star="2">★</span>
+                <span class="star-btn" data-star="1">★</span>
+              </div>
+              <span class="rate-status-msg" id="rateStatusMsg"></span>
+            </div>
           </div>
 
           <p class="pfp-description" id="pfpDesc">وصف العطر ونوتاته العطرية الفاخرة...</p>
