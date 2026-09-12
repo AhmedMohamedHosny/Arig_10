@@ -4525,3 +4525,103 @@ body {
   color: var(--success);
   font-weight: bold;
 }
+/* كارت تنبيه سداد الشحن مسبقاً */
+.shipping-deposit-card {
+  background: linear-gradient(135deg, rgba(15, 48, 39, 0.95), rgba(7, 25, 20, 0.98));
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.08);
+  margin: 6px 0;
+  text-align: center;
+  animation: depositFadeIn 0.35s ease;
+}
+
+@keyframes depositFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.deposit-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.deposit-icon {
+  font-size: 16px;
+}
+
+.deposit-body {
+  font-size: 12px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 12px;
+}
+
+.deposit-body strong {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.deposit-wallet-box {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.wallet-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.wallet-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wallet-action strong {
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  direction: ltr;
+}
+
+.copy-deposit-btn {
+  background: var(--gold);
+  color: #071914;
+  border: none;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.copy-deposit-btn:hover {
+  background: #f1c40f;
+  transform: scale(1.05);
+}
+
+.deposit-footer {
+  display: block;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-top: 6px;
+}
