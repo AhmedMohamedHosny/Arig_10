@@ -307,7 +307,6 @@ let selectedSize = 50; // الحجم الافتراضي 50 مل
 
 // نسب تسعير الأحجام بناءً على السعر الأساسي للـ 50 مل
 const SIZE_MULTIPLIERS = {
-  10: 0.30,  // عينة تجربة 10 مل
   30: 0.65,  // 30 مل
   50: 1.00,  // 50 مل (السعر الأصلي)
   100: 1.70  // 100 مل توفير
@@ -1950,68 +1949,61 @@ window.addEventListener("beforeunload", () => {
   cleanupRealTimeViewers();
 });
 
-// دالة التقييم التناسبي
 function setupRatingInteraction(prod) {
+  const userRateBox = document.querySelector(".user-rate-action");
   const starsContainer = document.getElementById("starRatingWidget");
   const statusMsg = document.getElementById("rateStatusMsg");
-  if (!starsContainer) return;
+  const pfpRatingEl = document.getElementById("pfpRating");
+  const pfpRevEl = document.getElementById("pfpReviews");
+
+  if (!starsContainer || !userRateBox) return;
 
   const storageKey = `rated_perfume_${prod.id}`;
   const alreadyRated = localStorage.getItem(storageKey);
 
-  if (statusMsg) {
-    statusMsg.textContent = alreadyRated ? "✓ قيّمت هذا العطر مسبقاً" : "";
+  // إذا كان العميل قيّم هذا العطر مسبقاً، نخفي قسم إدخال التقييم تماماً
+  if (alreadyRated) {
+    userRateBox.style.display = "none";
+    return;
+  } else {
+    userRateBox.style.display = "inline-flex";
+    if (statusMsg) statusMsg.textContent = "";
   }
 
   starsContainer.querySelectorAll(".star-btn").forEach(star => {
-    star.classList.remove("rated");
-    if (alreadyRated && Number(star.dataset.star) <= Number(alreadyRated)) {
-      star.classList.add("rated");
-    }
-
     star.onclick = async () => {
-      if (localStorage.getItem(storageKey)) {
-        alert("شكراً لك! لقد قمت بتقييم هذا العطر بالفعل.");
-        return;
-      }
+      if (localStorage.getItem(storageKey)) return;
 
       const userScore = Number(star.dataset.star);
       localStorage.setItem(storageKey, userScore);
 
-      // تلوين النجوم
-      starsContainer.querySelectorAll(".star-btn").forEach(s => {
-        s.classList.toggle("rated", Number(s.dataset.star) <= userScore);
-      });
-
-      if (statusMsg) statusMsg.textContent = "جاري حفظ التقييم...";
-
-      // الحساب التناسبي الصحيح: (المجموع السابق + تقييم الزائر) ÷ العدد الكلي الجديد
+      // الحساب التناسبي الصحيح للتقييم المتوسط
       const oldAvg = Number(prod.rating || 5.0);
-      const oldReviews = Number(prod.reviews || 1);
+      const oldReviews = Number(prod.reviews || 0);
 
       const newReviews = oldReviews + 1;
       const newAvg = Number((((oldAvg * oldReviews) + userScore) / newReviews).toFixed(1));
 
-      // تحديث محلي فوري
+      // تحديث فوري بالواجهة
       prod.rating = newAvg;
       prod.reviews = newReviews;
 
-      const pfpRatingEl = document.getElementById("pfpRating");
-      const pfpRevEl = document.getElementById("pfpReviews");
       if (pfpRatingEl) pfpRatingEl.textContent = `★ ${newAvg.toFixed(1)}`;
       if (pfpRevEl) pfpRevEl.textContent = `(${newReviews} تقييم)`;
 
-      if (statusMsg) statusMsg.textContent = "✓ شكراً لتقييمك!";
+      // إخفاء صندوق التقييم فوراً بعد التقييم
+      userRateBox.style.display = "none";
+      showToast("شكراً لتقييمك! ⭐", `تم تسجيل تقييمك (${userScore} نجوم) بنجاح.`);
 
-      // تحديث قاعدة بيانات Firebase في السحابة
+      // مزامنة التقييم في قاعدة بيانات فايربيز
       try {
-        const docRef = doc(db, "perfumes", String(prod.id));
-        await updateDoc(docRef, {
+        const perfumeDocRef = doc(db, "perfumes", String(prod.id));
+        await updateDoc(perfumeDocRef, {
           rating: newAvg,
           reviews: newReviews
         });
       } catch (err) {
-        console.warn("Local product updated. Cloud sync optional:", err);
+        console.warn("Could not sync rating to Firestore:", err);
       }
     };
   });
