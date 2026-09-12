@@ -467,6 +467,9 @@ input, select, textarea {
         <div class="dropdown-item" onclick="openSection('offersSec')">
           <span>🔥 إدارة العروض الترويجية</span>
         </div>
+        <div class="dropdown-item" onclick="openSection('reviewsSec')">
+          <span>💬 إدارة آراء وتقييمات العملاء</span>
+        </div>
         <div class="dropdown-item" onclick="openSection('analyticsSec')">
           <span>📊 تقرير التحليلات الشامل</span>
         </div>
@@ -747,7 +750,63 @@ input, select, textarea {
       </div>
 
     </section>
+<!-- 5. قسم إدارة ونشر صور آراء العملاء (سكرينات الواتساب) -->
+    <section id="reviewsSec" class="section-view">
+      <div class="panel">
+        <div class="panel-title">
+          <span>💬 رفع رأي عميل جديد (سكرين شوت واتساب)</span>
+          <button class="stock-btn" style="width:auto; padding:4px 10px; font-size:11px;" onclick="openSection('inventorySec')">➔ العودة للمخزون</button>
+        </div>
 
+        <form id="addReviewForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>اسم العميل أو تعليق مختصر (اختياري)</label>
+              <input type="text" id="revAuthor" placeholder="مثال: رأي أ/ أحمد من الإسكندرية">
+            </div>
+
+            <!-- رفع صورة السكرين شوت مباشرة -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>صورة رأي العميل / شات الواتساب *</label>
+              <div class="file-uploader-box" onclick="document.getElementById('revFileInput').click()">
+                <input type="file" id="revFileInput" accept="image/*" style="display:none;" required>
+                <div id="revUploadPrompt">
+                  <span style="font-size:24px; color:var(--gold);">📸</span>
+                  <p style="font-size:12px; margin:4px 0;">اضغط لاختيار سكرين شوت رأي العميل من جهازك</p>
+                  <span style="font-size:10px; color:var(--text-muted);">تُضغط الصورة سحابياً وتُنشر للمتجر فوراً</span>
+                </div>
+                <div id="revPreviewBox" style="display:none; align-items:center; gap:12px; justify-content:center;">
+                  <img id="revPreviewImg" src="" style="max-height:90px; border-radius:6px; border:1px solid var(--gold);">
+                  <span id="revPreviewName" style="font-size:11px; color:var(--gold);"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="saveRevBtn" style="margin-top:14px;">نشر الرأي في المتجر الآن 🚀</button>
+        </form>
+      </div>
+
+      <!-- جدول واستعراض الآراء المنشورة مع زر الحذف -->
+      <div class="panel">
+        <div class="panel-title">صور آراء العملاء المعروضة حالياً بالمتجر</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>العنوان / الملاحظة</th>
+                <th>تاريخ النشر</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsTableBody">
+              <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">جاري جلب الآراء...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
     <!-- 4. قسم التحليلات والأكثر طلباً -->
     <section id="analyticsSec" class="section-view">
       <div class="panel">
@@ -1835,6 +1894,88 @@ await addDoc(offersCol, {
       if (!confirm("هل تريد حذف هذا العرض نهائياً من المتجر؟")) return;
       await deleteDoc(doc(db, "offers", id));
       toast("تم حذف العرض بنجاح!");
+    };
+    /* =========================================================
+       إدارة ونشر آراء وسكرينات العملاء في Firebase
+       ========================================================= */
+    const reviewsCol = collection(db, "reviews");
+    let currentRevBase64 = "";
+
+    // اختيار وضغط صورة رأي العميل
+    document.getElementById("revFileInput")?.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      currentRevBase64 = await compressImageFile(file, 900, 0.85);
+      const img = document.getElementById("revPreviewImg");
+      const name = document.getElementById("revPreviewName");
+      if (img) img.src = currentRevBase64;
+      if (name) name.textContent = file.name;
+      document.getElementById("revUploadPrompt").style.display = "none";
+      document.getElementById("revPreviewBox").style.display = "flex";
+    });
+
+    // حفظ ونشر الرأي
+    document.getElementById("addReviewForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentRevBase64) {
+        alert("يرجى اختيار صورة سكرين شوت الرأي أولاً!");
+        return;
+      }
+      const btn = document.getElementById("saveRevBtn");
+      btn.disabled = true;
+      btn.textContent = "جاري النشر...";
+
+      try {
+        await addDoc(reviewsCol, {
+          author: document.getElementById("revAuthor").value.trim() || "عميل سراقة",
+          image: currentRevBase64,
+          createdAt: new Date()
+        });
+
+        toast("تم نشر رأي العميل بنجاح! 💬");
+        e.target.reset();
+        currentRevBase64 = "";
+        document.getElementById("revUploadPrompt").style.display = "block";
+        document.getElementById("revPreviewBox").style.display = "none";
+      } catch (err) {
+        toast("حدث خطأ أثناء حفظ الرأي!");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "نشر الرأي في المتجر الآن 🚀";
+      }
+    });
+
+    // عرض الآراء في جدول الإدارة وحذفها
+    onSnapshot(reviewsCol, (snapshot) => {
+      const tbody = document.getElementById("reviewsTableBody");
+      if (!tbody) return;
+      const list = [];
+      snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
+
+      // ترتيب من الأحدث للأقدم
+      list.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">لا توجد آراء منشورة بعد.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td><img src="${r.image}" style="max-height:55px; border-radius:4px; border:1px solid var(--line);"></td>
+          <td><strong>${r.author}</strong></td>
+          <td style="color:var(--text-muted); font-size:11px;">${r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString("ar-EG") : "اليوم"}</td>
+          <td>
+            <button type="button" class="btn-exit" style="padding:4px 10px; font-size:10px;" onclick="deleteCustomerReview('${r.id}')">حذف الرأي</button>
+          </td>
+        </tr>
+      `).join("");
+    });
+
+    window.deleteCustomerReview = async function(id) {
+      if (!confirm("هل تريد حذف هذا الرأي نهائياً من الموقع؟")) return;
+      await deleteDoc(doc(db, "reviews", id));
+      toast("تم حذف الرأي بنجاح!");
     };
   </script>
 </body>
