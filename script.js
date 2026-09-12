@@ -1,5 +1,9 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, 
+  increment, setDoc, deleteDoc, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBc1DZlKPE7bc-hyaDy7NHMJxnCepKIzqI",
   authDomain: "suraka-cfb2d.firebaseapp.com",
@@ -854,8 +858,7 @@ const avgRating = Number(prod.rating || 5.0).toFixed(1);
   if (pfpReviews) pfpReviews.textContent = `(${totalRev} تقييم)`;
 
   // تشغيل عداد "يشاهد الآن" الحي المتغير
-  initLiveViewersSimulation();
-
+trackRealTimeViewers(prod.id);
   // تهيئة نجوم تقييم العميل
   setupRatingInteraction(prod);
  
@@ -884,6 +887,7 @@ function closeProductFullPage() {
   productFullPage.style.display = "none";
   document.body.classList.remove("no-scroll");
   currentPfpProduct = null;
+  cleanupRealTimeViewers(); // حذف العميل من عداد المشاهدين فور الخروج
 }
 
 closeProductPageBtn?.addEventListener("click", closeProductFullPage);
@@ -1842,26 +1846,91 @@ window.claimSpecialOffer = function(offerId) {
   openCart();
 };
 /* =========================================================
-   محاكي الزوار الحيين (Live Viewers) & تقييم النجوم التناسبي
+   نظام الحضور الحقيقي للمشاهدين (Real-Time Live Viewers)
    ========================================================= */
 
-let liveViewersInterval = null;
+// توليد معرّف جلسة فريد لكل متصفح وزائر
+let viewerSessionId = sessionStorage.getItem("suraqa_viewer_session");
+if (!viewerSessionId) {
+  viewerSessionId = "usr_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now();
+  sessionStorage.setItem("suraqa_viewer_session", viewerSessionId);
+}
 
-function initLiveViewersSimulation() {
-  clearInterval(liveViewersInterval);
+let activeViewerUnsubscribe = null;
+let activeHeartbeatTimer = null;
+let activePerfumeViewerDoc = null;
+
+async function trackRealTimeViewers(perfumeId) {
+  // إلغاء تتبع العطر السابق إذا كان العميل يتنقل بين العطور
+  cleanupRealTimeViewers();
+
   const label = document.getElementById("liveViewersCount");
   if (!label) return;
 
-  function updateViewers() {
-    // رقم عشوائي واقعي بين 7 إلى 23 زائر
-    const count = Math.floor(Math.random() * (23 - 7 + 1)) + 7;
-    label.textContent = `يشاهد هذا العطر الآن ${count} شخصاً 👁️`;
+  const viewersColRef = collection(db, "perfumes", String(perfumeId), "viewers");
+  activePerfumeViewerDoc = doc(viewersColRef, viewerSessionId);
+
+  // 1. تسجيل دخول العميل الحالي في هذا العطر فوراً
+  try {
+    await setDoc(activePerfumeViewerDoc, {
+      lastSeen: Date.now()
+    });
+  } catch (err) {
+    console.warn("Viewers tracking init skipped:", err);
   }
 
-  updateViewers();
-  // يتغير العدد كل 6 إلى 10 ثوانٍ بشكل طبيعي
-  liveViewersInterval = setInterval(updateViewers, 7500);
+  // 2. إرسال نبضة حياة كل 15 ثانية لتأكيد استمرار المشاهدة
+  activeHeartbeatTimer = setInterval(async () => {
+    try {
+      if (activePerfumeViewerDoc) {
+        await setDoc(activePerfumeViewerDoc, { lastSeen: Date.now() }, { merge: true });
+      }
+    } catch (e) {}
+  }, 15000);
+
+  // 3. الاستماع الحي لعدد المشاهدين الفعليين المتواجدين الآن
+  activeViewerUnsubscribe = onSnapshot(viewersColRef, (snapshot) => {
+    const now = Date.now();
+    let activeCount = 0;
+
+    snapshot.forEach((snap) => {
+      const data = snap.data();
+      // احتساب الزائر فقط إذا كانت آخر نبضة له منذ أقل من 35 ثانية
+      if (data.lastSeen && (now - data.lastSeen) < 35000) {
+        activeCount++;
+      }
+    });
+
+    // إذا كان العميل داخل الصفحة فالعدد على الأقل 1
+    const finalCount = Math.max(1, activeCount);
+
+    if (finalCount === 1) {
+      label.textContent = "أنت تشاهد هذا العطر الآن 👁️";
+    } else {
+      label.textContent = `يشاهد هذا العطر الآن ${finalCount} أشخاص في نفس اللحظة 👁️`;
+    }
+  });
 }
+
+function cleanupRealTimeViewers() {
+  if (activeHeartbeatTimer) {
+    clearInterval(activeHeartbeatTimer);
+    activeHeartbeatTimer = null;
+  }
+  if (activeViewerUnsubscribe) {
+    activeViewerUnsubscribe();
+    activeViewerUnsubscribe = null;
+  }
+  if (activePerfumeViewerDoc) {
+    deleteDoc(activePerfumeViewerDoc).catch(() => {});
+    activePerfumeViewerDoc = null;
+  }
+}
+
+// مسح الزائر تلقائياً عند إغلاق التبويب أو مغادرة الصفحة
+window.addEventListener("beforeunload", () => {
+  cleanupRealTimeViewers();
+});
 
 // دالة التقييم التناسبي
 function setupRatingInteraction(prod) {
