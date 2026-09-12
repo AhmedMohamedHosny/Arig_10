@@ -336,33 +336,76 @@
       </div>
     </section>
 
-    <!-- TESTIMONIALS -->
-    <section class="section testimonials-section">
+<!-- TESTIMONIALS & WHATSAPP FEEDBACK -->
+    <section class="section testimonials-section" id="customerReviewsSection">
       <div class="section-heading centered">
-        <p class="eyebrow" data-ar="ثقة عملائنا" data-en="TRUSTED BY OUR CUSTOMERS">ثقة عملائنا</p>
-        <h2 data-ar-html="آراء <em>عملائنا</em>" data-en-html="What Our <em>Customers Say</em>">آراء <em>عملائنا</em></h2>
+        <p class="eyebrow">ثقة وشهادات نعتز بها</p>
+        <h2>تجارب وآراء <em>عملائنا الكرام</em></h2>
+        <p class="section-description centered" style="margin:8px auto 0; max-width:420px;">
+          محادثات وتقييمات واقعية من عملائنا على واتساب بعد استلام عطور سراقة وتجربتها.
+        </p>
       </div>
 
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text" data-ar="عطر رائع وثبات حقيقي طول اليوم، التغليف كمان فخم جدًا." data-en="Amazing fragrance with real all-day lasting power, and the packaging is stunning.">عطر رائع وثبات حقيقي طول اليوم، التغليف كمان فخم جدًا.</p>
-          <strong class="testimonial-name" data-ar="أحمد س." data-en="Ahmed S.">أحمد س.</strong>
-        </div>
+      <!-- شبكة عرض آخر 4 سكرينات من الواتساب -->
+      <div class="reviews-screens-grid" id="homeReviewsGrid">
+        <!-- تتولد ديناميكياً من فايربيز -->
+      </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text" data-ar="التوصيل كان سريع والعطر مطابق للوصف تمامًا، هطلب تاني أكيد." data-en="Fast delivery and the scent matched the description perfectly. Ordering again for sure.">التوصيل كان سريع والعطر مطابق للوصف تمامًا، هطلب تاني أكيد.</p>
-          <strong class="testimonial-name" data-ar="مريم ع." data-en="Mariam A.">مريم ع.</strong>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text" data-ar="أول مرة أجرب سراقة ومش هتكون آخر مرة، رائحة مميزة فعلاً." data-en="First time trying SURAQA and definitely not the last — truly distinctive scent.">أول مرة أجرب سراقة ومش هتكون آخر مرة، رائحة مميزة فعلاً.</p>
-          <strong class="testimonial-name" data-ar="يوسف م." data-en="Youssef M.">يوسف م.</strong>
-        </div>
+      <!-- زر عرض المزيد من آراء العملاء -->
+      <div style="text-align: center; margin-top: 35px;" id="moreReviewsBtnWrap">
+        <button type="button" class="btn-more-reviews" id="openAllReviewsBtn">
+          <span>💬 عرض المزيد من آراء وتجارب العملاء</span>
+          <span>←</span>
+        </button>
       </div>
     </section>
+
+    <!-- =========================================================
+         صفحة كاملة لاستعراض جميع صور آراء العملاء (All Reviews Gallery)
+         ========================================================= -->
+    <div class="all-reviews-page" id="allReviewsPage" style="display: none;">
+      <div class="pfp-top-nav">
+        <button type="button" class="pfp-back-btn" id="closeAllReviewsBtn">
+          <span>➔</span>
+          <span>العودة للمتجر</span>
+        </button>
+        <div class="pfp-brand-mini">
+          <img src="image/logo.png" alt="سراقة" style="height: 28px;">
+          <span>SURAQA</span>
+        </div>
+      </div>
+
+      <div class="all-reviews-container">
+        <div class="section-heading centered" style="margin: 30px auto 40px;">
+          <p class="eyebrow">أرشيف المحادثات الحية</p>
+          <h2 style="font-size: clamp(28px, 4vw, 42px);">جميع آراء وتقييمات <em>عطور سراقة</em></h2>
+          <p style="font-size: 13px; color: var(--muted); margin-top: 6px;">كل كلمة ثقة منكم هي وسام فخر وتأكيد على جودة عطورنا.</p>
+        </div>
+
+        <!-- شبكة كل الصور -->
+        <div class="all-reviews-gallery" id="fullReviewsGallery"></div>
+
+        <!-- فوتر الصفحة الكاملة بحقوق التصميم وسراقة -->
+        <footer class="pfp-footer" style="margin-top: 60px;">
+          <div class="pfp-footer-inner">
+            <div class="pfp-footer-brand">
+              <span class="pfp-footer-tag">جوهر الأناقة</span>
+              <span class="pfp-footer-logo">S U R A Q A</span>
+            </div>
+            <div class="pfp-footer-credit">
+              <span>© 2026 سراقة. جميع الحقوق محفوظة.</span>
+              <a href="https://wa.me/201101579399" target="_blank" rel="noopener" class="dev-credit">صُنع بعناية بواسطة أحمد محمد</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- نافذة منبثقة لتكبير سكرين الشات بوضوح (Lightbox) -->
+    <div class="review-lightbox-modal" id="reviewLightbox" onclick="this.classList.remove('open')">
+      <span class="lightbox-close">&times;</span>
+      <img id="lightboxImg" src="" alt="رأي العميل">
+    </div>
 
   </main>
 
