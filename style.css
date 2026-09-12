@@ -4625,3 +4625,142 @@ body {
   font-weight: 700;
   margin-top: 6px;
 }
+/* شبكة عرض سكرينات الواتساب في الرئيسية (آخر 4 صور) */
+.reviews-screens-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.review-screen-card {
+  background: rgba(10, 34, 28, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-screen-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.review-screen-img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+.review-screen-caption {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  background: rgba(7, 25, 20, 0.95);
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+/* زر عرض المزيد من الآراء */
+.btn-more-reviews {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 12px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+
+.btn-more-reviews:hover {
+  background: var(--gold);
+  color: #071914;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+}
+
+/* الصفحة الكاملة لأرشيف الآراء */
+.all-reviews-page {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999998 !important;
+  background: #071914 !important;
+  overflow-y: auto !important;
+  animation: pfpFadeIn 0.3s ease forwards;
+}
+
+.all-reviews-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
+
+.all-reviews-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+/* النافذة المنبثقة للتكبير (Lightbox) */
+.review-lightbox-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999999;
+  display: none;
+  place-items: center;
+  padding: 20px;
+  cursor: zoom-out;
+}
+
+.review-lightbox-modal.open {
+  display: grid;
+}
+
+.review-lightbox-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  animation: zoomInLight 0.25s ease;
+}
+
+@keyframes zoomInLight {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 35px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* تجاوب الموبايل */
+@media (max-width: 900px) {
+  .reviews-screens-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .review-screen-img {
+    height: 260px;
+  }
+}
