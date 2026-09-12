@@ -1187,7 +1187,7 @@ document.getElementById("viewBestSellers")?.addEventListener("click", () => {
    CHECKOUT & SHIPPING SYSTEM
    ========================================================= */
 
-const GOVERNORATES = [
+let GOVERNORATES = [
   { name: "القاهرة", fee: 45 }, { name: "الجيزة", fee: 45 }, { name: "الإسكندرية", fee: 55 },
   { name: "القليوبية", fee: 50 }, { name: "الغربية", fee: 55 }, { name: "المنوفية", fee: 55 },
   { name: "الشرقية", fee: 55 }, { name: "الدقهلية", fee: 55 }, { name: "البحيرة", fee: 60 },
@@ -1198,6 +1198,32 @@ const GOVERNORATES = [
   { name: "أسوان", fee: 95 }, { name: "البحر الأحمر", fee: 100 }, { name: "مطروح", fee: 90 },
   { name: "الوادي الجديد", fee: 100 }, { name: "شمال سيناء", fee: 110 }, { name: "جنوب سيناء", fee: 110 }
 ];
+
+function populateGovSelect() {
+  if (!custGovSelect) return;
+  const currentVal = custGovSelect.value;
+  custGovSelect.innerHTML = '<option value="" disabled selected>اختر المحافظة لمعرفة تكلفة الشحن</option>';
+  GOVERNORATES.forEach(gov => {
+    const opt = document.createElement("option");
+    opt.value = gov.name;
+    opt.textContent = `${gov.name} (${gov.fee} جنيه)`;
+    if (gov.name === currentVal) opt.selected = true;
+    custGovSelect.appendChild(opt);
+  });
+}
+populateGovSelect();
+
+// المزامنة التلقائية لأسعار الشحن المحددة من لوحة المشرف
+onSnapshot(doc(db, "settings", "shippingRates"), (docSnap) => {
+  if (!docSnap.exists()) return;
+  const rates = docSnap.data().rates || {};
+  GOVERNORATES = GOVERNORATES.map(g => ({
+    name: g.name,
+    fee: rates[g.name] !== undefined ? Number(rates[g.name]) : g.fee
+  }));
+  populateGovSelect();
+  updateCheckoutSummary();
+});
 
 const checkoutModal = document.getElementById("checkoutModalBackdrop");
 const checkoutClose = document.getElementById("checkoutClose");
