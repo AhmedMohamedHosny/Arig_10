@@ -11,7 +11,7 @@
   --white: #0d2c24;
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "DM Sans", Arial, sans-serif;
-  --serif-ar: "Aref Ruqaa", "Cormorant Garamond", Georgia, serif;
+--serif-ar: "Cairo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;  
   --sans-ar: "Cairo", "DM Sans", Arial, sans-serif;
   --transition: .35s cubic-bezier(.22, 1, .36, 1);
 }
@@ -53,6 +53,8 @@ html[lang="ar"] .benefit h3,
 html[lang="ar"] .cart-empty h3,
 html[lang="ar"] .no-products h3 {
   font-family: var(--serif-ar);
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 body.no-scroll {
@@ -965,26 +967,32 @@ html[lang="ar"] .collection-content strong {
 }
 
 .why-intro h2 {
-  font-size: clamp(48px, 5vw, 70px);
-  margin-bottom: 27px;
+  font-size: clamp(40px, 4.5vw, 58px);
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.25;
 }
 
 .why-intro > p:last-child {
-  color: rgba(255,255,255,.5);
-  max-width: 330px;
-  font-size: 12px;
-  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 440px;
+  font-size: 14.5px;
+  line-height: 2;
 }
 
-.benefits-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px 12px;
-  }
+.benefit h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
 
-  .benefit p {
-    font-size: 9px;
-    line-height: 1.5;
-  }
+.benefit p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.9;
+  max-width: 320px;
+}
 
   .benefit h3 {
     font-size: 18px;
