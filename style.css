@@ -945,90 +945,121 @@ html[lang="ar"] .collection-content strong {
   font-size: 11px;
 }
 
-/* WHY */
-
 .why-section {
-  background: linear-gradient(rgba(10, 34, 28, 0.85), rgba(10, 34, 28, 0.85)), url("image/W.jpg") center/cover no-repeat;
+  background: linear-gradient(rgba(7, 25, 20, 0.88), rgba(7, 25, 20, 0.92)), url("image/W.jpg") center/cover no-repeat;
   color: #fff;
   padding: 120px 5%;
 }
 
+/* توزيع الشاشة بالتساوي 50% يمين و 50% شمال */
 .why-inner {
   max-width: 1400px;
   margin: auto;
   display: grid;
-  grid-template-columns: .85fr 1.6fr;
-  gap: 100px;
-  align-items: start;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.why-intro {
+  width: 100%;
 }
 
 .why-intro .eyebrow {
   color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  font-weight: 700;
 }
 
 .why-intro h2 {
-  font-size: clamp(40px, 4.5vw, 58px);
-  font-weight: 800;
-  margin-bottom: 20px;
-  line-height: 1.25;
+  font-size: clamp(44px, 4.8vw, 68px);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  color: #fff;
 }
 
-.why-intro > p:last-child {
-  color: rgba(255, 255, 255, 0.78);
-  max-width: 440px;
-  font-size: 14.5px;
+.why-intro h2 em {
+  color: var(--gold);
+  font-style: normal;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+}
+
+.why-rich-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.why-lead-text {
+  font-size: 19px;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.why-lead-text strong {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.why-sub-desc {
+  font-size: 15px;
   line-height: 2;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* أوسمة التميز تحت النص */
+.why-signature-badge {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.why-signature-badge span {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+/* ضبط العناصر في اليسار */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px 20px;
+}
+
+.benefit {
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  padding-top: 20px;
 }
 
 .benefit h3 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 10px 0 6px;
   color: #fff;
 }
 
 .benefit p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.9;
-  max-width: 320px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.8;
 }
 
-  .benefit h3 {
-    font-size: 18px;
+@media (max-width: 900px) {
+  .why-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
-
-.benefit {
-  border-top: 1px solid rgba(255,255,255,.18);
-  padding-top: 17px;
-  position: relative;
-}
-
-.benefit-number {
-  font-size: 8px;
-  color: var(--gold);
-  letter-spacing: 1px;
-}
-
-.benefit-icon {
-  font-family: var(--serif);
-  font-size: 34px;
-  margin: 25px 0 12px;
-  color: #d7c6a5;
-}
-
-.benefit h3 {
-  font-family: var(--serif);
-  font-size: 25px;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
-.benefit p {
-  font-size: 10px;
-  color: rgba(255,255,255,.45);
-  line-height: 1.7;
-  max-width: 230px;
 }
 
 /* STORY */
