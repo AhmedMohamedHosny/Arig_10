@@ -4395,3 +4395,102 @@ body {
   font-size: 12px;
   font-weight: 800;
 }
+/* شريط يشاهد الآن بنبضات حية */
+.live-viewers-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  color: #2ecc71;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  margin: 6px 0 14px;
+}
+
+.live-dot-pulse {
+  width: 8px;
+  height: 8px;
+  background: #2ecc71;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+  animation: livePulseAnim 1.6s infinite;
+}
+
+@keyframes livePulseAnim {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+/* صندوق التقييم التفاعلي */
+.pfp-rating-interactive-box {
+  background: rgba(7, 25, 20, 0.6);
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pfp-rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pfp-rating-stars-val {
+  color: var(--gold);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.user-rate-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rate-prompt-txt {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.interactive-stars {
+  display: inline-flex;
+  flex-direction: row-reverse; /* لترتيب النجوم من اليمين للشمال */
+  gap: 3px;
+}
+
+.star-btn {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.star-btn:hover,
+.star-btn:hover ~ .star-btn,
+.star-btn.rated,
+.star-btn.rated ~ .star-btn {
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.star-btn:active {
+  transform: scale(1.25);
+}
+
+.rate-status-msg {
+  font-size: 10.5px;
+  color: var(--success);
+  font-weight: bold;
+}
