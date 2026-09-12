@@ -2014,3 +2014,86 @@ document.getElementById("copyDepositVodafoneBtn")?.addEventListener("click", () 
     showToast("تم النسخ بنجاح 📋", `تم نسخ رقم فودافون كاش: ${num}`);
   });
 });
+/* =========================================================
+   مراقبة وعرض آراء العملاء وسكرينات الواتساب تلقائياً
+   ========================================================= */
+const reviewsCol = collection(db, "reviews");
+let allCustomerReviews = [];
+
+onSnapshot(reviewsCol, (snapshot) => {
+  allCustomerReviews = [];
+  snapshot.forEach(docSnap => allCustomerReviews.push({ id: docSnap.id, ...docSnap.data() }));
+
+  // الترتيب من الأحدث
+  allCustomerReviews.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+  renderHomeReviews();
+  renderFullReviewsGallery();
+});
+
+// 1. عرض آخر 4 آراء فقط في الصفحة الرئيسية
+function renderHomeReviews() {
+  const grid = document.getElementById("homeReviewsGrid");
+  const moreBtnWrap = document.getElementById("moreReviewsBtnWrap");
+  if (!grid) return;
+
+  if (allCustomerReviews.length === 0) {
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--muted); font-size:13px; padding:30px 0;">سيتم نشر آراء وتجارب العملاء قريباً.</div>`;
+    if (moreBtnWrap) moreBtnWrap.style.display = "none";
+    return;
+  }
+
+  // أخذ أول 4 صور فقط
+  const top4 = allCustomerReviews.slice(0, 4);
+
+  grid.innerHTML = top4.map(r => `
+    <div class="review-screen-card" onclick="openReviewLightbox('${r.image}')">
+      <img src="${r.image}" class="review-screen-img" alt="${r.author || 'رأي عميل'}">
+      <div class="review-screen-caption">${r.author || 'رأي عميل عبر واتساب 💬'}</div>
+    </div>
+  `).join("");
+
+  // إخفاء زر المزيد إذا كان العدد الإجمالي 4 أو أقل
+  if (moreBtnWrap) {
+    moreBtnWrap.style.display = allCustomerReviews.length > 4 ? "block" : "none";
+  }
+}
+
+// 2. عرض كل الصور في صفحة الأرشيف الكاملة
+function renderFullReviewsGallery() {
+  const gallery = document.getElementById("fullReviewsGallery");
+  if (!gallery) return;
+
+  gallery.innerHTML = allCustomerReviews.map(r => `
+    <div class="review-screen-card" onclick="openReviewLightbox('${r.image}')">
+      <img src="${r.image}" class="review-screen-img" style="height:350px;" alt="${r.author || 'رأي عميل'}">
+      <div class="review-screen-caption">${r.author || 'رأي عميل عبر واتساب 💬'}</div>
+    </div>
+  `).join("");
+}
+
+// 3. فتح وإغلاق صفحة كل الآراء
+const allReviewsPage = document.getElementById("allReviewsPage");
+document.getElementById("openAllReviewsBtn")?.addEventListener("click", () => {
+  if (allReviewsPage) {
+    allReviewsPage.style.display = "block";
+    document.body.classList.add("no-scroll");
+  }
+});
+
+document.getElementById("closeAllReviewsBtn")?.addEventListener("click", () => {
+  if (allReviewsPage) {
+    allReviewsPage.style.display = "none";
+    document.body.classList.remove("no-scroll");
+  }
+});
+
+// 4. تكبير الصورة عند النقر (Lightbox)
+window.openReviewLightbox = function(src) {
+  const modal = document.getElementById("reviewLightbox");
+  const img = document.getElementById("lightboxImg");
+  if (modal && img) {
+    img.src = src;
+    modal.classList.add("open");
+  }
+};
